@@ -1907,7 +1907,31 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
 
 
 
-
+void copy_mushed_struct_members(struct wlc_muscheduler_info *src, struct musched_info_qq *dst) {
+    dst->flags = src->flags;
+    dst->scbh = src->scbh;
+    dst->dl_policy = src->dl_policy;
+    dst->dl_schidx = src->dl_schidx;
+    dst->rualloc = src->rualloc;
+    dst->ack_policy = src->ack_policy;
+    dst->mix_ackp = src->mix_ackp;
+    memcpy(dst->lowat, src->lowat, sizeof(src->lowat));
+    memcpy(dst->maxn, src->maxn, sizeof(src->maxn));
+    dst->rucfg_fixed = src->rucfg_fixed;
+    dst->use_murts = src->use_murts;
+    dst->dyn_sigbmcs = src->dyn_sigbmcs;
+    dst->tmout = src->tmout;
+    dst->num_scb_stats = src->num_scb_stats;
+    dst->ru_stats = src->ru_stats;
+    dst->num_dlofdma_users = src->num_dlofdma_users;
+    memcpy(dst->min_dlofdma_users, src->min_dlofdma_users, sizeof(src->min_dlofdma_users));
+    dst->mixbw = src->mixbw;
+    dst->wfa20in80 = src->wfa20in80;
+    dst->omutafwin = src->omutafwin;
+    dst->aggx = src->aggx;
+    dst->txdur_thresh_mu = src->txdur_thresh_mu;
+    dst->txdur_thresh_su = src->txdur_thresh_su;
+}
 
 
 

@@ -248,9 +248,17 @@ typedef struct musched_ru_stats {
 	uint32_t	txsucc_cnt[MUSCHED_RU_TYPE_NUM]; /* succ tx cnt per ru size */
 	uint8_t	ru_idx_use_bmap[MUSCHED_RU_BMP_ROW_SZ][MUSCHED_RU_BMP_COL_SZ];
 } musched_ru_stats_t;
-/* module info */
-struct wlc_muscheduler_info {
-	void *wlc;
+/* enum for different types Multi Users technologies */
+/*musched info*/
+struct musched_info_qq {
+    struct wlc_muscheduler_info musched;
+    bool wlc_fifo_isMU;
+    bool wlc_fifo_is_ulofdma;
+    //mu_type_t mu_type;
+    uint16_t mch;
+    uint16_t mcl;
+    uint16_t mch2;
+
 	uint16_t	flags;
 	int	scbh;
 	int16_t	dl_policy;
@@ -260,8 +268,6 @@ struct wlc_muscheduler_info {
 	bool	mix_ackp; /* 1: allow mixed ackp0 and ackp1. 0: disallow */
 	uint8_t	lowat[D11_REV128_BW_SZ];
 	uint8_t	maxn[D11_REV128_BW_SZ];
-	uint8_t	rucfg[D11_REV128_BW_SZ][MUSCHED_RUCFG_ROW][MUSCHED_RUCFG_COL];
-	uint8_t	rucfg_ack[D11_REV128_BW_SZ][MUSCHED_RUCFG_ROW][MUSCHED_RUCFG_COL];
 	bool	rucfg_fixed; /* = TRUE: fixed/set by iovar */
 	uint8_t	use_murts;
 	bool	dyn_sigbmcs;
@@ -276,17 +282,6 @@ struct wlc_muscheduler_info {
 	bool	aggx;		/* aggx feature */
 	uint16_t	txdur_thresh_mu;	/* threshold to enforce dl ofdma */
 	uint16_t	txdur_thresh_su;	/* threshold to fall back to SU */
-} wlc_muscheduler_info_t;
-/* enum for different types Multi Users technologies */
-/*musched info*/
-struct musched_info_qq {
-    struct wlc_muscheduler_info musched;
-    bool wlc_fifo_isMU;
-    bool wlc_fifo_is_ulofdma;
-    //mu_type_t mu_type;
-    uint16_t mch;
-    uint16_t mcl;
-    uint16_t mch2;
 }musched_info_qq_t;
 
 

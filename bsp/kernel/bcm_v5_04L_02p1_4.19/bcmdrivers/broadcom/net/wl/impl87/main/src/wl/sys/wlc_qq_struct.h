@@ -317,13 +317,36 @@ struct wlc_muscheduler_info {
 };
 /*musched info*/
 struct musched_info_qq {
-    wlc_muscheduler_info_t musched;
     bool wlc_fifo_isMU;
     bool wlc_fifo_is_ulofdma;
     //mu_type_t mu_type;
     uint16 mch;
     uint16 mcl;
     uint16 mch2;
+    
+	uint16	flags;
+	int	scbh;
+	int16	dl_policy;
+	int8	dl_schidx; /* decided by dl_policy; internal used by ucode */
+	int8	rualloc; /* rualloc mode */
+	int8	ack_policy;
+	bool	mix_ackp; /* 1: allow mixed ackp0 and ackp1. 0: disallow */
+	uint8	lowat[D11_REV128_BW_SZ];
+	uint8	maxn[D11_REV128_BW_SZ];
+	bool	rucfg_fixed; /* = TRUE: fixed/set by iovar */
+	uint8	use_murts;
+	bool	dyn_sigbmcs;
+	uint16	tmout;
+	int16	num_scb_stats;
+	musched_ru_stats_t ru_stats;
+	int16	num_dlofdma_users;
+	uint16	min_dlofdma_users[MUSCHED_DLOFDMA_MINUSER_SZ]; /* min users to enable dlofdma */
+	bool	mixbw;		/* TRUE: enabled; FALSE: disabled */
+	bool	wfa20in80;	/* fixed RU alloc WAR for WFA test (HE-4.69.1) */
+	bool	omutafwin;
+	bool	aggx;		/* aggx feature */
+	uint16	txdur_thresh_mu;	/* threshold to enforce dl ofdma */
+	uint16	txdur_thresh_su;	/* threshold to fall back to SU */
 };
 
 
