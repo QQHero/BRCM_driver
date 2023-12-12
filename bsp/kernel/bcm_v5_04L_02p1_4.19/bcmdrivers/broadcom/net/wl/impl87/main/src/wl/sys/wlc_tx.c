@@ -11607,7 +11607,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
 		musched_info_qq_cur->mch2 = mch2;
         copy_mushed_struct_members(wlc->musched,musched_info_qq_cur);
 		memcpy(info_qq, musched_info_qq_cur, sizeof(*musched_info_qq_cur));
-		debugfs_set_info_qq(6, info_qq, 1);
+		debugfs_set_info_qq(5, info_qq, 1);
 		MFREE(wlc->osh, musched_info_qq_cur, sizeof(*musched_info_qq_cur));
 	}	
 	/* dump_flag_qqdx */
