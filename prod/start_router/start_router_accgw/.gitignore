@@ -1,0 +1,13 @@
+*.vs
+*.vscode
+/bin/
+*.idea
+*.DS_Store
+/lib
+/bin
+/build
+/cmake-build*/
+xcuserdata/
+cmake_install.cmake
+Makefile
+CMakeFiles/
