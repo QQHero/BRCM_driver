@@ -251,7 +251,6 @@ typedef struct musched_ru_stats {
 /* enum for different types Multi Users technologies */
 /*musched info*/
 struct musched_info_qq {
-    struct wlc_muscheduler_info musched;
     bool wlc_fifo_isMU;
     bool wlc_fifo_is_ulofdma;
     //mu_type_t mu_type;
