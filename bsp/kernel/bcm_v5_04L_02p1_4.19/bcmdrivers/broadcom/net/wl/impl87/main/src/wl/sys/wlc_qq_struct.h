@@ -352,4 +352,10 @@ struct musched_info_qq {
 
 
 
+#include <monitor.h>
 
+struct monitor_info_qq {
+    wl_mon_rxsts_t wl_mon_rxsts;
+    uint32 ru_type;
+    uint16 ruidx;
+};

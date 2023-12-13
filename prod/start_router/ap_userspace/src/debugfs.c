@@ -114,6 +114,7 @@ static struct timespec pre_timestamp_class2;//上次打印的时间戳
 static struct timespec pre_timestamp_class3;//上次打印的时间戳
 static struct timespec pre_timestamp_class5;//上次打印的时间戳
 static struct timespec pre_timestamp_class6;//上次打印的时间戳
+static struct timespec pre_timestamp_class7;//上次打印的时间戳
 
 typedef struct {
     struct timespec timestamp;  // for debugging
@@ -287,9 +288,40 @@ struct musched_info_qq {
 
 
 
+struct wl_rxsts {
+    int    pkterror;       /* error flags per pkt */
+    int    phytype;        /* 802.11 A/B/G /N  */
+    uint16_t chanspec;        /* channel spec */
+    uint16_t  datarate;       /* rate in 500kbps */
+    uint8_t   mcs;            /* MCS for HT frame */
+    uint8_t   htflags;        /* HT modulation flags */
+    int    antenna;        /* antenna pkts received on */
+    int    pktlength;      /* pkt length minus bcm phy hdr */
+    uint32_t  mactime;        /* time stamp from mac, count per 1us */
+    int    sq;         /* signal quality */
+    int32_t   signal;         /* in dBm */
+    int32_t   noise;          /* in dBm */
+    int    preamble;       /* Unknown, short, long */
+    int    encoding;       /* Unknown, CCK, PBCC, OFDM, HT, VHT */
+    int    nfrmtype;       /* special 802.11 frames(AMPDU, AMSDU) or addition PPDU fromat */
+    uint8_t   nss;            /* Number of spatial streams for VHT frame */
+    uint8_t   coding;
+    uint16_t  aid;            /* Partial AID for VHT frame */
+    uint8_t   gid;            /* Group ID for VHT frame */
+    uint8_t   bw;         /* Bandwidth for VHT frame */
+    uint16_t  vhtflags;       /* VHT modulation flags */
+    uint16_t	bw_nonht;       /* non-HT bw advertised in rts/cts */
+    uint32_t  ampdu_counter;      /* AMPDU counter for sniffer */
+    uint32_t  sig_a1;			/* HE  SIG-A1 field */
+    uint32_t  sig_a2;			/* HE  SIG-A2 field */
+} wl_mon_rxsts_t;
 
 
-
+struct monitor_info_qq {
+    struct wl_rxsts wl_mon_rxsts;
+    uint32_t ru_type;
+    uint16_t ruidx;
+}monitor_info_qq_t;
 
 
 
@@ -324,6 +356,7 @@ void file_io(void) {
     info_class_t phy_info;
     info_class_t frameid_info;
     info_class_t multiuser_info;
+    info_class_t monitor_info;
     ssize_t bytes_read;
 
     // Open the debugfs file for reading
@@ -333,6 +366,7 @@ void file_io(void) {
     int fd3 = open("/sys/kernel/debug/kernel_info/class3", O_RDONLY);
     int fd5 = open("/sys/kernel/debug/kernel_info/class5", O_RDONLY);
     int fd6 = open("/sys/kernel/debug/kernel_info/class6", O_RDONLY);
+    int fd7 = open("/sys/kernel/debug/kernel_info/class7", O_RDONLY);
 
     if (fd1 < 0) {
         perror("Error opening debugfs file1");
@@ -353,6 +387,10 @@ void file_io(void) {
     }
     if (fd6 < 0) {
         perror("Error opening debugfs file6");
+        return;
+    }
+    if (fd7 < 0) {
+        perror("Error opening debugfs file7");
         return;
     }
     int32_t loop_num=0;
@@ -671,6 +709,35 @@ void file_io(void) {
 
 
 
+// Read the content of the debugfs file 7 into the buffer
+        bytes_read = read(fd7, (uint8_t *)&monitor_info, sizeof(info_class_t));
+        if (bytes_read != sizeof(info_class_t)) {
+            fprintf(stderr, "wrong bytes read: %d, shoud be %d\n", bytes_read,
+                    sizeof(info_class_t));
+            close(fd7);
+            return;
+        }
+
+        lseek(fd7, 0, SEEK_SET);
+        // hexdump(&phy_info_qq, sizeof(info_class_t));
+        // clock_gettime(CLOCK_REALTIME, &phy_info_qq.timestamp);
+        struct monitor_info_qq *monitor_info_qq_cur;
+        monitor_info_qq_cur = (struct monitor_info_qq *) malloc(sizeof(monitor_info_qq_t));
+        memcpy(monitor_info_qq_cur, monitor_info.info, sizeof(monitor_info_qq_t));
+        if(pre_timestamp_class7.tv_nsec!= monitor_info.timestamp.tv_nsec){
+            
+            fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,monitor_info.timestamp.tv_sec,
+            monitor_info.timestamp.tv_nsec / 1000);
+            fprintf(stdout,"monitor info:");
+            
+            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x)"\
+                ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,monitor_info_qq_cur->wl_mon_rxsts.chanspec);
+
+            fprintf(stdout,"\n");
+            pre_timestamp_class7 = monitor_info.timestamp;
+        }
+
+
 
 
 
@@ -683,6 +750,7 @@ void file_io(void) {
         free(phy_info_qq_cur);
         free(pkt_ergodic_cur);
         free(musched_info_qq_cur);
+        free(monitor_info_qq_cur);
         loop_num++;
     }
 
@@ -692,6 +760,7 @@ void file_io(void) {
     close(fd3);
     close(fd5);
     close(fd6);
+    close(fd7);
 }
 
 #define GET_FIELD(ptr, x) (((info_class_t*)ptr)->info[x])
