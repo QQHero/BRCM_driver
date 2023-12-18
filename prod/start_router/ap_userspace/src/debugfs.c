@@ -700,7 +700,7 @@ void file_io(void) {
             multiuser_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"multi-user info:");
             
-            fprintf(stdout,"wlc_fifo_isMU(%u);wlc_fifo_is_ulofdma(%u);mch(%u);mcl(%u);mch2(%u)"\
+            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mch(%u);mcl(%u);mch2(%u)"\
                 ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2);
 
             fprintf(stdout,"\n");

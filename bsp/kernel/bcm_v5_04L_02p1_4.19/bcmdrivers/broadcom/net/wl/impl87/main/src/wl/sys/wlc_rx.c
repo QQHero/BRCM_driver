@@ -607,6 +607,10 @@ wlc_rxhdr_clear_pad_present(d11rxhdr_t *rxh, wlc_info_t *wlc)
         }
     }
 }
+	/* dump_flag_qqdx */
+int32 skip_plcp_error_index = 0;
+int32 skip_plcp_error_index_last = 0;
+	/* dump_flag_qqdx */
 
 /**
  * Processes received data/ctrl/mgmt frames. Called from bmac or hwa. Calls ampdu receive if
@@ -871,6 +875,16 @@ wlc_recv(wlc_info_t *wlc, void *p)
     }
 
 skip_plcp_error:
+	/* dump_flag_qqdx */
+    skip_plcp_error_index++;
+    if(skip_plcp_error_index>skip_plcp_error_index_last+1000){
+        skip_plcp_error_index_last = skip_plcp_error_index;
+        printk("cur_time(%u):(MONITOR_ENAB(wlc)(%d) &&"
+        "(MONITOR_PROMISC_ENAB((wlc)->mon_info)(%d) || (wlc->rx_mgmt)(%d) ||"
+        "(STAMON_ENAB(pub)(%d) && STA_MONITORING(wlc, &h->a2))(%d)))",OSL_SYSUPTIME(),MONITOR_ENAB(wlc),MONITOR_PROMISC_ENAB((wlc)->mon_info),(wlc->rx_mgmt),
+        STAMON_ENAB(pub),STA_MONITORING(wlc, &h->a2));
+    }
+    /* dump_flag_qqdx */
     /* monitor mode. Send all runt/bad fcs/bad proto up as well */
     if (MONITOR_ENAB(wlc) &&
         (MONITOR_PROMISC_ENAB((wlc)->mon_info) || (wlc->rx_mgmt) ||

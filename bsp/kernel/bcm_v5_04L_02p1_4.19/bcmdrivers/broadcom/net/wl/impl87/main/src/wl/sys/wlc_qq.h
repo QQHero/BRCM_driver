@@ -1837,9 +1837,19 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
                 printk("###############qq_scb == NULL##################");
                 return;
             }
+            if(wlc == NULL)
+            {
+                printk("###############wlc == NULL##################");
+                return;
+            }
             if(wlc->lqi == NULL)
             {
                 printk("###############wlc->lqi == NULL##################");
+                return;
+            }
+            if((wlc->lqi)->ants == 0)
+            {
+                printk("###############(wlc->lqi)->ants == 0##################");
                 return;
             }
             if(SCB_BSSCFG(qq_scb) == NULL)
@@ -1859,9 +1869,14 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
                 printk("###############SCB_LQ_INFO(lqi, qq_scb) == NULL##################");
                 return;
             }
-            if(qq_scb == NULL)
+            if(fns == NULL)
             {
-                printk("###############qq_scb == NULL##################");
+                printk("###############fns == NULL##################");
+                return;
+            }
+            if(fns->ctx == NULL)
+            {
+                printk("###############fns->ctx == NULL##################");
                 return;
             }
 
