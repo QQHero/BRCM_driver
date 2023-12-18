@@ -1827,6 +1827,14 @@ typedef struct phy_rssi_info phy_rssi_info_t;
 
 void get_and_print_rssi_from_ant(wlc_info_t *wlc){
     if(start_game_is_on && qq_pi_is_set && qq_scb_is_set){
+        if(qq_pi.rssii == NULL){
+                printk("###############qq_pi.rssii == NULL##################");
+                return;
+        }
+        if(qq_pi.rssii->fns == NULL){
+                printk("###############qq_pi.rssii->fns == NULL##################");
+                return;
+        }
         phy_rssi_info_t *info = qq_pi.rssii;
         phy_type_rssi_fns_t *fns = info->fns;
 	    int8 int8_rxpwr_core[WL_RSSI_ANT_MAX-WL_ANT_IDX_1];
@@ -1895,6 +1903,12 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
             }
         }
 #endif
+
+            if(fns->ctx == NULL)
+            {
+                printk("###############fns->ctx == NULL##################");
+                return;
+            }
         int16 rxpwr = phy_ac_rssi_compute_compensation(fns->ctx, rxpwr_core, FALSE);
         rxpwr = MIN(MAX(-128, rxpwr), 0);
         if(last_rssi_from_ant == rxpwr){
