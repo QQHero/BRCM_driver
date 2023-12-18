@@ -5172,7 +5172,7 @@ wlc_monitor(wlc_info_t *wlc, wlc_d11rxhdr_t *wrxh, void *p, struct wlc_if *wlcif
 		monitor_info_qq_cur->ru_type = ru_type;
     memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
 		memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
-		debugfs_set_info_qq(5, info_qq, 1);
+		debugfs_set_info_qq(6, info_qq, 1);
 		MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
 	}	
 	/* dump_flag_qqdx */
