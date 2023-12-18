@@ -730,8 +730,9 @@ void file_io(void) {
             monitor_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"monitor info:");
             
-            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x)"\
-                ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,monitor_info_qq_cur->wl_mon_rxsts.chanspec);
+            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u)"\
+                ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
+                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2);
 
             fprintf(stdout,"\n");
             pre_timestamp_class7 = monitor_info.timestamp;

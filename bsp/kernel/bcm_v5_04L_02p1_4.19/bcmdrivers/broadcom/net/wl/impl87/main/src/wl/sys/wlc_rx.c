@@ -5174,22 +5174,6 @@ wlc_monitor(wlc_info_t *wlc, wlc_d11rxhdr_t *wrxh, void *p, struct wlc_if *wlcif
     plcp += D11_PHY_RXPLCP_OFF(wlc->pub->corerev);
 
 
-	/* dump_flag_qqdx */
-	if(start_game_is_on){
-        uint16 ruidx = ((plcp[6] & 0x0f) << 3) | ((plcp[7] & 0x1C) >> 2);
-        uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
-
-		kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
-		struct monitor_info_qq *monitor_info_qq_cur = NULL;
-		monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
-		monitor_info_qq_cur->ruidx = ruidx;
-		monitor_info_qq_cur->ru_type = ru_type;
-    memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
-		memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
-		debugfs_set_info_qq(6, info_qq, 1);
-		MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
-	}	
-	/* dump_flag_qqdx */
 
 
     if (!wlc_vht_prep_rate_info(wlc->vhti, wrxh, plcp, rspec, &sts) &&
@@ -5255,6 +5239,22 @@ wlc_monitor(wlc_info_t *wlc, wlc_d11rxhdr_t *wrxh, void *p, struct wlc_if *wlcif
                 WL_RXS_PREAMBLE_HT_MM : WL_RXS_PREAMBLE_HT_GF;
         }
     }
+	/* dump_flag_qqdx */
+	if(start_game_is_on){
+        uint16 ruidx = ((plcp[6] & 0x0f) << 3) | ((plcp[7] & 0x1C) >> 2);
+        uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
+
+		kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+		struct monitor_info_qq *monitor_info_qq_cur = NULL;
+		monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
+		monitor_info_qq_cur->ruidx = ruidx;
+		monitor_info_qq_cur->ru_type = ru_type;
+    memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+		memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+		debugfs_set_info_qq(6, info_qq, 1);
+		MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+	}	
+	/* dump_flag_qqdx */
 
     /* translate error code */
     if (D11RXHDR_ACCESS_VAL(&wrxh->rxhdr, wlc->pub->corerev, RxStatus1) & RXS_DECERR)
