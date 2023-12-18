@@ -2013,8 +2013,38 @@ wlc_lq_ant_rssi_get(wlc_info_t *wlc, wlc_bsscfg_t *cfg, struct scb *scb, int cha
 int8
 wlc_lq_ant_rssi_last_get(wlc_info_t *wlc, wlc_bsscfg_t *cfg, struct scb *scb, int chain)
 {
+            if(wlc == NULL)
+            {
+                printk("&&&###############wlc == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
     wlc_lq_info_t *lqi = wlc->lqi;
+            if(wlc->lqi == NULL)
+            {
+                printk("&&&###############wlc->lqi == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
+            if(BSS_LQ_INFO(lqi, cfg) == NULL)
+            {
+                printk("###############BSS_LQ_INFO(lqi, cfg) == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
     bss_lq_info_t *blqi = BSS_LQ_INFO(lqi, cfg);
+            if(scb == NULL)
+            {
+                printk("&&&###############scb == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
+            if(SCB_BSSCFG(scb) == NULL)
+            {
+                printk("&&&###############SCB_BSSCFG(scb) == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
+            if(SCB_LQ_INFO(lqi, scb) == NULL)
+            {
+                printk("&&&###############SCB_LQ_INFO(lqi, scb) == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
     scb_lq_info_t *slqi = SCB_LQ_INFO(lqi, scb);
     int8 rssi = WLC_RSSI_INVALID;
     uint i;
@@ -2028,8 +2058,24 @@ wlc_lq_ant_rssi_last_get(wlc_info_t *wlc, wlc_bsscfg_t *cfg, struct scb *scb, in
 
     ASSERT((chain >= WL_ANT_IDX_1) && (chain < WL_RSSI_ANT_MAX));
 
+            if(wlc->stf == NULL)
+            {
+                printk("###############wlc->stf == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
     if ((wlc->stf->rxchain & (1 << chain))) {
         row = slqi->rssi_chain_window + chain * MA_WIN_SZ(blqi->rssi_window_sz);
+            
+            if(row == NULL)
+            {
+                printk("###############(row) == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
+            if((row + i) == NULL)
+            {
+                printk("###############(row + i) == NULL##################");
+                return WLC_RSSI_INVALID;
+            }
         if (*(row + i) != WLC_RSSI_INVALID) {
             rssi = *(row + i);
         }

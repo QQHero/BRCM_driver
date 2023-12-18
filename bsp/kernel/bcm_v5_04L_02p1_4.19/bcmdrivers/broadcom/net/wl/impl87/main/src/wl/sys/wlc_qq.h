@@ -1847,6 +1847,11 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
                 printk("###############wlc->lqi == NULL##################");
                 return;
             }
+            if((wlc->lqi)->cfgh == 0)
+            {
+                printk("###############(wlc->lqi)->cfgh == 0##################");
+                return;
+            }
             if((wlc->lqi)->ants == 0)
             {
                 printk("###############(wlc->lqi)->ants == 0##################");
@@ -1867,16 +1872,6 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
             if(SCB_LQ_INFO(lqi, qq_scb) == NULL)
             {
                 printk("###############SCB_LQ_INFO(lqi, qq_scb) == NULL##################");
-                return;
-            }
-            if(fns == NULL)
-            {
-                printk("###############fns == NULL##################");
-                return;
-            }
-            if(fns->ctx == NULL)
-            {
-                printk("###############fns->ctx == NULL##################");
                 return;
             }
 
