@@ -11206,6 +11206,7 @@ wlc_doioctl(void *ctx, uint cmd, void *arg, uint len, struct wlc_if *wlcif)
         }
 
         wlc->monitor = val;
+        printk("cur_time(%u):wlc->monitor(%d))",OSL_SYSUPTIME(),wlc->monitor);
 #ifdef STA
         /* disable mpc if monitor is on, enable mpc if monitor is off */
         wlc_radio_mpc_upd(wlc);

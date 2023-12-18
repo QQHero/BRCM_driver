@@ -879,9 +879,9 @@ skip_plcp_error:
     skip_plcp_error_index++;
     if(skip_plcp_error_index>skip_plcp_error_index_last+1000){
         skip_plcp_error_index_last = skip_plcp_error_index;
-        printk("cur_time(%u):(MONITOR_ENAB(wlc)(%d) &&"
+        printk("cur_time(%u):wlc->monitor(%d)(MONITOR_ENAB(wlc)(%d) &&"
         "(MONITOR_PROMISC_ENAB((wlc)->mon_info)(%d) || (wlc->rx_mgmt)(%d) ||"
-        "(STAMON_ENAB(pub)(%d) && STA_MONITORING(wlc, &h->a2))(%d)))",OSL_SYSUPTIME(),MONITOR_ENAB(wlc),MONITOR_PROMISC_ENAB((wlc)->mon_info),(wlc->rx_mgmt),
+        "(STAMON_ENAB(pub)(%d) && STA_MONITORING(wlc, &h->a2))(%d)))",OSL_SYSUPTIME(),wlc->monitor,MONITOR_ENAB(wlc),MONITOR_PROMISC_ENAB((wlc)->mon_info),(wlc->rx_mgmt),
         STAMON_ENAB(pub),STA_MONITORING(wlc, &h->a2));
     }
     /* dump_flag_qqdx */
