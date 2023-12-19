@@ -13536,6 +13536,7 @@ wlc_bmac_txstatus(wlc_hw_info_t *wlc_hw, bool bound, bool *fatal)
 
             }
                     /* dump_flag_qqdx */
+                    #if 0
                     if(start_game_is_on){
                         int16 rssi1 = TGTXS_PHYRSSI(TX_STATUS_MACTXS_S8(&txs));
                         int16 rssi2 = ((rssi1) & PHYRSSI_SIGN_MASK) ? (rssi1 - PHYRSSI_2SCOMPLEMENT) : rssi1;
@@ -13590,9 +13591,19 @@ wlc_bmac_txstatus(wlc_hw_info_t *wlc_hw, bool bound, bool *fatal)
                         MFREE(wlc->osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
 
                     }
+                    #endif
                     /* dump_flag_qqdx */
             txs.frameid = (TX_STATUS_MACTXS_S1(&txs) & TX_STATUS_FID_MASK) >>
                         TX_STATUS_FID_SHIFT;
+                        	
+/* dump_flag_qqdx */
+if(D11_TXFID_GET_FIFO(wlc, txs.frameid) == start_sta_info_cur->fifo){
+    if(start_game_is_on){
+
+			get_and_print_rssi_from_ant(wlc);
+    }
+}
+/* dump_flag_qqdx */
             txs.sequence = TX_STATUS_MACTXS_S2(&txs) & TX_STATUS_SEQ_MASK;
             txs.phyerr = TX_STATUS_PTX(TX_STATUS_MACTXS_S2(&txs), wlc->pub->corerev);
             txs.lasttxtime = R_REG(osh, D11_TSFTimerLow(wlc_hw));

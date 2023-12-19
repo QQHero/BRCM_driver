@@ -669,6 +669,7 @@ wlc_recv(wlc_info_t *wlc, void *p)
     phy_rssi_compute_rssi((phy_info_t *)wlc->hw->band->pi, wrxh);
     
 	/* dump_flag_qqdx */
+    #if 0
 	if(start_game_is_on){
         
         qq_pi = *((phy_info_t *)wlc->hw->band->pi);
@@ -682,6 +683,7 @@ wlc_recv(wlc_info_t *wlc, void *p)
 		debugfs_set_info_qq(2, info_qq, 1);
 		MFREE(wlc->osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
 	}	
+    #endif
 	/* dump_flag_qqdx */
     /* strip off HW rxhdr */
     if (PKTLEN(osh, p) < wlc->hwrxoff) {

@@ -1562,6 +1562,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             /* dump_flag_qqdx */
             if(memcmp(&start_sta_info_cur->ea, &scb->ea, sizeof(struct ether_addr)) == 0 && start_sta_info_cur->ac_queue_index == PKTPRIO(p)){
                            
+                start_sta_info_cur->fifo = fifo;
                 qq_scb = scb;     
                 qq_scb_is_set = TRUE;
                 /* dump_flag_qqdx */
@@ -1631,6 +1632,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         pkt_qq_cur->failed_cnt = 0;
                         pkt_qq_cur->n_pkts = n_pkts_qq;
                         pkt_qq_cur->retry_time_list_index = 0;
+                        pkt_qq_cur->fifo = fifo;
                         if(scb->PS){
                             pkt_qq_cur->ps_totaltime = scb->ps_tottime + cur_time - scb->ps_starttime;
                         }else{
@@ -1655,6 +1657,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         //uint fifo = D11_TXFID_GET_FIFO(wlc, TxFrameID);
                         hnddma_t *tx_di = WLC_HW_DI(wlc, fifo);
                         dma_info_t *di = DI_INFO(tx_di);
+                        
                         pkt_qq_cur->pktnum_to_send_start = NTXDACTIVE(di->txin, di->txout) + 1;
                         pkt_qq_cur->pkt_added_in_wlc_tx_start = pkt_added_in_wlc_tx;
                         memcpy(&(pkt_qq_cur->rates_counts_txs_qq_start), cur_rates_counts_txs_qq, sizeof(struct rates_counts_txs_qq));
@@ -1691,7 +1694,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                                 //goto old_pkt_qqdx;//不需要再加到队列里
                             }
                         }
-                    //}
+                    //}fifo
         #endif /*dump_stack_qqdx_print*/
                         for (int i = 0; i < CCASTATS_MAX; i++) {
                             pkt_qq_cur->ccastats_qq[i] = wlc_bmac_cca_read_counter(wlc->hw, 4 * i, (4 * i + 2));

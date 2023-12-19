@@ -16,6 +16,7 @@ struct pkt_qq {
     uint16 FrameID;//每个数据帧生命周期不变的
     uint16 pktSEQ;//也许每个数据包生命周期不变的
 	uint16 n_pkts;       /**< number of queued packets */
+    uint32 fifo;
     uint8 tid;//tid
     uint8 APnum;//AP数量
     uint32 pkt_qq_chain_len_add_start;//记录是第几个送入硬件的包
@@ -143,6 +144,7 @@ struct start_sta_info{
 	int8_t start_is_on;//判断是否游戏正在运行
 	struct ether_addr ea;
 	int8_t ac_queue_index;
+	int32_t fifo;
     uint16_t          flowid;     /* flowid */
 };
 /*定时器初始化相关*/

@@ -2459,6 +2459,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 uint fifo = D11_TXFID_GET_FIFO(wlc, htol16(curTxFrameID));
                 hnddma_t *tx_di = WLC_HW_DI(wlc, fifo);
                 dma_info_t *di = DI_INFO(tx_di);
+                pkt_qq_cur->fifo = fifo;
                 pkt_qq_cur->pktnum_to_send_end = NTXDACTIVE(di->txin, di->txout) + 1;
                 pkt_qq_cur->pkt_added_in_wlc_tx_end = pkt_added_in_wlc_tx;
                 pkt_qq_cur->APnum = num_routers;
