@@ -290,21 +290,21 @@ struct musched_info_qq {
 
 
 struct wl_rxsts {
-    int    pkterror;       /* error flags per pkt */
-    int    phytype;        /* 802.11 A/B/G /N  */
+    uint32_t   pkterror;       /* error flags per pkt */
+    uint32_t   phytype;        /* 802.11 A/B/G /N  */
     uint16_t chanspec;        /* channel spec */
     uint16_t  datarate;       /* rate in 500kbps */
     uint8_t   mcs;            /* MCS for HT frame */
     uint8_t   htflags;        /* HT modulation flags */
-    int    antenna;        /* antenna pkts received on */
-    int    pktlength;      /* pkt length minus bcm phy hdr */
+    uint32_t   antenna;        /* antenna pkts received on */
+    uint32_t   pktlength;      /* pkt length minus bcm phy hdr */
     uint32_t  mactime;        /* time stamp from mac, count per 1us */
-    int    sq;         /* signal quality */
+    uint32_t   sq;         /* signal quality */
     int32_t   signal;         /* in dBm */
     int32_t   noise;          /* in dBm */
-    int    preamble;       /* Unknown, short, long */
-    int    encoding;       /* Unknown, CCK, PBCC, OFDM, HT, VHT */
-    int    nfrmtype;       /* special 802.11 frames(AMPDU, AMSDU) or addition PPDU fromat */
+    uint32_t   preamble;       /* Unknown, short, long */
+    uint32_t   encoding;       /* Unknown, CCK, PBCC, OFDM, HT, VHT */
+    uint32_t   nfrmtype;       /* special 802.11 frames(AMPDU, AMSDU) or addition PPDU fromat */
     uint8_t   nss;            /* Number of spatial streams for VHT frame */
     uint8_t   coding;
     uint16_t  aid;            /* Partial AID for VHT frame */
