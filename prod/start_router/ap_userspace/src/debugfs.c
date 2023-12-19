@@ -317,13 +317,27 @@ struct wl_rxsts {
     uint32_t  sig_a2;			/* HE  SIG-A2 field */
 } wl_mon_rxsts_t;
 
+#define	ETHER_ADDR_LEN		6
+struct	ether_addr {
+	uint8_t octet[ETHER_ADDR_LEN];
+};
+
+struct dot11_header {
+	uint16_t			fc;		/* frame control */
+	uint16_t			durid;		/* duration/ID */
+	struct ether_addr	a1;		/* address 1 */
+	struct ether_addr	a2;		/* address 2 */
+	struct ether_addr	a3;		/* address 3 */
+	uint16_t			seq;		/* sequence control */
+	struct ether_addr	a4;		/* address 4 */
+};
 
 struct monitor_info_qq {
     struct wl_rxsts wl_mon_rxsts;
     uint32_t ru_type;
     uint16_t ruidx;
+    struct dot11_header h;
 }monitor_info_qq_t;
-
 
 
 
@@ -731,9 +745,16 @@ void file_io(void) {
             monitor_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"monitor info:");
             
-            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u)"\
+            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);MAC address a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
+                ";MAC address a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
-                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2);
+                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,\
+                            monitor_info_qq_cur->h.a1.octet[0],monitor_info_qq_cur->h.a1.octet[1],monitor_info_qq_cur->h.a1.octet[2],\
+                            monitor_info_qq_cur->h.a1.octet[3],monitor_info_qq_cur->h.a1.octet[4],monitor_info_qq_cur->h.a1.octet[5],\
+                            monitor_info_qq_cur->h.a2.octet[0],monitor_info_qq_cur->h.a2.octet[1],monitor_info_qq_cur->h.a2.octet[2],\
+                            monitor_info_qq_cur->h.a2.octet[3],monitor_info_qq_cur->h.a2.octet[4],monitor_info_qq_cur->h.a2.octet[5],\
+                            monitor_info_qq_cur->h.a3.octet[0],monitor_info_qq_cur->h.a3.octet[1],monitor_info_qq_cur->h.a3.octet[2],\
+                            monitor_info_qq_cur->h.a3.octet[3],monitor_info_qq_cur->h.a3.octet[4],monitor_info_qq_cur->h.a3.octet[5]);
 
             fprintf(stdout,"\n");
             pre_timestamp_class7 = monitor_info.timestamp;
