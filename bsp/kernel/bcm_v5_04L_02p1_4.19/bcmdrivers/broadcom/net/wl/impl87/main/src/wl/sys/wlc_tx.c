@@ -1164,6 +1164,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             cur_rates_counts_txs_qq->txsucc_cnt[i] = 0;
         }
         printk("************sizeof void**%d*****%d**************",sizeof(di),sizeof(wlc_pkttag_t));
+        printk("************sizeof uint**%d****uint16*%d**************",sizeof(uint),sizeof(uint16));
 
         //memset(cur_rates_counts_txs_qq->tx_cnt, 0, sizeof(cur_rates_counts_txs_qq->tx_cnt));
         //memset(cur_rates_counts_txs_qq->txsucc_cnt, 0, sizeof(cur_rates_counts_txs_qq->txsucc_cnt));
