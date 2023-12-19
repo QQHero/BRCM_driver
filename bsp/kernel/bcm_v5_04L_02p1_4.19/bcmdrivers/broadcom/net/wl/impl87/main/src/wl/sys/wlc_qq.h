@@ -1583,6 +1583,8 @@ void scan_result_callback_update_qq(void *ctx, int status, wlc_bsscfg_t *bsscfg)
                         bi_qq.BSSID.octet[3],
                         bi_qq.BSSID.octet[4],
                         bi_qq.BSSID.octet[5]);
+                        
+            printk("************sizeof uint**%d****uint16*%d**************",sizeof(uint),sizeof(uint16));
 
             // 更新全局AP列表
             update_global_AP_list(&bi_qq);

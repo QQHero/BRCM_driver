@@ -11206,7 +11206,7 @@ wlc_doioctl(void *ctx, uint cmd, void *arg, uint len, struct wlc_if *wlcif)
         }
 
         wlc->monitor = val;
-        printk("cur_time(%u):wlc->monitor(%d);wlc->channum(%d))",OSL_SYSUPTIME(),wlc->monitor,(wlc->chanspec& WL_CHANSPEC_CHAN_MASK));
+        printk("cur_time(%u):wlc->monitor (%d);wlc->channum(%d))",OSL_SYSUPTIME(),wlc->monitor,(wlc->chanspec& WL_CHANSPEC_CHAN_MASK));
         printk("************sizeof uint**%d****uint16*%d**************",sizeof(uint),sizeof(uint16));
 #ifdef STA
         /* disable mpc if monitor is on, enable mpc if monitor is off */
