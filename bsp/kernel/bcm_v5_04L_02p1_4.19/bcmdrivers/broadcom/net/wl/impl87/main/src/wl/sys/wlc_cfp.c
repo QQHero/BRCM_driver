@@ -3423,6 +3423,7 @@ wlc_cfp_rxframe(wlc_info_t *wlc, void* p)
 		SCB_CFP_RCB_NODE_IS_PENDING(scb_cfp, prio) =  TRUE;
 	}
 }
+phy_info_t *pi_qq;
 
 /**
  * 0. CFP RX ENTRY Function
@@ -3554,6 +3555,7 @@ wlc_cfp_bmac_recv(wlc_hw_info_t *wlc_hw, uint fifo, wlc_worklet_info_t *worklet)
 		/* reserve room for SW RXHDR */
 		wrxh = (wlc_d11rxhdr_t *)PKTPUSH(wlc_hw->osh, p, WLC_RXHDR_LEN);
 	/* dump_flag_qqdx */
+	#if defined(RSSI_CFP542)
 		struct dot11_header *h3;
 		h3 = (struct dot11_header *)(((uint8*)(PKTDATA(wlc->osh, p))) + wlc->hwrxoff + RXHDR_GET_PAD_LEN(&wrxh->rxhdr, wlc) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
 	if(memcmp(&(start_sta_info_cur->ea), &(h3->a2), sizeof(struct ether_addr)) == 0){
@@ -3582,6 +3584,7 @@ wlc_cfp_bmac_recv(wlc_hw_info_t *wlc_hw, uint fifo, wlc_worklet_info_t *worklet)
 			}
 		}	
 	}
+	#endif//RSSI_CFP542
 	/* dump_flag_qqdx */
 		/* record the tsf_l in wlc_rxd11hdr */
 		wrxh->tsf_l = tsf_l;
