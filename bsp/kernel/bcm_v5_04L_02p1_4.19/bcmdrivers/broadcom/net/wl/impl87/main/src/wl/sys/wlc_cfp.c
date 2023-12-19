@@ -3558,20 +3558,28 @@ wlc_cfp_bmac_recv(wlc_hw_info_t *wlc_hw, uint fifo, wlc_worklet_info_t *worklet)
 		h3 = (struct dot11_header *)(((uint8*)(PKTDATA(wlc->osh, p))) + wlc->hwrxoff + RXHDR_GET_PAD_LEN(&wrxh->rxhdr, wlc) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
 	if(memcmp(&(start_sta_info_cur->ea), &(h3->a2), sizeof(struct ether_addr)) == 0){
 		if(start_game_is_on){
-			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
-			struct phy_info_qq *phy_info_qq_cur = NULL;
-			phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(wlc->osh, sizeof(*phy_info_qq_cur));
-			phy_info_qq_cur->RSSI = wrxh->rssi;
-			phy_info_qq_cur->RSSI_loc = 542;
-			uint16 fc_qq, fk_qq;
-			fc_qq = ltoh16(h3->fc);
-			//ft = FC_TYPE(fc);
-			fk_qq = (fc_qq & FC_KIND_MASK);
-			phy_info_qq_cur->RSSI_type = FC_TYPE(fc_qq);
-			phy_info_qq_cur->RSSI_subtype = FC_SUBTYPE(fc_qq);
-			memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
-			debugfs_set_info_qq(2, info_qq, 1);
-			MFREE(wlc->osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
+			if(ltoh16(h3->fc) != FC_TYPE_DATA){
+				phy_rssi_compute_rssi((phy_info_t *)wlc->hw->band->pi, wrxh);
+				if(wrxh->rssi<0){
+					if(phy_info_qq_rx_new.RSSI != wrxh->rssi){
+						phy_info_qq_rx_new.RSSI = wrxh->rssi;
+						kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+						struct phy_info_qq *phy_info_qq_cur = NULL;
+						phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(wlc->osh, sizeof(*phy_info_qq_cur));
+						phy_info_qq_cur->RSSI = wrxh->rssi;
+						phy_info_qq_cur->RSSI_loc = 542;
+						uint16 fc_qq, fk_qq;
+						fc_qq = ltoh16(h3->fc);
+						//ft = FC_TYPE(fc);
+						fk_qq = (fc_qq & FC_KIND_MASK);
+						phy_info_qq_cur->RSSI_type = FC_TYPE(fc_qq);
+						phy_info_qq_cur->RSSI_subtype = FC_SUBTYPE(fc_qq);
+						memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
+						debugfs_set_info_qq(2, info_qq, 1);
+						MFREE(wlc->osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
+					}
+				}
+			}
 		}	
 	}
 	/* dump_flag_qqdx */
