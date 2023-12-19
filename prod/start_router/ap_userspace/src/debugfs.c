@@ -751,6 +751,8 @@ void file_io(void) {
             fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,monitor_info.timestamp.tv_sec,
             monitor_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"monitor info:");
+            fprintf(stdout,"size:,sizeof(struct wl_rxsts),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
+            ,sizeof(struct wl_rxsts),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
             
             fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);MAC address a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ";MAC address a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
