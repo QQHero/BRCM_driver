@@ -1586,8 +1586,8 @@ void scan_result_callback_update_qq(void *ctx, int status, wlc_bsscfg_t *bsscfg)
                         
             printk("************sizeof uint**%d****uint16*%d**************",sizeof(uint),sizeof(uint16));
 
-            printk("size:,sizeof(struct wl_rxsts),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
-            ,sizeof(struct wl_rxsts),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
+            printk("size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
+            ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
             // 更新全局AP列表
             update_global_AP_list(&bi_qq);
             
