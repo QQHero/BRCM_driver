@@ -393,4 +393,5 @@ struct monitor_info_qq {
     uint16 ruidx;
     //struct dot11_header h;
     struct dot11_header h1;
+    uint16 monitor_loc;
 };
