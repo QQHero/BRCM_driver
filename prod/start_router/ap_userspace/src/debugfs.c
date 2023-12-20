@@ -754,8 +754,7 @@ void file_io(void) {
             fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
             ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
             
-            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);MAC address h.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
-                ";MAC address h.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h.a3(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
+            fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);MAC address h1.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ";MAC address h1.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
                 monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(monitor_info_qq_cur->h1.fc & FC_KIND_MASK)>> FC_TYPE_SHIFT,\
