@@ -761,7 +761,7 @@ bcmwifi_monitor_delete(monitor_info_t* info)
 	if (info)
 		MFREE(NULL, info, sizeof(struct monitor_info));
 }
-
+uint32 debug_temp = 0;
 uint16
 bcmwifi_monitor(monitor_info_t* info, monitor_pkt_info_t* pkt_info,
 	void *pkt, uint16 len, void *pout, int16* offset,
@@ -769,7 +769,10 @@ bcmwifi_monitor(monitor_info_t* info, monitor_pkt_info_t* pkt_info,
 {
 	uint16 hwrxoff;
 	wl_phyextract_t *phy_extract = (wl_phyextract_t *)phyextract;
-
+	debug_temp ++;
+	if(debug_temp%100 == 1){
+        printk("----------[fyl] OSL_SYSUPTIME2(%u)----------debug_temp(%u)",OSL_SYSUPTIME(),debug_temp);
+	}
 	if (dma_flags != 0)
 		dma_flags = D11RXHDR_ACCESS_VAL(rxhdr,
 				info->corerev, dma_flags);
