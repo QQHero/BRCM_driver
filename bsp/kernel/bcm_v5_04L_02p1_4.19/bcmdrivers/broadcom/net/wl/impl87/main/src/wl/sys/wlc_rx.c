@@ -5247,15 +5247,15 @@ wlc_monitor(wlc_info_t *wlc, wlc_d11rxhdr_t *wrxh, void *p, struct wlc_if *wlcif
         uint16 ruidx = ((plcp[6] & 0x0f) << 3) | ((plcp[7] & 0x1C) >> 2);
         uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
 
-		struct dot11_header *h;
-		h = (struct dot11_header *)(((uint8*)(PKTDATA(wlc->osh, p))) + wlc->hwrxoff + RXHDR_GET_PAD_LEN(&wrxh->rxhdr, wlc) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
+		//struct dot11_header *h;
+		//h = (struct dot11_header *)(((uint8*)(PKTDATA(wlc->osh, p))) + wlc->hwrxoff + RXHDR_GET_PAD_LEN(&wrxh->rxhdr, wlc) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
         
 		struct dot11_header *h1;
         h1 = (struct dot11_header *)(PKTDATA(wlc->osh, p) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
 		kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 		struct monitor_info_qq *monitor_info_qq_cur = NULL;
 		monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
-        memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
+        //memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
         memcpy(&monitor_info_qq_cur->h1, h1, sizeof(struct dot11_header));
 		monitor_info_qq_cur->ruidx = ruidx;
 		monitor_info_qq_cur->ru_type = ru_type;

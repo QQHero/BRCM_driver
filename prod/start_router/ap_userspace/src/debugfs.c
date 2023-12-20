@@ -342,7 +342,7 @@ struct monitor_info_qq {
     struct wl_rxsts_qq wl_mon_rxsts;
     uint32_t ru_type;
     uint16_t ruidx;
-    struct dot11_header h;
+    //struct dot11_header h;
     struct dot11_header h1;
 }monitor_info_qq_t;
 
@@ -758,13 +758,7 @@ void file_io(void) {
                 ";MAC address h.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h.a3(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ";MAC address h1.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
-                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(monitor_info_qq_cur->h.fc & FC_KIND_MASK)>> FC_TYPE_SHIFT,\
-                            monitor_info_qq_cur->h.a1.octet[0],monitor_info_qq_cur->h.a1.octet[1],monitor_info_qq_cur->h.a1.octet[2],\
-                            monitor_info_qq_cur->h.a1.octet[3],monitor_info_qq_cur->h.a1.octet[4],monitor_info_qq_cur->h.a1.octet[5],\
-                            monitor_info_qq_cur->h.a2.octet[0],monitor_info_qq_cur->h.a2.octet[1],monitor_info_qq_cur->h.a2.octet[2],\
-                            monitor_info_qq_cur->h.a2.octet[3],monitor_info_qq_cur->h.a2.octet[4],monitor_info_qq_cur->h.a2.octet[5],\
-                            monitor_info_qq_cur->h.a3.octet[0],monitor_info_qq_cur->h.a3.octet[1],monitor_info_qq_cur->h.a3.octet[2],\
-                            monitor_info_qq_cur->h.a3.octet[3],monitor_info_qq_cur->h.a3.octet[4],monitor_info_qq_cur->h.a3.octet[5],\
+                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(monitor_info_qq_cur->h1.fc & FC_KIND_MASK)>> FC_TYPE_SHIFT,\
                             monitor_info_qq_cur->h1.a1.octet[0],monitor_info_qq_cur->h1.a1.octet[1],monitor_info_qq_cur->h1.a1.octet[2],\
                             monitor_info_qq_cur->h1.a1.octet[3],monitor_info_qq_cur->h1.a1.octet[4],monitor_info_qq_cur->h1.a1.octet[5],\
                             monitor_info_qq_cur->h1.a2.octet[0],monitor_info_qq_cur->h1.a2.octet[1],monitor_info_qq_cur->h1.a2.octet[2],\
