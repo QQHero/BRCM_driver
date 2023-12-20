@@ -288,8 +288,7 @@ struct musched_info_qq {
 
 
 
-
-struct wl_rxsts {
+struct wl_rxsts_qq {
     uint32_t   pkterror;       /* error flags per pkt */
     uint32_t   phytype;        /* 802.11 A/B/G /N  */
     uint16_t chanspec;        /* channel spec */
@@ -340,7 +339,7 @@ struct dot11_header {
 };
 
 struct monitor_info_qq {
-    struct wl_rxsts wl_mon_rxsts;
+    struct wl_rxsts_qq wl_mon_rxsts;
     uint32_t ru_type;
     uint16_t ruidx;
     struct dot11_header h;
@@ -751,8 +750,8 @@ void file_io(void) {
             fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,monitor_info.timestamp.tv_sec,
             monitor_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"monitor info:");
-            fprintf(stdout,"size:,sizeof(struct wl_rxsts),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
-            ,sizeof(struct wl_rxsts),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
+            fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
+            ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
             
             fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);MAC address a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ";MAC address a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address a3(%02x:%02x:%02x:%02x:%02x:%02x)"\

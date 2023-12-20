@@ -1932,7 +1932,33 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
 
 }
 	
-
+void copy_wl_rxsts_to_wl_rxsts_qq(wl_mon_rxsts_t* src, struct wl_rxsts_qq* dst) {
+    dst->pkterror = src->pkterror;
+    dst->phytype = src->phytype;
+    dst->chanspec = src->chanspec;
+    dst->datarate = src->datarate;
+    dst->mcs = src->mcs;
+    dst->htflags = src->htflags;
+    dst->antenna = src->antenna;
+    dst->pktlength = src->pktlength;
+    dst->mactime = src->mactime;
+    dst->sq = src->sq;
+    dst->signal = src->signal;
+    dst->noise = src->noise;
+    dst->preamble = src->preamble;
+    dst->encoding = src->encoding;
+    dst->nfrmtype = src->nfrmtype;
+    dst->nss = src->nss;
+    dst->coding = src->coding;
+    dst->aid = src->aid;
+    dst->gid = src->gid;
+    dst->bw = src->bw;
+    dst->vhtflags = src->vhtflags;
+    dst->bw_nonht = src->bw_nonht;
+    dst->ampdu_counter = src->ampdu_counter;
+    dst->sig_a1 = src->sig_a1;
+    dst->sig_a2 = src->sig_a2;
+}
 
 
 void copy_mushed_struct_members(struct wlc_muscheduler_info *src, struct musched_info_qq *dst) {

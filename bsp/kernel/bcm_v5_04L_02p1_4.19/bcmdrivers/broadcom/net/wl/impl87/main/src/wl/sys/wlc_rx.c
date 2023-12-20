@@ -431,6 +431,7 @@ void update_global_AP_list(wlc_bss_info_t *bss_info);
 void find_best_channels(int *best_40MHz_channels, int *best_80MHz_channels);
 extern phy_info_t qq_pi;
 extern bool qq_pi_is_set;
+void copy_wl_rxsts_to_wl_rxsts_qq(wl_mon_rxsts_t* src, struct wl_rxsts_qq* dst);
 
 /* bandwidth ASCII string */
 const char *wf_chspec_bw_str[] =
@@ -5255,7 +5256,8 @@ wlc_monitor(wlc_info_t *wlc, wlc_d11rxhdr_t *wrxh, void *p, struct wlc_if *wlcif
         memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
 		monitor_info_qq_cur->ruidx = ruidx;
 		monitor_info_qq_cur->ru_type = ru_type;
-    memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+        copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
+    //memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
 		memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
 		debugfs_set_info_qq(6, info_qq, 1);
 		MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));

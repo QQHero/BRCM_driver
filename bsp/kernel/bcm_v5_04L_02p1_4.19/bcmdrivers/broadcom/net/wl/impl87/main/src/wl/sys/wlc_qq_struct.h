@@ -356,9 +356,39 @@ struct musched_info_qq {
 
 #include <monitor.h>
 
+
+
+struct wl_rxsts_qq {
+    uint32_t   pkterror;       /* error flags per pkt */
+    uint32_t   phytype;        /* 802.11 A/B/G /N  */
+    uint16_t chanspec;        /* channel spec */
+    uint16_t  datarate;       /* rate in 500kbps */
+    uint8_t   mcs;            /* MCS for HT frame */
+    uint8_t   htflags;        /* HT modulation flags */
+    uint32_t   antenna;        /* antenna pkts received on */
+    uint32_t   pktlength;      /* pkt length minus bcm phy hdr */
+    uint32_t  mactime;        /* time stamp from mac, count per 1us */
+    uint32_t   sq;         /* signal quality */
+    int32_t   signal;         /* in dBm */
+    int32_t   noise;          /* in dBm */
+    uint32_t   preamble;       /* Unknown, short, long */
+    uint32_t   encoding;       /* Unknown, CCK, PBCC, OFDM, HT, VHT */
+    uint32_t   nfrmtype;       /* special 802.11 frames(AMPDU, AMSDU) or addition PPDU fromat */
+    uint8_t   nss;            /* Number of spatial streams for VHT frame */
+    uint8_t   coding;
+    uint16_t  aid;            /* Partial AID for VHT frame */
+    uint8_t   gid;            /* Group ID for VHT frame */
+    uint8_t   bw;         /* Bandwidth for VHT frame */
+    uint16_t  vhtflags;       /* VHT modulation flags */
+    uint16_t	bw_nonht;       /* non-HT bw advertised in rts/cts */
+    uint32_t  ampdu_counter;      /* AMPDU counter for sniffer */
+    uint32_t  sig_a1;			/* HE  SIG-A1 field */
+    uint32_t  sig_a2;			/* HE  SIG-A2 field */
+};
+
 #include <802.11.h>
 struct monitor_info_qq {
-    wl_mon_rxsts_t wl_mon_rxsts;
+    struct wl_rxsts_qq wl_mon_rxsts;
     uint32 ru_type;
     uint16 ruidx;
     struct dot11_header h;
