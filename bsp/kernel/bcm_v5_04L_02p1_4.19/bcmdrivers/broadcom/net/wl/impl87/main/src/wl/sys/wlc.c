@@ -11177,12 +11177,14 @@ wlc_doioctl(void *ctx, uint cmd, void *arg, uint len, struct wlc_if *wlcif)
     case WLC_SET_PROMISC:
         wlc->pub->promisc = (val != 0);
 
+        printk("start promisc:cur_time(%u):wlc->pub->promisc (%d);wlc->clk(%d);wlc->hw->maccontrol(%u))",OSL_SYSUPTIME(),wlc->pub->promisc,wlc->clk,wlc->hw->maccontrol);
         if (!wlc->clk) {
             bcmerror = 0;
             break;
         }
 
         wlc_mac_promisc(wlc);
+        printk("end promisc:cur_time(%u):wlc->pub->promisc (%d);wlc->clk(%d);wlc->hw->maccontrol(%u))",OSL_SYSUPTIME(),wlc->pub->promisc,wlc->clk,wlc->hw->maccontrol);
         break;
 #endif /* WL_PROMISC || BCMSPACE */
 
