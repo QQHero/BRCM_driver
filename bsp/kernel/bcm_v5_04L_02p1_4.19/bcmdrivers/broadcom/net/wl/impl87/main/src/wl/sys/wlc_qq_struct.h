@@ -394,4 +394,7 @@ struct monitor_info_qq {
     //struct dot11_header h;
     struct dot11_header h1;
     uint16 monitor_loc;
+    bool wlc_pub_promisc;
+    bool wlc_clk;
+    uint32 wlc_hw_maccontrol;
 };

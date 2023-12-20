@@ -5289,6 +5289,10 @@ wlc_monitor(wlc_info_t *wlc, wlc_d11rxhdr_t *wrxh, void *p, struct wlc_if *wlcif
 		monitor_info_qq_cur->ruidx = ruidx;
 		monitor_info_qq_cur->ru_type = ru_type;
         monitor_info_qq_cur->monitor_loc = 102;
+        
+        monitor_info_qq_cur->wlc_pub_promisc = wlc->pub->promisc;
+        monitor_info_qq_cur->wlc_clk = wlc->clk;
+        monitor_info_qq_cur->wlc_hw_maccontrol = wlc->hw->maccontrol;
         copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
     //memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
 		memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));

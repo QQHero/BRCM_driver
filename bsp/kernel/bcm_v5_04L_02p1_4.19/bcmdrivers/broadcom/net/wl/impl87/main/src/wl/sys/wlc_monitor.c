@@ -72,7 +72,10 @@
 #include <phy_calmgr_api.h>
 #include <phy_hecap_api.h>
 #include <phy_ac_info.h>
-
+    /* dump_flag_qqdx */
+#include <wlc_types.h>
+#include <wlc_hw_priv.h>
+    /* dump_flag_qqdx */
 #if defined(PHYCAL_CACHING)
 #include <wlc_phy_hal.h>
 #endif
@@ -384,9 +387,12 @@ wlc_monitor_doiovar(
 		break;
 
 	case IOV_SVAL(IOV_MONITOR_PROMISC_LEVEL):
+	
+        printk("start promisc:cur_time(%u):wlc->pub->promisc (%d);wlc->clk(%d);wlc->hw->maccontrol(%u))",OSL_SYSUPTIME(),wlc->pub->promisc,wlc->clk,wlc->hw->maccontrol);
 		ctxt->promisc_bits = (uint32)int_val;
 		if (MONITOR_ENAB(WLC(ctxt)))
 			wlc_mac_promisc(WLC(ctxt));
+        printk("end promisc:cur_time(%u):wlc->pub->promisc (%d);wlc->clk(%d);wlc->hw->maccontrol(%u))",OSL_SYSUPTIME(),wlc->pub->promisc,wlc->clk,wlc->hw->maccontrol);
 		break;
 
 	case IOV_GVAL(IOV_MONITOR_CONFIG):
