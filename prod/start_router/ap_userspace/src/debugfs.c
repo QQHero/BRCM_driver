@@ -346,9 +346,12 @@ struct monitor_info_qq {
     struct dot11_header h1;
 }monitor_info_qq_t;
 
+#include <stdint.h>
+#include <endian.h>
 
-
-
+uint16_t ltoh16(uint16_t little_endian_value) {
+    return le16toh(little_endian_value);
+}
 
 
 
@@ -757,7 +760,7 @@ void file_io(void) {
             fprintf(stdout,"ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);MAC address h1.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ";MAC address h1.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
-                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(monitor_info_qq_cur->h1.fc & FC_KIND_MASK)>> FC_TYPE_SHIFT,\
+                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(ltoh16(monitor_info_qq_cur->h1.fc) & FC_KIND_MASK)>> FC_TYPE_SHIFT,\
                             monitor_info_qq_cur->h1.a1.octet[0],monitor_info_qq_cur->h1.a1.octet[1],monitor_info_qq_cur->h1.a1.octet[2],\
                             monitor_info_qq_cur->h1.a1.octet[3],monitor_info_qq_cur->h1.a1.octet[4],monitor_info_qq_cur->h1.a1.octet[5],\
                             monitor_info_qq_cur->h1.a2.octet[0],monitor_info_qq_cur->h1.a2.octet[1],monitor_info_qq_cur->h1.a2.octet[2],\
