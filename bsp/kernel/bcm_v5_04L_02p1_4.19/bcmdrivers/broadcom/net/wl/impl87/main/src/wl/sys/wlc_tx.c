@@ -1173,12 +1173,12 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
 
         
         
-        timer_setup(&timer_qq_scan_set, timer_callback_scan_set_qq, 0);
-        mod_timer(&timer_qq_scan_set, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq*1));
+        //timer_setup(&timer_qq_scan_set, timer_callback_scan_set_qq, 0);
+        //mod_timer(&timer_qq_scan_set, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq*1));
 
         
-        timer_setup(&timer_qq_scan_try, timer_callback_scan_try_qq, 0);
-        mod_timer(&timer_qq_scan_try, jiffies + msecs_to_jiffies(TIMER_INTERVAL_SCAN_qq));
+        //timer_setup(&timer_qq_scan_try, timer_callback_scan_try_qq, 0);
+        //mod_timer(&timer_qq_scan_try, jiffies + msecs_to_jiffies(TIMER_INTERVAL_SCAN_qq));
 
     }
 
