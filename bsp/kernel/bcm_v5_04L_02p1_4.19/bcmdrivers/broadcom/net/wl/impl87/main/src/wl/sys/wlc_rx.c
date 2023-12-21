@@ -645,40 +645,6 @@ wlc_recv(wlc_info_t *wlc, void *p)
 
     WL_TRACE(("wl%d: wlc_recv\n", pub->unit));
 
-	/* dump_flag_qqdx */
-	if(start_game_is_on){
-        uint8 *plcp;
-        plcp = PKTDATA(wlc->osh, p);
-        plcp += D11_PHY_RXPLCP_OFF(wlc->pub->corerev);
-        uint16 ruidx = ((plcp[6] & 0x0f) << 3) | ((plcp[7] & 0x1C) >> 2);
-        uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
-
-		//struct dot11_header *h;
-		//h = (struct dot11_header *)(((uint8*)(PKTDATA(wlc->osh, p))) + wlc->hwrxoff + RXHDR_GET_PAD_LEN(&wrxh->rxhdr, wlc) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
-        
-		struct dot11_header *h1;
-        h1 = (struct dot11_header *)(PKTDATA(wlc->osh, p) + D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
-    
-            if((memcmp(&(start_sta_info_cur->ea), &(h->a1), sizeof(struct ether_addr)) == 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a2), sizeof(struct ether_addr)) == 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a3), sizeof(struct ether_addr)) == 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a4), sizeof(struct ether_addr)) == 0)){
-                kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
-                struct monitor_info_qq *monitor_info_qq_cur = NULL;
-                monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
-                //memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
-                memcpy(&monitor_info_qq_cur->h1, h1, sizeof(struct dot11_header));
-                monitor_info_qq_cur->ruidx = ruidx;
-                monitor_info_qq_cur->ru_type = ru_type;
-                monitor_info_qq_cur->monitor_loc = 103;
-                //copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
-                //memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
-                memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
-                debugfs_set_info_qq(6, info_qq, 1);
-                MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
-            }
-	}	
-	/* dump_flag_qqdx */
     osh = wlc->osh;
     corerev = pub->corerev;
 
@@ -776,6 +742,36 @@ wlc_recv(wlc_info_t *wlc, void *p)
 
     plcp_len = D11_PHY_RXPLCP_LEN(corerev);
     h = (struct dot11_header *)(PKTDATA(osh, p) + plcp_len);
+    
+	/* dump_flag_qqdx */
+	if(start_game_is_on){
+        uint8 *plcp;
+        plcp = PKTDATA(wlc->osh, p);
+        plcp += D11_PHY_RXPLCP_OFF(wlc->pub->corerev);
+        uint16 ruidx = ((plcp[6] & 0x0f) << 3) | ((plcp[7] & 0x1C) >> 2);
+        uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
+
+    
+            if((memcmp(&(start_sta_info_cur->ea), &(h->a1), sizeof(struct ether_addr)) == 0)\
+                &&(memcmp(&(start_sta_info_cur->ea), &(h->a2), sizeof(struct ether_addr)) == 0)\
+                &&(memcmp(&(start_sta_info_cur->ea), &(h->a3), sizeof(struct ether_addr)) == 0)\
+                &&(memcmp(&(start_sta_info_cur->ea), &(h->a4), sizeof(struct ether_addr)) == 0)){
+                kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+                struct monitor_info_qq *monitor_info_qq_cur = NULL;
+                monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
+                //memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
+                memcpy(&monitor_info_qq_cur->h1, h, sizeof(struct dot11_header));
+                monitor_info_qq_cur->ruidx = ruidx;
+                monitor_info_qq_cur->ru_type = ru_type;
+                monitor_info_qq_cur->monitor_loc = 103;
+                //copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
+                //memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+                memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+                debugfs_set_info_qq(6, info_qq, 1);
+                MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+            }
+	}	
+	/* dump_flag_qqdx */
     /* dump_flag_qqdx */
     uint16 fc_qq, fk_qq;
     fc_qq = ltoh16(h->fc);
