@@ -751,24 +751,31 @@ wlc_recv(wlc_info_t *wlc, void *p)
         uint16 ruidx = ((plcp[6] & 0x0f) << 3) | ((plcp[7] & 0x1C) >> 2);
         uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
 
-    
-            if((memcmp(&(start_sta_info_cur->ea), &(h->a1), sizeof(struct ether_addr)) != 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a2), sizeof(struct ether_addr)) != 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a3), sizeof(struct ether_addr)) != 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a4), sizeof(struct ether_addr)) != 0)){
-                kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
-                struct monitor_info_qq *monitor_info_qq_cur = NULL;
-                monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
-                //memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
-                memcpy(&monitor_info_qq_cur->h1, h, sizeof(struct dot11_header));
-                monitor_info_qq_cur->ruidx = ruidx;
-                monitor_info_qq_cur->ru_type = ru_type;
-                monitor_info_qq_cur->monitor_loc = 103;
-                //copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
-                //memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
-                memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
-                debugfs_set_info_qq(6, info_qq, 1);
-                MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+        struct ether_addr example_ea1, example_ea2;
+        ether_aton_r_qq("b8:3a:08:b6:84:02", &example_ea1);
+        ether_aton_r_qq("ff:ff:ff:ff:ff:ff", &example_ea2);
+
+        if((memcmp(&(example_ea1), &(h->a1), sizeof(struct ether_addr)) != 0)\
+            &&(memcmp(&(example_ea2), &(h->a1), sizeof(struct ether_addr)) != 0)){
+
+                if((memcmp(&(start_sta_info_cur->ea), &(h->a1), sizeof(struct ether_addr)) != 0)\
+                    &&(memcmp(&(start_sta_info_cur->ea), &(h->a2), sizeof(struct ether_addr)) != 0)\
+                    &&(memcmp(&(start_sta_info_cur->ea), &(h->a3), sizeof(struct ether_addr)) != 0)\
+                    &&(memcmp(&(start_sta_info_cur->ea), &(h->a4), sizeof(struct ether_addr)) != 0)){
+                        kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+                        struct monitor_info_qq *monitor_info_qq_cur = NULL;
+                        monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
+                        //memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
+                        memcpy(&monitor_info_qq_cur->h1, h, sizeof(struct dot11_header));
+                        monitor_info_qq_cur->ruidx = ruidx;
+                        monitor_info_qq_cur->ru_type = ru_type;
+                        monitor_info_qq_cur->monitor_loc = 103;
+                        //copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
+                        //memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+                        memcpy(info_qq, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+                        debugfs_set_info_qq(6, info_qq, 1);
+                        MFREE(wlc->osh, monitor_info_qq_cur, sizeof(*monitor_info_qq_cur));
+                }
             }
 	}	
 	/* dump_flag_qqdx */

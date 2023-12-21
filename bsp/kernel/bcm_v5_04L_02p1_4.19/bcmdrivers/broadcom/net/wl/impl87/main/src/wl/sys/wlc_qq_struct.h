@@ -356,7 +356,7 @@ struct musched_info_qq {
 
 #include <monitor.h>
 
-
+int ether_aton_r_qq(const char *asc, struct ether_addr *addr);
 
 struct wl_rxsts_qq {
     uint32_t   pkterror;       /* error flags per pkt */

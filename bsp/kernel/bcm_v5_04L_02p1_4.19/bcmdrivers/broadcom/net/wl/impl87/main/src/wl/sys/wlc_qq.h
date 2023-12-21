@@ -1988,7 +1988,20 @@ void copy_mushed_struct_members(struct wlc_muscheduler_info *src, struct musched
 }
 
 
+int ether_aton_r_qq(const char *asc, struct ether_addr *addr) {
+    int values[6];
 
+    if (sscanf(asc, "%x:%x:%x:%x:%x:%x",
+               &values[0], &values[1], &values[2],
+               &values[3], &values[4], &values[5]) == 6) {
+        for (int i = 0; i < 6; ++i) {
+            addr->octet[i] = (unsigned char)values[i];
+        }
+        return 0;
+    }
+
+    return -1;
+}
 
 
 
