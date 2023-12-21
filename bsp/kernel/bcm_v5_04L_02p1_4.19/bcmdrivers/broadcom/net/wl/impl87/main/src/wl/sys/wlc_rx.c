@@ -752,10 +752,10 @@ wlc_recv(wlc_info_t *wlc, void *p)
         uint32 ru_type = wf_he_ruidx_to_ru_type(ruidx);
 
     
-            if((memcmp(&(start_sta_info_cur->ea), &(h->a1), sizeof(struct ether_addr)) == 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a2), sizeof(struct ether_addr)) == 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a3), sizeof(struct ether_addr)) == 0)\
-                &&(memcmp(&(start_sta_info_cur->ea), &(h->a4), sizeof(struct ether_addr)) == 0)){
+            if((memcmp(&(start_sta_info_cur->ea), &(h->a1), sizeof(struct ether_addr)) != 0)\
+                &&(memcmp(&(start_sta_info_cur->ea), &(h->a2), sizeof(struct ether_addr)) != 0)\
+                &&(memcmp(&(start_sta_info_cur->ea), &(h->a3), sizeof(struct ether_addr)) != 0)\
+                &&(memcmp(&(start_sta_info_cur->ea), &(h->a4), sizeof(struct ether_addr)) != 0)){
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                 struct monitor_info_qq *monitor_info_qq_cur = NULL;
                 monitor_info_qq_cur = (struct monitor_info_qq *) MALLOCZ(wlc->osh, sizeof(*monitor_info_qq_cur));
