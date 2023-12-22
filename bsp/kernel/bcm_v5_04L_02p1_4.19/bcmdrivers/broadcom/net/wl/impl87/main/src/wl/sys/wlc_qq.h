@@ -2002,8 +2002,49 @@ int ether_aton_r_qq(const char *asc, struct ether_addr *addr) {
 
     return -1;
 }
-
-
+// 更新 my_scb_t 结构体中的标志位，根据 scb 结构体中的标志位
+void update_scb_flags(struct scb_flagsinfo *my_scb, struct scb *scb) {
+    my_scb->wme = (scb->flags & SCB_WMECAP);
+    my_scb->ampdu = (scb->flags & SCB_AMPDUCAP);
+    my_scb->amsdu = (scb->flags & SCB_AMSDUCAP);
+    my_scb->amsdu_in_ampdu = (scb->flags2 & SCB2_AMSDU_IN_AMPDU_CAP);
+    my_scb->dtpc = (scb->flags & SCB_DTPCCAP);
+    my_scb->ht = (scb->flags & SCB_HTCAP);
+    my_scb->vht = (scb->flags2 & SCB2_VHTCAP);
+    my_scb->isgf = (scb->flags & (SCB_HTCAP | SCB_NONGF)) == SCB_HTCAP;
+    my_scb->nongf = (scb->flags & (SCB_HTCAP | SCB_NONGF)) == (SCB_HTCAP | SCB_NONGF);
+    my_scb->coex = (scb->flags & SCB_COEX_MGMT);
+    my_scb->stbc = (scb->flags & SCB_STBCCAP);
+    my_scb->ht_ldpc = SCB_HT_CAP(scb) && ((scb->flags2 & SCB2_LDPCCAP));
+    my_scb->ht_prop_rates = ((scb->flags3 & SCB3_HT_PROP_RATES_CAP) != 0);
+    my_scb->oper_mode_notif = SCB_OPER_MODE_NOTIF_CAP(scb);
+    my_scb->he = SCB_HE_CAP(scb);
+    my_scb->ibss_peer = SCB_IS_IBSS_PEER(scb);
+    my_scb->pktc = SCB_PKTC_ENABLED(scb);
+    my_scb->qos = SCB_QOS(scb);
+    my_scb->p2p = SCB_P2P(scb);
+    my_scb->dwds = SCB_DWDS(scb);
+    my_scb->dwds_cap = SCB_DWDS_CAP(scb);
+    my_scb->map = SCB_MAP_CAP(scb);
+    my_scb->map_p2 = SCB_MAP_P2_CAP(scb);
+    my_scb->ecsa = SCB_ECSA_CAP(scb);
+    my_scb->legacy_wds = SCB_LEGACY_WDS(scb);
+    my_scb->a4_data = SCB_A4_DATA(scb);
+    my_scb->a4_null_data = SCB_A4_NULLDATA(scb);
+    my_scb->a4_8021x = SCB_A4_8021X(scb);
+    my_scb->mfp = SCB_MFP(scb);
+    my_scb->sha256 = SCB_SHA256(scb);
+    my_scb->qam_1024 = SCB_1024QAM_CAP(scb);
+    my_scb->vhtmu = SCB_VHTMU(scb);
+    my_scb->hemmu = SCB_HEMMU(scb);
+    my_scb->dlofdma = SCB_DLOFDMA_ADM(scb);
+    my_scb->ulofdma = SCB_ULOFDMA_ADM(scb);
+    my_scb->ulmmu = SCB_ULMMU_ADM(scb);
+    my_scb->rrm = SCB_RRM(scb);
+    my_scb->ftm = SCB_FTM(scb);
+    my_scb->ftm_initiator = SCB_FTM_INITIATOR(scb);
+    my_scb->ftm_responder = SCB_FTM_RESPONDER(scb);
+}
 
 
 

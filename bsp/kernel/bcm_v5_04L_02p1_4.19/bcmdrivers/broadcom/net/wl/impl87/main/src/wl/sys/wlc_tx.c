@@ -11605,7 +11605,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
 		musched_info_qq_cur = (struct musched_info_qq *) MALLOCZ(wlc->osh, sizeof(*musched_info_qq_cur));
 		musched_info_qq_cur->wlc_fifo_isMU = wlc_fifo_isMU(wlc->fifo, scb, ac);
         musched_info_qq_cur->wlc_fifo_is_ulofdma = wlc_fifo_is_ulofdma(wlc->fifo, scb, ac);
-		//musched_info_qq_cur->mu_type = mu;
+        update_scb_flags(&(musched_info_qq_cur->scb_flags), scb);
 		musched_info_qq_cur->mch = mch;
 		musched_info_qq_cur->mcl = mcl;
 		musched_info_qq_cur->mch2 = mch2;

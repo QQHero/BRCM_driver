@@ -318,14 +318,57 @@ struct wlc_muscheduler_info {
 	uint16	txdur_thresh_su;	/* threshold to fall back to SU */
 };
 /*musched info*/
+struct scb_flagsinfo{
+    bool wme;
+    bool ampdu;
+    bool amsdu;
+    bool amsdu_in_ampdu;
+    bool dtpc;
+    bool ht;
+    bool vht;
+    bool isgf;
+    bool nongf;
+    bool coex;
+    bool stbc;
+    bool ht_ldpc;
+    bool ht_prop_rates;
+    bool oper_mode_notif;
+    bool he;
+    bool ibss_peer;
+    bool pktc;
+    bool qos;
+    bool p2p;
+    bool dwds;
+    bool dwds_cap;
+    bool map;
+    bool map_p2;
+    bool ecsa;
+    bool legacy_wds;
+    bool a4_data;
+    bool a4_null_data;
+    bool a4_8021x;
+    bool mfp;
+    bool sha256;
+    bool qam_1024;
+    bool vhtmu;
+    bool hemmu;
+    bool dlofdma;
+    bool ulofdma;
+    bool ulmmu;
+    bool rrm;
+    bool ftm;
+    bool ftm_initiator;
+    bool ftm_responder;
+};
+void update_scb_flags(struct scb_flagsinfo *my_scb, struct scb *scb);
 struct musched_info_qq {
     bool wlc_fifo_isMU;
     bool wlc_fifo_is_ulofdma;
-    //mu_type_t mu_type;
+    uint8 mu_type;
     uint16 mch;
     uint16 mcl;
     uint16 mch2;
-    
+    struct scb_flagsinfo scb_flags;
 	uint16	flags;
 	int	scbh;
 	int16	dl_policy;

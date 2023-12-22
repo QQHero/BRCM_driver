@@ -252,14 +252,56 @@ typedef struct musched_ru_stats {
 } musched_ru_stats_t;
 /* enum for different types Multi Users technologies */
 /*musched info*/
+struct scb_flagsinfo{
+    bool wme;
+    bool ampdu;
+    bool amsdu;
+    bool amsdu_in_ampdu;
+    bool dtpc;
+    bool ht;
+    bool vht;
+    bool isgf;
+    bool nongf;
+    bool coex;
+    bool stbc;
+    bool ht_ldpc;
+    bool ht_prop_rates;
+    bool oper_mode_notif;
+    bool he;
+    bool ibss_peer;
+    bool pktc;
+    bool qos;
+    bool p2p;
+    bool dwds;
+    bool dwds_cap;
+    bool map;
+    bool map_p2;
+    bool ecsa;
+    bool legacy_wds;
+    bool a4_data;
+    bool a4_null_data;
+    bool a4_8021x;
+    bool mfp;
+    bool sha256;
+    bool qam_1024;
+    bool vhtmu;
+    bool hemmu;
+    bool dlofdma;
+    bool ulofdma;
+    bool ulmmu;
+    bool rrm;
+    bool ftm;
+    bool ftm_initiator;
+    bool ftm_responder;
+} scb_flagsinfo_t;
 struct musched_info_qq {
     bool wlc_fifo_isMU;
     bool wlc_fifo_is_ulofdma;
-    //mu_type_t mu_type;
+    uint8_t mu_type;
     uint16_t mch;
     uint16_t mcl;
     uint16_t mch2;
-
+    struct scb_flagsinfo scb_flags;
 	uint16_t	flags;
 	int	scbh;
 	int16_t	dl_policy;
@@ -729,14 +771,21 @@ void file_io(void) {
             multiuser_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"multi-user info:");
             
-            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mch(%u);mcl(%u);mch2(%u)"\
-                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2);
+            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u)"\
+                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->mu_type,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2);
+            
+            fprintf(stdout,"scb_flagsinfo:WME: %d, AMPDU: %d, AMSDU: %d, AMSDU_IN_AMPDU: %d, DTPC: %d, HT: %d, VHT: %d, ISGF: %d, NONGF: %d, COEX: %d, STBC: %d, HT_LDPC: %d, HT_PROP_RATES: %d, OPER_MODE_NOTIF: %d, HE: %d, IBSS_PEER: %d, PKTC: %d, QOS: %d, P2P: %d, DWDS: %d, DWDS_CAP: %d, MAP: %d, MAP_P2: %d, ECSA: %d, LEGACY_WDS: %d, A4_DATA: %d, A4_NULL_DATA: %d, A4_8021X: %d, MFP: %d, SHA256: %d, QAM_1024: %d, VHTMU: %d, HEMMU: %d, DLOFDMA: %d, ULOFDMA: %d, ULMMU: %d, RRM: %d, FTM: %d, FTM_INITIATOR: %d, FTM_RESPONDER: %d"\
+                ,musched_info_qq_cur->scb_flags.wme, musched_info_qq_cur->scb_flags.ampdu, musched_info_qq_cur->scb_flags.amsdu, musched_info_qq_cur->scb_flags.amsdu_in_ampdu, musched_info_qq_cur->scb_flags.dtpc, musched_info_qq_cur->scb_flags.ht, musched_info_qq_cur->scb_flags.vht, musched_info_qq_cur->scb_flags.isgf, musched_info_qq_cur->scb_flags.nongf, musched_info_qq_cur->scb_flags.coex, musched_info_qq_cur->scb_flags.stbc, musched_info_qq_cur->scb_flags.ht_ldpc, musched_info_qq_cur->scb_flags.ht_prop_rates, musched_info_qq_cur->scb_flags.oper_mode_notif, musched_info_qq_cur->scb_flags.he, musched_info_qq_cur->scb_flags.ibss_peer, musched_info_qq_cur->scb_flags.pktc, musched_info_qq_cur->scb_flags.qos, musched_info_qq_cur->scb_flags.p2p, musched_info_qq_cur->scb_flags.dwds, musched_info_qq_cur->scb_flags.dwds_cap, musched_info_qq_cur->scb_flags.map, musched_info_qq_cur->scb_flags.map_p2, musched_info_qq_cur->scb_flags.ecsa, musched_info_qq_cur->scb_flags.legacy_wds, musched_info_qq_cur->scb_flags.a4_data, musched_info_qq_cur->scb_flags.a4_null_data, musched_info_qq_cur->scb_flags.a4_8021x, musched_info_qq_cur->scb_flags.mfp, musched_info_qq_cur->scb_flags.sha256, musched_info_qq_cur->scb_flags.qam_1024, musched_info_qq_cur->scb_flags.vhtmu, musched_info_qq_cur->scb_flags.hemmu, musched_info_qq_cur->scb_flags.dlofdma, musched_info_qq_cur->scb_flags.ulofdma, musched_info_qq_cur->scb_flags.ulmmu, musched_info_qq_cur->scb_flags.rrm, musched_info_qq_cur->scb_flags.ftm, musched_info_qq_cur->scb_flags.ftm_initiator, musched_info_qq_cur->scb_flags.ftm_responder);
 
             fprintf(stdout,"\n");
             pre_timestamp_class6 = multiuser_info.timestamp;
         }
 
 
+//void print_scb_flags(my_scb_t *flags) {
+//    printf("WME: %d, AMPDU: %d, AMSDU: %d, AMSDU_IN_AMPDU: %d, DTPC: %d, HT: %d, VHT: %d, ISGF: %d, NONGF: %d, COEX: %d, STBC: %d, HT_LDPC: %d, HT_PROP_RATES: %d, OPER_MODE_NOTIF: %d, HE: %d, IBSS_PEER: %d, PKTC: %d, QOS: %d, P2P: %d, DWDS: %d, DWDS_CAP: %d, MAP: %d, MAP_P2: %d, ECSA: %d, LEGACY_WDS: %d, A4_DATA: %d, A4_NULL_DATA: %d, A4_8021X: %d, MFP: %d, SHA256: %d, QAM_1024: %d, VHTMU: %d, HEMMU: %d, DLOFDMA: %d, ULOFDMA: %d, ULMMU: %d, RRM: %d, FTM: %d, FTM_INITIATOR: %d, FTM_RESPONDER: %d\n",
+//        flags->wme, flags->ampdu, flags->amsdu, flags->amsdu_in_ampdu, flags->dtpc, flags->ht, flags->vht, flags->isgf, flags->nongf, flags->coex, flags->stbc, flags->ht_ldpc, flags->ht_prop_rates, flags->oper_mode_notif, flags->he, flags->ibss_peer, flags->pktc, flags->qos, flags->p2p, flags->dwds, flags->dwds_cap, flags->map, flags->map_p2, flags->ecsa, flags->legacy_wds, flags->a4_data, flags->a4_null_data, flags->a4_8021x, flags->mfp, flags->sha256, flags->qam_1024, flags->vhtmu, flags->hemmu, flags->dlofdma, flags->ulofdma, flags->ulmmu, flags->rrm, flags->ftm, flags->ftm_initiator, flags->ftm_responder);
+//}
 
 // Read the content of the debugfs file 7 into the buffer
         bytes_read = read(fd7, (uint8_t *)&monitor_info, sizeof(info_class_t));
