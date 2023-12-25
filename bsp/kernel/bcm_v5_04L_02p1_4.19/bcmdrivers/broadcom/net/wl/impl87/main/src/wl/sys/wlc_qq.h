@@ -518,10 +518,10 @@ void timer_callback_start_info_qq(struct timer_list *t) {
         start_sta_info_cur->ea.ether_addr_octet[5]);*/
     if(start_sta_info_cur->start_is_on>0){
         start_game_is_on = TRUE;
-        wlc_muscheduler_info_t *musched = wlc_qq->musched;
         WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
         wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
-        wlc_musched_admit_dlclients(musched);
+        //wlc_muscheduler_info_t *musched = wlc_qq->musched;
+        //wlc_musched_admit_dlclients(musched);
     }else{
         start_game_is_on = FALSE;
     }
