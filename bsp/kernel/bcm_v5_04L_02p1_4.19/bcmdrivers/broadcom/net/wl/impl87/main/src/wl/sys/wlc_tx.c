@@ -11467,6 +11467,9 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
         }
     }
 
+    /* dump_flag_qqdx */
+        int8 dl_schpos_qq, dl_schid_qq;
+    /* dump_flag_qqdx */
 #ifdef WL11AX
     /* Configure HEModeControl */
     if (SCB_DLOFDMA_ADM(scb) && WLPKTFLAG_AMPDU(parms.pkttag) &&
@@ -11498,6 +11501,15 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
         }
         mch2 = ((dl_schpos << MCTL2_SCHPOS_SHIFT) & MCTL2_SCHPOS_MASK) |
             ((dl_schid << MCTL2_SCHIDX_SHIFT) & MCTL2_SCHIDX_MASK);
+        
+    /* dump_flag_qqdx */
+    int dump_rand_flag = OSL_RAND() % 10000;
+    if (dump_rand_flag>=9900) {
+        printk(KERN_ALERT"----------dl_schpos(%d)dl_schid(%d)----------",dl_schpos,dl_schid);
+        dl_schpos_qq = dl_schpos;
+        dl_schid_qq = dl_schid;
+    }
+    /* dump_flag_qqdx */
         mch |= D11AC_TXC_MU;
         mch |= D11REV128_TXC_HEOFDMA;
         if (wlc_txbf_tbcap_check(wlc->txbf, scb, DLOFDMA) != BCME_OK) {
@@ -11609,6 +11621,8 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
 		musched_info_qq_cur->mch = mch;
 		musched_info_qq_cur->mcl = mcl;
 		musched_info_qq_cur->mch2 = mch2;
+        musched_info_qq_cur->dl_schpos = dl_schpos_qq;
+        musched_info_qq_cur->dl_schid = dl_schid_qq;
         copy_mushed_struct_members(wlc->musched,musched_info_qq_cur);
 		memcpy(info_qq, musched_info_qq_cur, sizeof(*musched_info_qq_cur));
 		debugfs_set_info_qq(5, info_qq, 1);

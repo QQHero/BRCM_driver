@@ -392,6 +392,8 @@ struct musched_info_qq {
 	bool	aggx;		/* aggx feature */
 	uint16	txdur_thresh_mu;	/* threshold to enforce dl ofdma */
 	uint16	txdur_thresh_su;	/* threshold to fall back to SU */
+    int8 dl_schid; /*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
+    int8 dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
 };
 
 

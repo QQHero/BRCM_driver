@@ -325,6 +325,8 @@ struct musched_info_qq {
 	bool	aggx;		/* aggx feature */
 	uint16_t	txdur_thresh_mu;	/* threshold to enforce dl ofdma */
 	uint16_t	txdur_thresh_su;	/* threshold to fall back to SU */
+    int8_t dl_schid; /*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
+    int8_t dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
 }musched_info_qq_t;
 
 
@@ -771,8 +773,9 @@ void file_io(void) {
             multiuser_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"multi-user info:");
             
-            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u)"\
-                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->mu_type,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2);
+            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u)"\
+                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->mu_type\
+                ,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2,musched_info_qq_cur->dl_schpos,musched_info_qq_cur->dl_schid);
             
             fprintf(stdout,"scb_flagsinfo:WME: %d, AMPDU: %d, AMSDU: %d, AMSDU_IN_AMPDU: %d, DTPC: %d, HT: %d, VHT: %d, ISGF: %d, NONGF: %d, COEX: %d, STBC: %d, HT_LDPC: %d, HT_PROP_RATES: %d, OPER_MODE_NOTIF: %d, HE: %d, IBSS_PEER: %d, PKTC: %d, QOS: %d, P2P: %d, DWDS: %d, DWDS_CAP: %d, MAP: %d, MAP_P2: %d, ECSA: %d, LEGACY_WDS: %d, A4_DATA: %d, A4_NULL_DATA: %d, A4_8021X: %d, MFP: %d, SHA256: %d, QAM_1024: %d, VHTMU: %d, HEMMU: %d, DLOFDMA: %d, ULOFDMA: %d, ULMMU: %d, RRM: %d, FTM: %d, FTM_INITIATOR: %d, FTM_RESPONDER: %d"\
                 ,musched_info_qq_cur->scb_flags.wme, musched_info_qq_cur->scb_flags.ampdu, musched_info_qq_cur->scb_flags.amsdu, musched_info_qq_cur->scb_flags.amsdu_in_ampdu, musched_info_qq_cur->scb_flags.dtpc, musched_info_qq_cur->scb_flags.ht, musched_info_qq_cur->scb_flags.vht, musched_info_qq_cur->scb_flags.isgf, musched_info_qq_cur->scb_flags.nongf, musched_info_qq_cur->scb_flags.coex, musched_info_qq_cur->scb_flags.stbc, musched_info_qq_cur->scb_flags.ht_ldpc, musched_info_qq_cur->scb_flags.ht_prop_rates, musched_info_qq_cur->scb_flags.oper_mode_notif, musched_info_qq_cur->scb_flags.he, musched_info_qq_cur->scb_flags.ibss_peer, musched_info_qq_cur->scb_flags.pktc, musched_info_qq_cur->scb_flags.qos, musched_info_qq_cur->scb_flags.p2p, musched_info_qq_cur->scb_flags.dwds, musched_info_qq_cur->scb_flags.dwds_cap, musched_info_qq_cur->scb_flags.map, musched_info_qq_cur->scb_flags.map_p2, musched_info_qq_cur->scb_flags.ecsa, musched_info_qq_cur->scb_flags.legacy_wds, musched_info_qq_cur->scb_flags.a4_data, musched_info_qq_cur->scb_flags.a4_null_data, musched_info_qq_cur->scb_flags.a4_8021x, musched_info_qq_cur->scb_flags.mfp, musched_info_qq_cur->scb_flags.sha256, musched_info_qq_cur->scb_flags.qam_1024, musched_info_qq_cur->scb_flags.vhtmu, musched_info_qq_cur->scb_flags.hemmu, musched_info_qq_cur->scb_flags.dlofdma, musched_info_qq_cur->scb_flags.ulofdma, musched_info_qq_cur->scb_flags.ulmmu, musched_info_qq_cur->scb_flags.rrm, musched_info_qq_cur->scb_flags.ftm, musched_info_qq_cur->scb_flags.ftm_initiator, musched_info_qq_cur->scb_flags.ftm_responder);
