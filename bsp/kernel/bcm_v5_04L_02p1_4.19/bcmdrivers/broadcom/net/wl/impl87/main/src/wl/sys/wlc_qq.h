@@ -485,6 +485,11 @@ uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包�
 
 
 wlc_info_t *wlc_qq;
+phy_info_t qq_pi;
+bool qq_pi_is_set = FALSE;
+bool qq_scb_is_set = FALSE;
+struct scb *qq_scb;
+
 struct start_sta_info *start_sta_info_cur;
 bool start_game_is_on = FALSE;
 /*定时器初始化相关*/
@@ -515,6 +520,7 @@ void timer_callback_start_info_qq(struct timer_list *t) {
         start_game_is_on = TRUE;
         wlc_muscheduler_info_t *musched = wlc_qq->musched;
         WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
+        wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
         wlc_musched_admit_dlclients(musched);
     }else{
         start_game_is_on = FALSE;
@@ -1607,12 +1613,6 @@ void scan_result_callback_update_qq(void *ctx, int status, wlc_bsscfg_t *bsscfg)
 
 }
 
-
-
-phy_info_t qq_pi;
-bool qq_pi_is_set = FALSE;
-bool qq_scb_is_set = FALSE;
-struct scb *qq_scb;
 
 
 /*
