@@ -484,6 +484,7 @@ uint32 pkt_qq_chain_len_found = 0;// 遍历链表没有找到
 uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包量
 
 
+wlc_info_t *wlc_qq;
 struct start_sta_info *start_sta_info_cur;
 bool start_game_is_on = FALSE;
 /*定时器初始化相关*/
@@ -512,6 +513,8 @@ void timer_callback_start_info_qq(struct timer_list *t) {
         start_sta_info_cur->ea.ether_addr_octet[5]);*/
     if(start_sta_info_cur->start_is_on>0){
         start_game_is_on = TRUE;
+        wlc_muscheduler_info_t *musched = wlc_qq->musched;
+        wlc_musched_admit_dlclients(musched);
     }else{
         start_game_is_on = FALSE;
     }
@@ -1243,7 +1246,6 @@ void find_best_channels(int *best_20MHz_channel, int *best_40MHz_channels, int *
 }
 
 
-wlc_info_t *wlc_qq;
 struct timer_list timer_qq_scan_set;
 struct timer_list timer_qq_scan_try;
 bool in_scan_qq = FALSE;//用于判断当前是否正处于scan中，避免信道切换受到scan的影响。

@@ -1715,6 +1715,15 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 	FOREACHSCB(wlc->scbstate, &scbiter, scb) {
 		scb_musched_t *musched_scb = SCB_MUSCHED(musched, scb);
 		bool dlmu_on;
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)----\n",
+                            scb->ea.octet[0],
+                            scb->ea.octet[1],
+                            scb->ea.octet[2],
+                            scb->ea.octet[3],
+                            scb->ea.octet[4],
+                            scb->ea.octet[5]);
+	/* dump_flag_qqdx */
 
 		/* check scb_musched validity in case of pending scb deinit */
 		if (!musched_scb) {
@@ -1730,6 +1739,9 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 			/* skip ineligible or already set SCB */
 			continue;
 		}
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:onoff (%d)----\n", onoff);
+	/* dump_flag_qqdx */
 
 		/* disable/enable dlmu explicitly */
 		wlc_scbmusched_enable_dlofdma(musched, scb, onoff);

@@ -3912,7 +3912,7 @@ wlc_mutx_admit_dlofdma_clients(wlc_mutx_info_t *mu_info)
 		}
 
 	/* dump_flag_qqdx */
-		if (!SCB_DLOFDMA_ADM(scb)) {
+		if (SCB_DLOFDMA_ADM(scb)) {
 	/* dump_flag_qqdx */
 			ofdma_on = FALSE;
 			WL_MUTX(("%s evict------->"MACF" swap_mufifotech %d #inflt %d\n",
