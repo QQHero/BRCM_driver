@@ -3893,6 +3893,16 @@ wlc_mutx_admit_dlofdma_clients(wlc_mutx_info_t *mu_info)
 
 	WL_MUMIMO(("%s new ofdma admit list\n", __FUNCTION__));
 	FOREACH_LIST_POS(pos, next, mu_info->admit_ofdma_list) {
+		
+	/* dump_flag_qqdx */
+                printk("wlc_mutx_admit_dlofdma_clients:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)----\n",
+                            scb->ea.octet[0],
+                            scb->ea.octet[1],
+                            scb->ea.octet[2],
+                            scb->ea.octet[3],
+                            scb->ea.octet[4],
+                            scb->ea.octet[5]);
+	/* dump_flag_qqdx */
 		mu_scb = (mutx_scb_t *)pos->data;
 		scb = mu_scb->scb;
 		WL_MUMIMO((""MACF"\n", ETHER_TO_MACF(scb->ea)));
@@ -3901,7 +3911,9 @@ wlc_mutx_admit_dlofdma_clients(wlc_mutx_info_t *mu_info)
 			continue;
 		}
 
-		if (SCB_DLOFDMA_ADM(scb)) {
+	/* dump_flag_qqdx */
+		if (!SCB_DLOFDMA_ADM(scb)) {
+	/* dump_flag_qqdx */
 			ofdma_on = FALSE;
 			WL_MUTX(("%s evict------->"MACF" swap_mufifotech %d #inflt %d\n",
 				__FUNCTION__, ETHER_TO_MACF(scb->ea), mu_scb->swap_mufifotech,
@@ -3929,6 +3941,9 @@ wlc_mutx_admit_dlofdma_clients(wlc_mutx_info_t *mu_info)
 			}
 		}
 
+	/* dump_flag_qqdx */
+                printk("wlc_mutx_admit_dlofdma_clients:ofdma_on (%d)----\n", ofdma_on);
+	/* dump_flag_qqdx */
 		wlc_scbmusched_set_dlofdma(wlc->musched, scb, ofdma_on);
 		wlc_scbmusched_set_dlschpos(wlc->musched, scb, 0);
 		mutx_scb_list_move(mu_info->mu_cap_stas_list, pos);
