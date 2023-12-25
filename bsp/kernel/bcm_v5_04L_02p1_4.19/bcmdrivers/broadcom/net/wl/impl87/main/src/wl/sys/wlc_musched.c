@@ -2206,9 +2206,11 @@ wlc_musched_scb_isdlofdma_eligible(wlc_muscheduler_info_t *musched, scb_t* scb)
 	}
 	
 	/* dump_flag_qqdx */
-                printk("wlc_musched_scb_isdlofdma_eligible:bw(%d), link_bw(%d), SCB_HE_CAP(scb)  (%d) HE_DLOMU_ENAB(musched->wlc->pub)  (%d) musched->wlc->dsmps_war  (%d)"
+                printk("wlc_musched_scb_isdlofdma_eligible:bw(%d), link_bw(%d), SCB_HE_CAP(scb)  (%d) HE_DLOMU_ENAB(musched->wlc->pub) (%d)"
+				"HE_ENAB(musched->wlc->pub) (%d) WLC_HE_FEATURES_DLOMU(musched->wlc->pub) (%d) musched->wlc->dsmps_war  (%d)"
 		"wlc_stf_is_scb_dynamic_smps(musched->wlc, scb)) (%d)  BSSCFG_AP(SCB_BSSCFG(scb))  (%d) SCB_HEMMU(scb) (%d) !SCB_LEGACY_WDS(scb)  (%d)"
-		"(musched->maxn[link_bw] != 0) (%d)----\n", bw, link_bw, SCB_HE_CAP(scb), HE_DLOMU_ENAB(musched->wlc->pub), musched->wlc->dsmps_war,\
+		"(musched->maxn[link_bw] != 0) (%d)----\n", bw, link_bw, SCB_HE_CAP(scb), HE_DLOMU_ENAB(musched->wlc->pub)\
+		,HE_ENAB(musched->wlc->pub), WLC_HE_FEATURES_DLOMU(musched->wlc->pub), musched->wlc->dsmps_war,\
 		wlc_stf_is_scb_dynamic_smps(musched->wlc, scb),	BSSCFG_AP(SCB_BSSCFG(scb)), SCB_HEMMU(scb), SCB_LEGACY_WDS(scb), (musched->maxn[link_bw]));
 	/* dump_flag_qqdx */
 
