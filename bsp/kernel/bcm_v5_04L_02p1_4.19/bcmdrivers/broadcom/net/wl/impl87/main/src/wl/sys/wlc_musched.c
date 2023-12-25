@@ -1727,6 +1727,9 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 
 		/* check scb_musched validity in case of pending scb deinit */
 		if (!musched_scb) {
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:musched_scb----\n");
+	/* dump_flag_qqdx */
 			continue;
 		}
 
@@ -1735,8 +1738,15 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 		/* also check dlul_assoc which include max ofdma count info */
 		dlmu_on &= musched_scb->dlul_assoc;
 
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:dlmu_on (%d)----\n", dlmu_on);
+	/* dump_flag_qqdx */
 		if (!dlmu_on || (onoff == wlc_scbmusched_is_dlofdma(musched, scb))) {
 			/* skip ineligible or already set SCB */
+			
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:onoff ==----\n");
+	/* dump_flag_qqdx */
 			continue;
 		}
 	/* dump_flag_qqdx */
