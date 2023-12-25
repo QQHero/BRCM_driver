@@ -490,6 +490,7 @@ bool qq_pi_is_set = FALSE;
 bool qq_scb_is_set = FALSE;
 struct scb *qq_scb;
 
+
 struct start_sta_info *start_sta_info_cur;
 bool start_game_is_on = FALSE;
 /*定时器初始化相关*/
@@ -523,7 +524,11 @@ void timer_callback_start_info_qq(struct timer_list *t) {
 	/* dump_flag_qqdx */
         WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
         wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
-        //wlc_muscheduler_info_t *musched = wlc_qq->musched;
+        wlc_muscheduler_info_t *musched = wlc_qq->musched;
+        
+        musched->dl_schidx = 1;
+	    scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
+        musched_scb->dl_schpos = 1;
         //wlc_musched_admit_dlclients(musched);
     }else{
         start_game_is_on = FALSE;

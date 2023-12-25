@@ -396,7 +396,17 @@ struct musched_info_qq {
     int8 dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
 };
 
-
+//copy from wlc_musched.c
+/* scb cubby */
+typedef struct {
+	musched_ru_stats_t *scb_ru_stats; /* pointer to ru usage stats */
+	int8 dl_schpos;		/* HEMU DL scheduler pos */
+	bool dlul_assoc;	/* eligible on / off, determined on (de}assoc/auth */
+	uint8 min_ru;
+} scb_musched_t;
+#define SCB_MUSCHED_CUBBY(musched, scb)	(scb_musched_t **)SCB_CUBBY(scb, (musched)->scbh)
+#define SCB_MUSCHED(musched, scb)	*SCB_MUSCHED_CUBBY(musched, scb)
+//copy from wlc_musched.c
 
 
 #include <monitor.h>
