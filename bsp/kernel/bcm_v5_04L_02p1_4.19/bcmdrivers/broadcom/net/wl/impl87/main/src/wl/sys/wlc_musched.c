@@ -227,7 +227,10 @@ struct wlc_muscheduler_info {
 #define MUSCHED_TRVLSCH_TMOUT_DFLT		128
 
 #define MUSCHED_TRVLSCH_LOWAT_DFLT		4
-#define MUSCHED_TRVLSCH_MINN_DFLT		2
+
+	/* dump_flag_qqdx */
+#define MUSCHED_TRVLSCH_MINN_DFLT		1
+	/* dump_flag_qqdx */
 
 #define MUSCHED_TXDUR_THRSH_MU_DFLT		1000
 #define MUSCHED_TXDUR_THRSH_SU_DFLT		3000
