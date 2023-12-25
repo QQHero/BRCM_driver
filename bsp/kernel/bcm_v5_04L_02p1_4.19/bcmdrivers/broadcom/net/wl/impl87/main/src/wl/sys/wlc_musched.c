@@ -1716,13 +1716,13 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 		scb_musched_t *musched_scb = SCB_MUSCHED(musched, scb);
 		bool dlmu_on;
 	/* dump_flag_qqdx */
-                printk("wlc_musched_admit_dlclients:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)----\n",
+                printk("wlc_musched_admit_dlclients:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)--onoff (%d)--\n",
                             scb->ea.octet[0],
                             scb->ea.octet[1],
                             scb->ea.octet[2],
                             scb->ea.octet[3],
                             scb->ea.octet[4],
-                            scb->ea.octet[5]);
+                            scb->ea.octet[5], onoff);
 	/* dump_flag_qqdx */
 
 		/* check scb_musched validity in case of pending scb deinit */
@@ -1734,12 +1734,15 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 		}
 
 		dlmu_on = wlc_musched_scb_isdlofdma_eligible(musched, scb);
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:dlmu_on1 (%d)----\n", dlmu_on);
+	/* dump_flag_qqdx */
 
 		/* also check dlul_assoc which include max ofdma count info */
 		dlmu_on &= musched_scb->dlul_assoc;
 
 	/* dump_flag_qqdx */
-                printk("wlc_musched_admit_dlclients:dlmu_on (%d)----\n", dlmu_on);
+                printk("wlc_musched_admit_dlclients:dlmu_on2 (%d)----\n", dlmu_on);
 	/* dump_flag_qqdx */
 		if (!dlmu_on || (onoff == wlc_scbmusched_is_dlofdma(musched, scb))) {
 			/* skip ineligible or already set SCB */
