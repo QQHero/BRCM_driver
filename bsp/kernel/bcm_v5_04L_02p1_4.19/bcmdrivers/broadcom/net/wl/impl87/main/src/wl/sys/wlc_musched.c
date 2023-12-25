@@ -1742,7 +1742,7 @@ wlc_musched_admit_dlclients(wlc_muscheduler_info_t *musched)
 		dlmu_on &= musched_scb->dlul_assoc;
 
 	/* dump_flag_qqdx */
-                printk("wlc_musched_admit_dlclients:dlmu_on2 (%d)----\n", dlmu_on);
+                printk("wlc_musched_admit_dlclients:dlmu_on2 (%d)--musched_scb->dlul_assoc(%d--\n", dlmu_on,musched_scb->dlul_assoc);
 	/* dump_flag_qqdx */
 		if (!dlmu_on || (onoff == wlc_scbmusched_is_dlofdma(musched, scb))) {
 			/* skip ineligible or already set SCB */
@@ -2173,7 +2173,16 @@ wlc_musched_scb_isdlofdma_eligible(wlc_muscheduler_info_t *musched, scb_t* scb)
 	scb_musched_t *musched_scb;
 	uint bw, link_bw;
 	bool ret = FALSE;
-
+	
+	/* dump_flag_qqdx */
+                printk("wlc_musched_admit_dlclients:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)----\n",
+                            scb->ea.octet[0],
+                            scb->ea.octet[1],
+                            scb->ea.octet[2],
+                            scb->ea.octet[3],
+                            scb->ea.octet[4],
+                            scb->ea.octet[5]);
+	/* dump_flag_qqdx */
 	wlc = musched->wlc;
 	musched_scb = SCB_MUSCHED(musched, scb);
 
@@ -2195,6 +2204,14 @@ wlc_musched_scb_isdlofdma_eligible(wlc_muscheduler_info_t *musched, scb_t* scb)
 		(musched->maxn[link_bw] != 0)) {
 		ret = TRUE;
 	}
+	
+	/* dump_flag_qqdx */
+                printk("wlc_musched_scb_isdlofdma_eligible:bw(%d), link_bw(%d), SCB_HE_CAP(scb)  (%d) HE_DLOMU_ENAB(musched->wlc->pub)  (%d) musched->wlc->dsmps_war  (%d)"
+		"wlc_stf_is_scb_dynamic_smps(musched->wlc, scb)) (%d)  BSSCFG_AP(SCB_BSSCFG(scb))  (%d) SCB_HEMMU(scb) (%d) !SCB_LEGACY_WDS(scb)  (%d)"
+		"(musched->maxn[link_bw] != 0) (%d)----\n", bw, link_bw, SCB_HE_CAP(scb), HE_DLOMU_ENAB(musched->wlc->pub), musched->wlc->dsmps_war,\
+		wlc_stf_is_scb_dynamic_smps(musched->wlc, scb),	BSSCFG_AP(SCB_BSSCFG(scb)), SCB_HEMMU(scb), SCB_LEGACY_WDS(scb), (musched->maxn[link_bw]));
+	/* dump_flag_qqdx */
+
 	return ret;
 }
 
