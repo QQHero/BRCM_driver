@@ -247,7 +247,7 @@ void tcpEchoRunnable()
         FD_ZERO(&waitSend);
         for (i = 0; i < MAX_SOCKETS; i++) {
             if (sockets[i].send == SEND) {
-                FD_SET(sockets[i].id, &waitSend);
+                //FD_SET(sockets[i].id, &waitSend);
                 if (sockets[i].id > maxFd) {
                     maxFd = sockets[i].id;
                 }
