@@ -236,7 +236,7 @@ void tcpEchoRunnable()
         */
         for (i=0;i<REPORT_LIST_SIZE;i++) {
             if (report_list[i].sock_udp_fd > 0) {
-                //FD_SET(report_list[i].sock_udp_fd, &waitRecv);
+                FD_SET(report_list[i].sock_udp_fd, &waitRecv);
                 if (report_list[i].sock_udp_fd > maxFd) {
                     maxFd = report_list[i].sock_udp_fd;
                 }
