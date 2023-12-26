@@ -733,8 +733,6 @@ wifi_info* get_wifi_info(session_node* cb_node)
     kwb_chan_info_t chan_info = {0};
     int ac_index;
 
-	//debug_print("session id:%s get wifi info\n",cb_node->session_id);
-
     if(cb_node->stream_priority == 0)   //BE
         ac_index = 0;  //BE
     else if(cb_node->stream_priority == 4 || cb_node->stream_priority == 5)   //VI

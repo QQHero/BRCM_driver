@@ -333,23 +333,15 @@ int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, 
 	char message[UDP_BUFSIZE];
 	int mem_index;
 	memset(message, 0, UDP_BUFSIZE);
-	session_node *stop_node;
 
 	if (session_id==NULL || sta_ip_addr ==NULL || report_ip_addr == NULL || app_id == NULL) {
 		debug_print("NULL Input String\n");
 		return -1;
 	}
 
-	stop_node = get_session_node(session_id);
-	if(stop_node != NULL) {
-		if(report_list[stop_node->report_ip_index].ref_count == 0){
-			close(report_list[stop_node->report_ip_index].sock_udp_fd);
-			delete_report_ip_node(stop_node->report_ip_index);
-			//debug_print("delete_report_ip_node success, index:%d\n",stop_node->report_ip_index);
-		}		
-		mp_reset_config(session_id);
-		delete_session_node(session_id);
-		debug_print("delete exist session node, id:%s\n",session_id);
+	if(get_session_node(session_id) != NULL) {
+		debug_print("session already existed\n");
+		return 1;
 	}
 
 	session_node* new_node = create_session_node(session_id, sta_ip_addr, proxy_ip_addr, proxy_port, report_ip_addr, report_port, app_id,timer_ms, version_num);
@@ -374,14 +366,13 @@ int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, 
 			new_node->sock_udp_fd = fd; 
 			new_node->report_ip_index = add_report_ip_node(new_node->report_ip_addr,1,fd, new_node->addr);
 			new_node->report = 1;
-			debug_print("udp socket created: proxy ip-%s, port-%d, index-%d",new_node->proxy_ip_addr, new_node->report_port, new_node->report_ip_index );
+			//debug_print("udp socket created: proxy ip-%s, port-%d, index-%d",new_node->proxy_ip_addr, new_node->report_port, new_node->report_ip_index );
 		}
 	}
 	else{
 		new_node->report_ip_index = report_ip_index;
 		report_list[report_ip_index].ref_count += 1;
 		new_node->sock_udp_fd = report_list[report_ip_index].sock_udp_fd;
-		new_node->report = 1;
 		memcpy(&new_node->addr, &report_list[report_ip_index].addr, sizeof(struct sockaddr_in));
 		debug_print("udp socket copied: proxy ip-%s, port-%d, index-%d",new_node->proxy_ip_addr, new_node->report_port, report_ip_index);
 
@@ -568,7 +559,7 @@ int mp_stop_session(char* session_id, int stop_reason)
 
 	debug_print("session_started_count:%d, session_cnt:%d\n", session_started_count, get_session_count() );
 
-	if(session_started_count > 30 && get_session_count() == 0){
+	if(session_started_count > 10 && get_session_count() == 0){
 		debug_print("exit program\n");
 		exit(0);
 	}
@@ -1081,10 +1072,8 @@ void gather_ap_info()
 
 	//TODO: set lifttime for report
 	while(node!=NULL) {
-		//debug_print("get session ap info\n");
 		next_node = node->next;
 		if (node->report ==1 ) {
-			//debug_print("send session ap info\n");
 			send_session_info(node);
 		}		
 		node = next_node;
