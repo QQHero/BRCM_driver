@@ -171,23 +171,7 @@ int delete_session_node(char* session_id)
 }
 
 
-session_node* get_session_node_index(int tcp_socket_index)
-{
 
-	//print_all_sessions();
-	session_node *searchNode = head;
-    while(searchNode!=NULL)
-    {
-        if(searchNode->tcp_socket_index == tcp_socket_index)
-        {
-			return searchNode;
-        }
-        else
-            searchNode = searchNode->next;
-    }
-	return NULL;
-
-}
 
 
 session_node* get_session_node(char* session_id)

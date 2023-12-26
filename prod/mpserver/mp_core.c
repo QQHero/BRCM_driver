@@ -51,7 +51,6 @@ struct proxy_ip_node proxy_list[PROXY_LIST_SIZE];
 
 
 void send_session_info(session_node* cb_node);
-void terminateSocket(int index);
 
 
 void init_mp_core()
@@ -171,9 +170,8 @@ void delete_report_ip_node(int index)
 
 int assign_stream_priority(int freq_band)
 {	
-	return 4;
 
-	/*
+	int i = 0;
 	while (i < 4){
 		if(freq_band == FREQUENCY_BAND_5GHZ){
 			if(priority_used_5G[i] == 0){
@@ -189,7 +187,6 @@ int assign_stream_priority(int freq_band)
 		}
 		i++;
 	}
-	*/
 	debug_print("stream priority assignment is full!\n");
 	return -1;	
 }
@@ -328,7 +325,7 @@ int mp_start_session_without_report(char* session_id, char* sta_ip_addr, char* a
 }
 
 
-int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, char* proxy_ip_addr, int proxy_port, char* report_ip_addr, int report_port, char* app_id, int timer_ms, uint32_t version_num)
+int mp_start_session(char* session_id, char* sta_ip_addr, char* proxy_ip_addr, int proxy_port, char* report_ip_addr, int report_port, char* app_id, int timer_ms, uint32_t version_num)
 {
 	char message[UDP_BUFSIZE];
 	int mem_index;
@@ -349,8 +346,6 @@ int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, 
 		debug_print("cannot create new session\n");
 		return -1;
 	}
-
-	new_node->tcp_socket_index = tcp_socket_index;
 	   
 	//only create udp socket fd if proxy node not existed
 	int report_ip_index;
@@ -531,9 +526,6 @@ int mp_stop_session(char* session_id, int stop_reason)
 			delete_report_ip_node(stop_node->report_ip_index);
 			//debug_print("delete_report_ip_node success, index:%d\n",stop_node->report_ip_index);
 		}
-
-		terminateSocket(stop_node->tcp_socket_index);
-		
 
 		if(stop_node->session_config.DECA_enabled == 1 ){
  			deca_stop_probe(stop_node->freg_band);
@@ -752,12 +744,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 						sprintf(tuple.protocol,"tcp");
 						
 						//add_ac_queue_tuple(int wlan_interface,five_tuples_t tuple,int priority)
-						//FREQUENCY_BAND_5GHZ
-						// int ac_result = add_ac_queue_tuple(cf_node->freg_band,tuple,cf_node->stream_priority);
-
-						int ac_result = add_ac_queue_tuple(FREQUENCY_BAND_5GHZ,tuple,cf_node->stream_priority);
-						add_ac_queue_tuple(FREQUENCY_BAND_2GHZ,tuple,cf_node->stream_priority);
-
+						int ac_result = add_ac_queue_tuple(cf_node->freg_band,tuple,cf_node->stream_priority); 
 						usleep(200000); //200ms
 			
 						if(ac_result != 0){
@@ -927,9 +914,7 @@ int mp_reset_config(char* session_id)
 
 					//debug_print("mp_reset_config ref_count=0, stream id:%d, stream priority:%d\n",rs_node->stream_id,rs_node->stream_priority);
 					//ac_result = mp_set_wme_ac_ip("0.0.0.0", 0,  0, 0, rs_node->stream_id, rs_node->freg_band);
-					//ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
-					del_ac_queue_by_ip(FREQUENCY_BAND_2GHZ,1,rs_node->sta_ip_addr);
-					del_ac_queue_by_ip(FREQUENCY_BAND_5GHZ,1,rs_node->sta_ip_addr);
+					ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
 
 					usleep(200000); //200ms
 					if(ac_result == 0){
@@ -964,9 +949,7 @@ int mp_reset_config(char* session_id)
 
 			//debug_print("mp_reset_config ref_count=0, stream id:%d, stream priority:%d\n",rs_node->stream_id,rs_node->stream_priority);
 			//ac_result = mp_set_wme_ac_ip("0.0.0.0", 0,  0, 0, rs_node->stream_id, rs_node->freg_band);
-			//ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
-			del_ac_queue_by_ip(FREQUENCY_BAND_2GHZ,1,rs_node->sta_ip_addr);
-			del_ac_queue_by_ip(FREQUENCY_BAND_5GHZ,1,rs_node->sta_ip_addr);
+			ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
 
 			usleep(200000); //200ms
 			if(ac_result == 0){
