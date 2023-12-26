@@ -767,7 +767,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 						int ac_result = add_ac_queue_tuple(FREQUENCY_BAND_5GHZ,tuple,cf_node->stream_priority);
 						add_ac_queue_tuple(FREQUENCY_BAND_2GHZ,tuple,cf_node->stream_priority);
 
-						usleep(50000); //50ms
+						usleep(200000); //200ms
 			
 						if(ac_result != 0){
 
@@ -863,7 +863,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 				sprintf(tuple.protocol,"tcp");
 						
 				int ac_result = add_ac_queue_tuple(cf_node->freg_band,tuple,cf_node->stream_priority); 
-				usleep(50000); //50ms
+				usleep(200000); //200ms
 			
 				if(ac_result != 0){
 
