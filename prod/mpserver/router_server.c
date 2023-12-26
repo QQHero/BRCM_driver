@@ -303,7 +303,9 @@ void tcpEchoRunnable()
 
         for (i=0;i<REPORT_LIST_SIZE && nfd > 0;i++) {
             if (report_list[i].sock_udp_fd > 0) {
+                DEBUG_LOG_D("report_list[i].sock_udp_fd > 0 i:(%d);nfd(%d)", i, nfd);
                 if (FD_ISSET(report_list[i].sock_udp_fd, &waitRecv)) {
+                    DEBUG_LOG_D("FD_ISSET(report_list[i].sock_udp_fd, &waitRecv) i:(%d);nfd(%d)", i, nfd);
                     handle_udp_echo(i);
                 }
             }
