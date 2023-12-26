@@ -228,6 +228,7 @@ void tcpEchoRunnable()
                 if (sockets[i].id > maxFd) {
                     maxFd = sockets[i].id;
                 }
+                break;
             }
         }
 
