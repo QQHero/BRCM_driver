@@ -87,23 +87,7 @@ void string_lower_to_upper(char string[]);
 int get_session_count();
 
 
-session_node* get_session_node_index(int tcp_socket_index)
-{
 
-	//print_all_sessions();
-	session_node *searchNode = head;
-    while(searchNode!=NULL)
-    {
-        if(searchNode->tcp_socket_index == tcp_socket_index)
-        {
-			return searchNode;
-        }
-        else
-            searchNode = searchNode->next;
-    }
-	return NULL;
-
-}
 
 
 #define debug_print(f_, ...) printf("[%s]", get_localtime_str()), printf((f_), ##__VA_ARGS__)

@@ -13,6 +13,16 @@
 #include <pthread.h>
 #include <errno.h>
 #include "TencentWiFi.h"
+/* dump_flag_qqdx */
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <stdbool.h>
+#include <netinet/ether.h>
+/* dump_flag_qqdx */
 
 
 
@@ -51,7 +61,6 @@ struct proxy_ip_node proxy_list[PROXY_LIST_SIZE];
 
 
 void send_session_info(session_node* cb_node);
-void terminateSocket(int index);
 
 
 void init_mp_core()
@@ -171,9 +180,8 @@ void delete_report_ip_node(int index)
 
 int assign_stream_priority(int freq_band)
 {	
-	return 4;
 
-	/*
+	int i = 0;
 	while (i < 4){
 		if(freq_band == FREQUENCY_BAND_5GHZ){
 			if(priority_used_5G[i] == 0){
@@ -189,7 +197,6 @@ int assign_stream_priority(int freq_band)
 		}
 		i++;
 	}
-	*/
 	debug_print("stream priority assignment is full!\n");
 	return -1;	
 }
@@ -273,6 +280,7 @@ int mp_set_tuples(char* session_id, five_tuples_t *tuples)
 
 int mp_start_session_without_report(char* session_id, char* sta_ip_addr, char* app_id, int timer_ms, uint32_t version_num)
 {
+	debug_print("qq______________333");
 	if(get_session_node(session_id) != NULL) {
 		debug_print("session already existed\n");
 		return 1;
@@ -327,29 +335,72 @@ int mp_start_session_without_report(char* session_id, char* sta_ip_addr, char* a
 	return 0;
 }
 
+/* dump_flag_qqdx */
+#ifndef ETHER_ADDR_LEN
+#define ETHER_ADDR_LEN 6
+#endif
+#define DEBUG_CLASS_MAX_FIELD 240
 
-int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, char* proxy_ip_addr, int proxy_port, char* report_ip_addr, int report_port, char* app_id, int timer_ms, uint32_t version_num)
+struct start_sta_info{
+	int8_t start_is_on;//判断是否游戏正在运行
+	struct ether_addr ea;
+	int8_t ac_queue_index;
+    uint16_t          flowid;     /* flowid */
+};
+typedef uint32_t kernel_info_t;
+typedef struct {
+    struct timespec timestamp;  // for debugging
+    //kernel_info_t info[sizeof(pkt_qq_t)];
+    kernel_info_t info[DEBUG_CLASS_MAX_FIELD];
+} info_class_t;
+struct start_sta_info *start_sta_info_cur;
+
+void write_data(kernel_info_t *info_input);
+void write_data(kernel_info_t *info_input)
+{
+	int fd = open("/sys/kernel/debug/kernel_info/class4", O_WRONLY);
+	info_class_t kernel_info_list;
+	if (fd < 0) {
+		perror("open");
+		exit(1);
+	}
+	/*
+	if (likely(ts > 0)) {
+        // recording timestamp may incur syncronization error between kernel info and userspace
+        ktime_get_ts(&(kernel_info_list.timestamp));
+    }*/
+	//debug_print("qq______________000");
+	ssize_t len = write(fd, info_input, sizeof(kernel_info_t)*DEBUG_CLASS_MAX_FIELD);
+	/*
+    for (int i = 0; i < DEBUG_CLASS_MAX_FIELD; ++i) {
+        debug_print("info1[%d] = %u\n", i, info_input[i]);
+    }*/
+	//debug_print("qq______________111");
+	//debug_print("qq______________444");
+	if (len < 0) {
+		perror("write");
+		exit(1);
+	}
+	//debug_print("qq______________333");
+
+	close(fd);
+}
+//#include "debugfs_qq.h"
+/* dump_flag_qqdx */
+int mp_start_session(char* session_id, char* sta_ip_addr, char* proxy_ip_addr, int proxy_port, char* report_ip_addr, int report_port, char* app_id, int timer_ms, uint32_t version_num)
 {
 	char message[UDP_BUFSIZE];
 	int mem_index;
 	memset(message, 0, UDP_BUFSIZE);
-	session_node *stop_node;
 
 	if (session_id==NULL || sta_ip_addr ==NULL || report_ip_addr == NULL || app_id == NULL) {
 		debug_print("NULL Input String\n");
 		return -1;
 	}
 
-	stop_node = get_session_node(session_id);
-	if(stop_node != NULL) {
-		if(report_list[stop_node->report_ip_index].ref_count == 0){
-			close(report_list[stop_node->report_ip_index].sock_udp_fd);
-			delete_report_ip_node(stop_node->report_ip_index);
-			//debug_print("delete_report_ip_node success, index:%d\n",stop_node->report_ip_index);
-		}		
-		mp_reset_config(session_id);
-		delete_session_node(session_id);
-		debug_print("delete exist session node, id:%s\n",session_id);
+	if(get_session_node(session_id) != NULL) {
+		debug_print("session already existed\n");
+		return 1;
 	}
 
 	session_node* new_node = create_session_node(session_id, sta_ip_addr, proxy_ip_addr, proxy_port, report_ip_addr, report_port, app_id,timer_ms, version_num);
@@ -357,8 +408,6 @@ int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, 
 		debug_print("cannot create new session\n");
 		return -1;
 	}
-
-	new_node->tcp_socket_index = tcp_socket_index;
 	   
 	//only create udp socket fd if proxy node not existed
 	int report_ip_index;
@@ -374,14 +423,13 @@ int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, 
 			new_node->sock_udp_fd = fd; 
 			new_node->report_ip_index = add_report_ip_node(new_node->report_ip_addr,1,fd, new_node->addr);
 			new_node->report = 1;
-			debug_print("udp socket created: proxy ip-%s, port-%d, index-%d",new_node->proxy_ip_addr, new_node->report_port, new_node->report_ip_index );
+			//debug_print("udp socket created: proxy ip-%s, port-%d, index-%d",new_node->proxy_ip_addr, new_node->report_port, new_node->report_ip_index );
 		}
 	}
 	else{
 		new_node->report_ip_index = report_ip_index;
 		report_list[report_ip_index].ref_count += 1;
 		new_node->sock_udp_fd = report_list[report_ip_index].sock_udp_fd;
-		new_node->report = 1;
 		memcpy(&new_node->addr, &report_list[report_ip_index].addr, sizeof(struct sockaddr_in));
 		debug_print("udp socket copied: proxy ip-%s, port-%d, index-%d",new_node->proxy_ip_addr, new_node->report_port, report_ip_index);
 
@@ -401,6 +449,27 @@ int mp_start_session(int tcp_socket_index, char* session_id, char* sta_ip_addr, 
 	}
 	else
 		debug_print("mac addr:%s\n",new_node->sta_mac_addr);
+	/* dump_flag_qqdx */
+	start_sta_info_cur = (struct start_sta_info *) malloc(sizeof(struct start_sta_info));
+	
+	ether_aton_r(new_node->sta_mac_addr,&(start_sta_info_cur->ea));
+	//memcpy(start_sta_info_cur->ea.ether_addr_octet, new_node->sta_mac_addr, ETHER_ADDR_LEN);
+	
+	start_sta_info_cur->start_is_on = 1;
+	start_sta_info_cur->ac_queue_index = 4;
+
+	kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+	memcpy(info_qq, start_sta_info_cur, sizeof(*start_sta_info_cur));
+	/*debug_print("sizeof(*start_sta_info_cur)[%d][%d][%d][%d]\n", sizeof(*start_sta_info_cur)\
+	, sizeof(start_sta_info_cur->start_is_on), sizeof(start_sta_info_cur->ea), sizeof(start_sta_info_cur->ac_queue_index));
+    for (int i = 0; i < DEBUG_CLASS_MAX_FIELD; ++i) {
+        debug_print("info2[%d] = %u\n", i, info_qq[i]);
+    }*/
+	debug_print("qq______________111222");
+	write_data(info_qq);
+	
+	debug_print("qq______________222");
+	/* dump_flag_qqdx */
 
 /*
 	if(start_timer(new_node->session_id, &new_node->timer_id, new_node->timer_ms, timer_callback) == -1){
@@ -541,9 +610,6 @@ int mp_stop_session(char* session_id, int stop_reason)
 			//debug_print("delete_report_ip_node success, index:%d\n",stop_node->report_ip_index);
 		}
 
-		terminateSocket(stop_node->tcp_socket_index);
-		
-
 		if(stop_node->session_config.DECA_enabled == 1 ){
  			deca_stop_probe(stop_node->freg_band);
 		}
@@ -568,10 +634,25 @@ int mp_stop_session(char* session_id, int stop_reason)
 
 	debug_print("session_started_count:%d, session_cnt:%d\n", session_started_count, get_session_count() );
 
-	if(session_started_count > 30 && get_session_count() == 0){
+	if(session_started_count > 10 && get_session_count() == 0){
 		debug_print("exit program\n");
 		exit(0);
 	}
+
+    /* dump_flag_qqdx */
+    start_sta_info_cur->start_is_on = 0;
+    start_sta_info_cur->ac_queue_index = 4;
+	//debug_print("session_stop_qq\n");
+
+	kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+	memcpy(info_qq, start_sta_info_cur, sizeof(*start_sta_info_cur));
+	//write_data(info_qq);//暂时先阻止退出
+	/*debug_print("sizeof(*start_sta_info_cur)[%d][%d][%d][%d]\n", sizeof(*start_sta_info_cur)\
+	, sizeof(start_sta_info_cur->start_is_on), sizeof(start_sta_info_cur->ea), sizeof(start_sta_info_cur->ac_queue_index));
+    for (int i = 0; i < DEBUG_CLASS_MAX_FIELD; ++i) {
+        debug_print("info2[%d] = %u\n", i, info_qq[i]);
+    }*/
+    /* dump_flag_qqdx */
 
 	return result;
 }
@@ -761,13 +842,8 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 						sprintf(tuple.protocol,"tcp");
 						
 						//add_ac_queue_tuple(int wlan_interface,five_tuples_t tuple,int priority)
-						//FREQUENCY_BAND_5GHZ
-						// int ac_result = add_ac_queue_tuple(cf_node->freg_band,tuple,cf_node->stream_priority);
-
-						int ac_result = add_ac_queue_tuple(FREQUENCY_BAND_5GHZ,tuple,cf_node->stream_priority);
-						add_ac_queue_tuple(FREQUENCY_BAND_2GHZ,tuple,cf_node->stream_priority);
-
-						usleep(50000); //50ms
+						int ac_result = add_ac_queue_tuple(cf_node->freg_band,tuple,cf_node->stream_priority); 
+						usleep(200000); //200ms
 			
 						if(ac_result != 0){
 
@@ -863,7 +939,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 				sprintf(tuple.protocol,"tcp");
 						
 				int ac_result = add_ac_queue_tuple(cf_node->freg_band,tuple,cf_node->stream_priority); 
-				usleep(50000); //50ms
+				usleep(200000); //200ms
 			
 				if(ac_result != 0){
 
@@ -936,9 +1012,7 @@ int mp_reset_config(char* session_id)
 
 					//debug_print("mp_reset_config ref_count=0, stream id:%d, stream priority:%d\n",rs_node->stream_id,rs_node->stream_priority);
 					//ac_result = mp_set_wme_ac_ip("0.0.0.0", 0,  0, 0, rs_node->stream_id, rs_node->freg_band);
-					//ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
-					del_ac_queue_by_ip(FREQUENCY_BAND_2GHZ,1,rs_node->sta_ip_addr);
-					del_ac_queue_by_ip(FREQUENCY_BAND_5GHZ,1,rs_node->sta_ip_addr);
+					ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
 
 					usleep(200000); //200ms
 					if(ac_result == 0){
@@ -973,9 +1047,7 @@ int mp_reset_config(char* session_id)
 
 			//debug_print("mp_reset_config ref_count=0, stream id:%d, stream priority:%d\n",rs_node->stream_id,rs_node->stream_priority);
 			//ac_result = mp_set_wme_ac_ip("0.0.0.0", 0,  0, 0, rs_node->stream_id, rs_node->freg_band);
-			//ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
-			del_ac_queue_by_ip(FREQUENCY_BAND_2GHZ,1,rs_node->sta_ip_addr);
-			del_ac_queue_by_ip(FREQUENCY_BAND_5GHZ,1,rs_node->sta_ip_addr);
+			ac_result = del_ac_queue_by_ip(rs_node->freg_band,1,rs_node->sta_ip_addr);
 
 			usleep(200000); //200ms
 			if(ac_result == 0){
@@ -1081,10 +1153,8 @@ void gather_ap_info()
 
 	//TODO: set lifttime for report
 	while(node!=NULL) {
-		//debug_print("get session ap info\n");
 		next_node = node->next;
 		if (node->report ==1 ) {
-			//debug_print("send session ap info\n");
 			send_session_info(node);
 		}		
 		node = next_node;
