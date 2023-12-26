@@ -203,7 +203,7 @@ int startRouterListen(int listenPort)
 
 
 
-void tcpEchoRunnable() 
+void tcpEchoRunnable1() 
 {
     DEBUG_LOG_D("Start tcpEchoRunnable");
     // change to thread
@@ -350,7 +350,148 @@ void tcpEchoRunnable()
     return;
 }
 
+void tcpEchoRunnable() 
+{
+    DEBUG_LOG_D("Start tcpEchoRunnable");
+    // change to thread
+    int i = 0;
+    int maxFd = 0;
 
+	struct timeval to; //timeout for select
+
+    struct timeval te; //timestamp for get ap information
+    gettimeofday(&te, NULL); // get current time
+    static long long time_stamp_previous_ms;
+    static long long time_stamp_current_ms;
+    
+    time_stamp_previous_ms = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+     
+	while (1) {
+        fd_set waitRecv;
+        FD_ZERO(&waitRecv);
+        for (i = 0; i < MAX_SOCKETS; i++) {
+            if ((sockets[i].recv == LISTEN) || (sockets[i].recv == RECEIVE)) {
+                FD_SET(sockets[i].id, &waitRecv);
+                if (sockets[i].id > maxFd) {
+                    maxFd = sockets[i].id;
+                }
+            }
+        }
+
+        /*
+            put udp socket into slect fd_set
+        */
+        for (i=0;i<REPORT_LIST_SIZE;i++) {
+            if (report_list[i].sock_udp_fd > 0) {
+                FD_SET(report_list[i].sock_udp_fd, &waitRecv);
+                if (report_list[i].sock_udp_fd > maxFd) {
+                    maxFd = report_list[i].sock_udp_fd;
+                }
+            }
+        }
+    
+        fd_set waitSend;
+        FD_ZERO(&waitSend);
+        for (i = 0; i < MAX_SOCKETS; i++) {
+            if (sockets[i].send == SEND) {
+                FD_SET(sockets[i].id, &waitSend);
+                if (sockets[i].id > maxFd) {
+                    maxFd = sockets[i].id;
+                }
+            }
+        }
+
+        //fd_set event_fd_set;
+        //FD_ZERO(&event_fd_set);
+        if (mevent_socket > 0) {
+            FD_SET(mevent_socket, &waitRecv);
+        }
+        if (mevent_socket > maxFd) {
+            maxFd = mevent_socket;
+        } 
+
+
+        gettimeofday(&to, NULL);
+        time_stamp_current_ms = to.tv_sec*1000LL + to.tv_usec/1000;
+        int wait_time_us=0;
+        wait_time_us = SELECT_TIMEOUT - ((time_stamp_current_ms - time_stamp_previous_ms)*1000);
+        if (wait_time_us < 0 ) {
+            wait_time_us = 0;
+        } else if (wait_time_us > 200000) {
+            wait_time_us = 200000;
+        }
+
+   
+        to.tv_sec = 0;
+        to.tv_usec = wait_time_us;
+        int nfd = 0;
+        //DEBUG_LOG_D("Try select: maxFd(%d)", maxFd);
+        // linux should select max fd + 1
+        //DEBUG_LOG_I("select fd");
+        nfd = select(maxFd + 1, &waitRecv, &waitSend, NULL, &to);
+
+        /* Internal Timer timeout*/
+        if (nfd == 0) {
+            gettimeofday(&te, NULL); // get current time
+            time_stamp_current_ms = te.tv_sec*1000LL + te.tv_usec/1000;
+            if (time_stamp_current_ms - time_stamp_previous_ms >= 200) {
+                time_stamp_previous_ms = time_stamp_current_ms;
+                gather_ap_info();
+                
+            }
+            continue;
+        }
+
+        if (nfd < 0) {
+            DEBUG_LOG_D("select nfd < 0, error!");
+            /*TODO: handle error*/
+        }
+
+        /*check if it's from udp RTT packet*/
+
+        for (i=0;i<REPORT_LIST_SIZE && nfd > 0;i++) {
+            if (report_list[i].sock_udp_fd > 0) {
+                if (FD_ISSET(report_list[i].sock_udp_fd, &waitRecv)) {
+                    handle_udp_echo(i);
+                }
+            }
+        }
+
+        /*check if it's event */
+        if (FD_ISSET(mevent_socket, &waitRecv)) {
+            DEBUG_LOG_I("Select EVENT socket");
+            mevent_event_handler(mevent_socket);
+        }
+
+        for (i = 0; i < MAX_SOCKETS && nfd > 0; i++) {
+            if (FD_ISSET(sockets[i].id, &waitRecv)) {
+                nfd--;
+                if (sockets[i].recv == LISTEN) {
+                    DEBUG_LOG_D("Accept: i:(%d)", i);
+                    acceptConnection(i);
+                }
+                if (sockets[i].recv == RECEIVE) {
+                    DEBUG_LOG_D("Recv socket(%d): i:(%d)", sockets[i].id, i);
+                    // do with receive Message, just parse header..
+                    receiveMessage(i);
+                }
+            }
+        }
+
+        for (i = 0; i < MAX_SOCKETS && nfd > 0; i++) {
+            if (FD_ISSET(sockets[i].id, &waitSend)) {
+                nfd--;
+                if (sockets[i].send == SEND) {
+                    DEBUG_LOG_D("Send socket(%d): i:(%d)", sockets[i].id, i);
+                    // cache send message and send..
+                    sendMessage(i);
+                }
+            }
+        }    
+    }
+    DEBUG_LOG_D("Stop tcpEchoRunnable");
+    return;
+}
 
 void receiveMessage(int index) 
 {
