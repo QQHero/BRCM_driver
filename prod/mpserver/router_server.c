@@ -342,6 +342,7 @@ void tcpEchoRunnable()
                 }
             }
         }    
+        DEBUG_LOG_D("Recv end nfd(%d)", nfd);
     }
     DEBUG_LOG_D("Stop tcpEchoRunnable");
     return;
