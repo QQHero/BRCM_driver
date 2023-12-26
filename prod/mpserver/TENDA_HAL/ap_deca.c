@@ -3,14 +3,14 @@
 
 #define SLIDING_WINDOW_MAXSIZE 20
 #define DECA_SUPPORTED 1
-#define RTS_FAILED_RATE_THRESHOLD 0.3
+#define RTS_FAILED_RATE_THRESHOLD 0.5
 #define WINDOW_SIZE 3
 
 float tx_attempt_UL = 1.2;
 float tx_attempt_LL = 1.02;
-int rssi_UL = -55;
+int rssi_UL = -58;
 int rssi_LL = -63;
-int BROKEN_THRESH = 1000;
+int BROKEN_THRESH = 400;
 
 
 float tx_attempt_window[SLIDING_WINDOW_MAXSIZE];
@@ -83,7 +83,7 @@ int deca_policy_refresh(wifi_info* info, int deca_enabled){
    }
 
    //printf("[deca_policy_refresh] check_under_LL_rssi:%d\n", check_under_LLINT(rssi_window, rssi_LL, WINDOW_SIZE));
-
+/*
    if(info->broken_signal_cnt > BROKEN_THRESH) {
       deca_enabled = 1;
    } else {
@@ -97,6 +97,17 @@ int deca_policy_refresh(wifi_info* info, int deca_enabled){
          }
       }
    }
+*/
+
+   if(window_full){      
+      if((deca_enabled == 0) && (check_under_LLINT(rssi_window, rssi_LL, WINDOW_SIZE) && (info->broken_signal_cnt > BROKEN_THRESH) )){
+         deca_enabled = 1;
+      }
+      else if((deca_enabled == 1) && (check_over_ULINT(rssi_window, rssi_UL, WINDOW_SIZE) || (info->broken_signal_cnt < (BROKEN_THRESH - 200) ) )){
+         deca_enabled = 0;
+      }
+   }  
+
    return deca_enabled;
 }
 

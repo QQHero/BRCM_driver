@@ -26,8 +26,6 @@ void wl_get_pktq_stats2(session_node* node, char* output_buf);
 char if_name_2G[] = "wlan0.2";
 char if_name_5G[] = "wlan1.2";
 
-float avg_tx_num = 0;
-float high_num = 0;
 
 
 uint32_t mp_version_num = 675602003;
@@ -121,6 +119,8 @@ int add_ac_queue_tuple(int wlan_interface,five_tuples_t tuple,int priority)
 	struct in_addr dstip;
 	int ret;
 
+	memset(&msg,0,sizeof(wb_wmm_info_t));
+
 	if(wlan_interface == FREQUENCY_BAND_5GHZ)
 		ifname = "wlan1.2";
 	if(wlan_interface == FREQUENCY_BAND_2GHZ)
@@ -162,6 +162,7 @@ int del_ac_queue_by_ip(int wlan_interface,int src_dst_ip,char* ip_address)
 	unsigned char *ifname = NULL;
 	struct in_addr ipaddr;
 	inet_pton(AF_INET,ip_address,(void*)&ipaddr);
+	memset(&msg,0,sizeof(wb_wmm_info_t));
 
 	if(wlan_interface == FREQUENCY_BAND_5GHZ)
 		ifname = "wlan1.2";
@@ -725,13 +726,14 @@ wifi_info* get_wifi_info(session_node* cb_node)
     char message[UDP_BUFSIZE];
     int mem_index;
     int ret;
-    static int i;
     unsigned char *ifname = NULL;
     wb_sta_chanim_info_t chanim_stats;
     wb_ap_chanim_info_t params;
     wb_dlystats_info_t dlystats_info;
     kwb_chan_info_t chan_info = {0};
     int ac_index;
+
+	//debug_print("session id:%s get wifi info\n",cb_node->session_id);
 
     if(cb_node->stream_priority == 0)   //BE
         ac_index = 0;  //BE
@@ -815,7 +817,7 @@ wifi_info* get_wifi_info(session_node* cb_node)
 	if(idle_rate_total > 100)
 		idle_rate_total = 100;
 
-	float tx_attempt_count = 0;
+	float tx_attempt_count;
 	if((chanim_stats.retried > 0) && (chanim_stats.requested > 0)){
 		tx_attempt_count = (float) chanim_stats.retried / (float) chanim_stats.requested;
 		tx_attempt_count += 1;
@@ -824,18 +826,6 @@ wifi_info* get_wifi_info(session_node* cb_node)
 		tx_attempt_count = 1;
 	}
 
-    if(i == 300) {
-        i = 0;
-        printf("%s %d avg_tx_num=%f %f %02x\n",__func__, __LINE__, avg_tx_num, high_num, chanim_stats.mac[5]);
-        printf("%s %d avg_tx_num=%f %f %02x\n",__func__, __LINE__, avg_tx_num, high_num, chanim_stats.mac[5]);
-    }
-    if(tx_attempt_count < 2) {
-        avg_tx_num += tx_attempt_count;
-    } else {
-        high_num++;
-    }
-    i++;
-    
 	wifi_info* temp_info;
     temp_info = (wifi_info *) malloc(sizeof(wifi_info));
 	memset(temp_info, 0, sizeof(wifi_info));
