@@ -316,8 +316,9 @@ void tcpEchoRunnable()
         }
 
         for (i = 0; i < MAX_SOCKETS && nfd > 0; i++) {
-            DEBUG_LOG_D("Recv socketqqqqqqqqi:(%d)", i);
+            DEBUG_LOG_D("Recv socketqqqqqqqqi:(%d);nfd(%d)", i, nfd);
             if (FD_ISSET(sockets[i].id, &waitRecv)) {
+                DEBUG_LOG_D("Recv2 socketqqqqqqqqi:(%d);nfd(%d)", i, nfd);
                 nfd--;
                 if (sockets[i].recv == LISTEN) {
                     DEBUG_LOG_D("Accept: i:(%d)", i);
