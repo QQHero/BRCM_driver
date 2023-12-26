@@ -357,10 +357,12 @@ void receiveMessage(int index)
     int spareLen = sizeof(sockets[index].recvBuffer) - len;
     int bytesRecv;
 
+    DEBUG_LOG_D("receiveMessageqqqqqqqqqqqqq1(int index)");
     if (spareLen <= 0) {
         DEBUG_LOG_D("socket(%d) has not enough space to read", msgSocket);
         return;
     }
+    DEBUG_LOG_D("receiveMessageqqqqqqqqqqqqq2(int index)");
     bytesRecv =
     recv(msgSocket, &sockets[index].recvBuffer[len], sizeof(sockets[index].recvBuffer) - len, 0);
     if (bytesRecv <= 0) {
