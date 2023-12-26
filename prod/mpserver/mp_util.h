@@ -52,6 +52,7 @@ struct session_linked_list
 	int 	deca_probe_enabled;   //deca probe is enabled
 	int 	deca_probe_failed;    //deca probe ever failed for this session
 	int 	report;               //0:don't report 1:report
+	int     tcp_socket_index;
 	five_tuples_t tuples[MAX_TUPLES];              
 };
 typedef struct session_linked_list session_node;
@@ -62,6 +63,7 @@ session_node* create_session_node(char* session_id, char* sta_ip_addr, char* pro
 int insert_session_node(session_node* new_node);
 int delete_session_node(char* session_id);
 session_node* get_session_node(char* session_id);
+session_node* get_session_node_index(int tcp_socket_index);
 void print_all_sessions();
 session_node*  get_first_session_node();
 const char* get_localtime_str();
@@ -85,7 +87,23 @@ void string_lower_to_upper(char string[]);
 int get_session_count();
 
 
+session_node* get_session_node_index(int tcp_socket_index)
+{
 
+	//print_all_sessions();
+	session_node *searchNode = head;
+    while(searchNode!=NULL)
+    {
+        if(searchNode->tcp_socket_index == tcp_socket_index)
+        {
+			return searchNode;
+        }
+        else
+            searchNode = searchNode->next;
+    }
+	return NULL;
+
+}
 
 
 #define debug_print(f_, ...) printf("[%s]", get_localtime_str()), printf((f_), ##__VA_ARGS__)
