@@ -301,45 +301,39 @@ int disable_wlan0()
 
 int ip_to_mac_address(char* ip_addr, char* mac_address) 
 {
-    char cmd[BUFSIZE];	 
-    char buf[BUFSIZE];
-    FILE *fp;
+	
+    /* dump_flag_qqdx */
+    FILE *fp = fopen("/proc/net/arp", "r");
+	if (fp == NULL) {
+		printf("Error opening arp file!\n");
+		return -1;
+	}
+
 	int found = 0;
-	char dest[BUFSIZE];
-    memset(dest, 0, BUFSIZE);
-    int num = 0;
-	char *tempstr = NULL;
+	char line[BUFSIZE];
+	// Skip the header line
+	fgets(line, sizeof(line), fp);
 
-	sprintf(cmd, "arp %s",ip_addr); 
+	while (fgets(line, sizeof(line), fp) != NULL) {
+		char ip[32], mac[32], flags[8], mask[8], device[8];
+		sscanf(line, "%s %*s %s %s %s %s", ip, flags, mac, mask, device);
+		if (strcmp(ip, ip_addr) == 0) {
+			strcpy(mac_address, mac);
+			found = 1;
+			break;
+		}
+	}
 
-    if ((fp = popen(cmd, "r")) == NULL) {
-        printf("Error opening pipe!\n");
-        return -1;
-    }
+	fclose(fp);
 
-	debug_print("qqip_to_mac_address11111111\n");
-	    
-    if(fgets(buf, BUFSIZE, fp) != NULL) {
-	debug_print("qqip_to_mac_address222222222222222\n");
-		tempstr = strstr(buf, "at");
-		//printf("tempstr-%s\n",tempstr);
-		num =strstr(tempstr,"[") - tempstr ;
-		debug_print("qqip_to_mac_address3333333333333\n");
-		//printf("tempstr num-%d\n",num);
-		//strncpy(dest,tempstr+3,num-3);
-		strncpy(dest,tempstr+3,num-4);
-		strcpy(mac_address, dest);
-		pclose(fp);
-		debug_print("qqip_to_mac_address44444444444444\n");
+	if (found) {
+		debug_print("Found MAC address: %s\n", mac_address);
 		return 0;
-    }
-
-    if(pclose(fp))  {
-        printf("Command not found or exited with error status\n");
-        return -1;
-    }
-	printf("Mac addr not found\n");
-    return -1;
+	} else {
+		printf("MAC address not found\n");
+		return -1;
+	}
+    /* dump_flag_qqdx */
 }
 
 int split(char dst[][BUFSIZE], char* str, const char* spl)
