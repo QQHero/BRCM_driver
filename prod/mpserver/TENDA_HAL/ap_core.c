@@ -301,6 +301,7 @@ int disable_wlan0()
 
 int ip_to_mac_address(char* ip_addr, char* mac_address) 
 {
+	debug_print("ip_to_mac_address11111111\n");
     char cmd[BUFSIZE];	 
     char buf[BUFSIZE];
     FILE *fp;
@@ -316,17 +317,20 @@ int ip_to_mac_address(char* ip_addr, char* mac_address)
         printf("Error opening pipe!\n");
         return -1;
     }
+	debug_print("ip_to_mac_address222222222222222\n");
 
 	    
     if(fgets(buf, BUFSIZE, fp) != NULL) {
 		tempstr = strstr(buf, "at");
 		printf("tempstr-%s\n",tempstr);
 		num =strstr(tempstr,"[") - tempstr ;
+		debug_print("ip_to_mac_address3333333333333\n");
 		printf("tempstr num-%d\n",num);
 		//strncpy(dest,tempstr+3,num-3);
 		strncpy(dest,tempstr+3,num-4);
 		strcpy(mac_address, dest);
 		pclose(fp);
+		debug_print("ip_to_mac_address44444444444444\n");
 		return 0;
     }
 
