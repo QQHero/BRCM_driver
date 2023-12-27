@@ -519,16 +519,19 @@ void timer_callback_start_info_qq(struct timer_list *t) {
         start_sta_info_cur->ea.ether_addr_octet[5]);*/
     if(start_sta_info_cur->start_is_on>0){
         start_game_is_on = TRUE;
+        if((qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
 	/* dump_flag_qqdx */
                 printk("start set ofdma qq:\n");
 	/* dump_flag_qqdx */
-        WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
-        wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
-        wlc_muscheduler_info_t *musched = wlc_qq->musched;
-        
-        musched->dl_schidx = 1;
-	    scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
-        musched_scb->dl_schpos = 1;
+            WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
+
+            wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
+            wlc_muscheduler_info_t *musched = wlc_qq->musched;
+            
+            musched->dl_schidx = 1;
+            scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
+            musched_scb->dl_schpos = 1;
+        }
         //wlc_musched_admit_dlclients(musched);
     }else{
         start_game_is_on = FALSE;
