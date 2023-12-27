@@ -1652,13 +1652,19 @@ wlc_musched_dp_stats(wlc_muscheduler_info_t *musched, tx_status_t *txs, uint8 *c
 void wlc_musched_update_dlofdma(wlc_muscheduler_info_t *musched, scb_t* scb)
 {
 	/* dump_flag_qqdx */
-                printk("wlc_musched_update_dlofdma:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)----\n",
-                            scb->ea.octet[0],
-                            scb->ea.octet[1],
-                            scb->ea.octet[2],
-                            scb->ea.octet[3],
-                            scb->ea.octet[4],
-                            scb->ea.octet[5]);
+	printk("wlc_musched_update_dlofdma:start1\n");
+	if(scb!=NULL){
+
+		printk("wlc_musched_update_dlofdma:scb MAC address (%02x:%02x:%02x:%02x:%02x:%02x)----\n",
+					scb->ea.octet[0],
+					scb->ea.octet[1],
+					scb->ea.octet[2],
+					scb->ea.octet[3],
+					scb->ea.octet[4],
+					scb->ea.octet[5]);
+	}else{
+		printk("wlc_musched_update_dlofdma:NULL scb");
+	}
 	/* dump_flag_qqdx */
 	bool dlmu_on = wlc_musched_scb_isdlofdma_eligible(musched, scb);
 	bool dlmu_redo = FALSE;
@@ -1710,6 +1716,9 @@ void wlc_musched_update_dlofdma(wlc_muscheduler_info_t *musched, scb_t* scb)
 	if (dlmu_redo) {
 		wlc_musched_admit_dlclients(wlc->musched);
 	}
+	/* dump_flag_qqdx */
+                printk("wlc_musched_update_dlofdma:end1\n");
+	/* dump_flag_qqdx */
 }
 
 void

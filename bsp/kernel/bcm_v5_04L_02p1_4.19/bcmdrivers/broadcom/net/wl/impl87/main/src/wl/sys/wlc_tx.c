@@ -11502,14 +11502,14 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
         mch2 = ((dl_schpos << MCTL2_SCHPOS_SHIFT) & MCTL2_SCHPOS_MASK) |
             ((dl_schid << MCTL2_SCHIDX_SHIFT) & MCTL2_SCHIDX_MASK);
         
-    /* dump_flag_qqdx */
-    int dump_rand_flag = OSL_RAND() % 10000;
-    if (dump_rand_flag>=9900) {
-        printk(KERN_ALERT"----------dl_schpos(%d)dl_schid(%d)----------",dl_schpos,dl_schid);
+        /* dump_flag_qqdx */
+        int dump_rand_flag = OSL_RAND() % 10000;
+        if (dump_rand_flag>=9900) {
+            printk(KERN_ALERT"----------dl_schpos(%d)dl_schid(%d)----------",dl_schpos,dl_schid);
+        }
         dl_schpos_qq = dl_schpos;
         dl_schid_qq = dl_schid;
-    }
-    /* dump_flag_qqdx */
+        /* dump_flag_qqdx */
         mch |= D11AC_TXC_MU;
         mch |= D11REV128_TXC_HEOFDMA;
         if (wlc_txbf_tbcap_check(wlc->txbf, scb, DLOFDMA) != BCME_OK) {
