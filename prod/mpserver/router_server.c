@@ -374,7 +374,9 @@ void receiveMessage(int index)
         DEBUG_LOG_D("socket index(%d) close", index);
         session_node* closeNode = get_session_node_index(index);
         if (closeNode != NULL) {
-            mp_stop_session(closeNode->session_id ,SESSION_STOPREASON_NORMAL);
+            
+            DEBUG_LOG_D("111111111111111bytesRecv is (%d)", bytesRecv);
+            //mp_stop_session(closeNode->session_id ,SESSION_STOPREASON_NORMAL);
         } else {
             closeSocketFd(msgSocket);
             removeSocket(index);            
