@@ -621,6 +621,7 @@ int add_BQW_enable_proxy_node(char* proxy_ip_addr, int stream_id, int stream_pro
 int mp_apply_config(char* session_id, struct apconfig config, char* result)
 {	
 
+		debug_print("mp_apply_configqq11111111111111111111\n");
     if(result == NULL){
 		debug_print("mp_apply_config result pointer not allocated!\n");
 		return -1;
@@ -654,6 +655,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 			cf_node->session_config.DECA_enabled = 0;			
 		}
 
+		debug_print("mp_apply_configqq22222222222222\n");
         //appid not startgame, could have more than one stream in the same AC queue
 		if (cf_node != NULL && check_app_stream_limit(cf_node->app_id) > 1) {
 				
@@ -798,6 +800,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 
 						cf_node->session_config.BQW_enabled = 1;
 						BQW_enabled_stream_count += 1;
+		debug_print("mp_apply_configqq3333333333333333\n");
 						debug_print("BQW enabled stream count:%d\n", BQW_enabled_stream_count);
 
 			
@@ -885,6 +888,7 @@ int mp_apply_config(char* session_id, struct apconfig config, char* result)
 
 				cf_node->session_config.BQW_enabled = 1;
 				BQW_enabled_stream_count += 1;
+		debug_print("mp_apply_configqq44444444444444444\n");
 				debug_print("BQW enabled stream count:%d\n", BQW_enabled_stream_count);
 				if(hal_deca_supported()){
 					sprintf(result, "%s;%s", result_pre, BQW_enabled_string);
@@ -945,6 +949,7 @@ int mp_reset_config(char* session_id)
 						release_stream_priority(rs_node->stream_priority,rs_node->freg_band);
 						release_stream_id(rs_node->stream_id);
 						BQW_enabled_stream_count -= 1;
+		debug_print("mp_apply_configqq55555555555555555\n");
 						debug_print("BQW enabled stream count:%d\n", BQW_enabled_stream_count);
 					}
 					else{
@@ -981,6 +986,7 @@ int mp_reset_config(char* session_id)
 			if(ac_result == 0){
 	
 				BQW_enabled_stream_count -= 1;
+		debug_print("mp_apply_configqq666666666666666\n");
 				debug_print("BQW enabled stream count:%d\n", BQW_enabled_stream_count);
 			}
 			else{
