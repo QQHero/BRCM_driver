@@ -18,7 +18,9 @@ int udp_sock_create(char* ip_addr, int port, struct sockaddr_in *addr)
         socklen_t addrlen = sizeof(struct sockaddr_in);
 
 
-        printf("udp_sock_create， ip_addr:%s, port:%d\n",ip_addr, port);
+    /* dump_flag_qqdx */
+        debug_print("udp_sock_create, ip_addr:%s, port:%d\n",ip_addr, port);
+    /* dump_flag_qqdx */
        
         if ( (fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
         {
