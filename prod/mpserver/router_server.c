@@ -10,6 +10,7 @@
 #include "router_log.h"
 #include "router_protocol.h"
 #include "mp_core.h"
+#include "mp_util.h"
 //#include "mp_aeb.h"
 
 
@@ -92,6 +93,14 @@ void removeSocket(int index) {
   sockets[index].recv = EMPTY;
   sockets[index].send = EMPTY;
   socketsCount--;
+}
+
+void terminateSocket(int index) {
+    closeSocketFd(sockets[index].id);
+    sockets[index].id = kInvalidSocket;
+    sockets[index].recv = EMPTY;
+    sockets[index].send = EMPTY;
+    socketsCount--;    
 }
 
 static inline int make_socket_nonblocking(int fd) 
@@ -288,8 +297,9 @@ void tcpEchoRunnable()
             gettimeofday(&te, NULL); // get current time
             time_stamp_current_ms = te.tv_sec*1000LL + te.tv_usec/1000;
             if (time_stamp_current_ms - time_stamp_previous_ms >= 200) {
-                gather_ap_info();
                 time_stamp_previous_ms = time_stamp_current_ms;
+                gather_ap_info();
+                
             }
             continue;
         }
@@ -361,8 +371,16 @@ void receiveMessage(int index)
     bytesRecv =
     recv(msgSocket, &sockets[index].recvBuffer[len], sizeof(sockets[index].recvBuffer) - len, 0);
     if (bytesRecv <= 0) {
-        closeSocketFd(msgSocket);
-        removeSocket(index);
+        DEBUG_LOG_D("socket index(%d) close", index);
+        session_node* closeNode = get_session_node_index(index);
+        if (closeNode != NULL) {
+            mp_stop_session(closeNode->session_id ,SESSION_STOPREASON_NORMAL);
+        } else {
+            closeSocketFd(msgSocket);
+            removeSocket(index);            
+        }
+        //closeSocketFd(msgSocket);
+        //removeSocket(index);
         return;
     }
 

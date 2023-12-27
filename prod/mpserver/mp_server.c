@@ -553,7 +553,7 @@ int handle_handshake_cmd(int index,cJSON *jobjReceived)
     
   if (result==0) {
     DEBUG_LOG_I("Session ID:%s,ACC IP:%s,PORT:%s,STA IP:%s,APP_ID:%s\n",session_id,acc_ip,port,sockets[index].clientIp,app_id);
-    result = mp_start_session(session_id,sockets[index].clientIp,acc_ip,atoi(port),report_ip,atoi(report_port),app_id,timer_ms ,mp_version_num);
+    result = mp_start_session(index,session_id,sockets[index].clientIp,acc_ip,atoi(port),report_ip,atoi(report_port),app_id,timer_ms ,mp_version_num);
 
     if (result!=-1) {
       if(cJSON_HasObjectItem(jobjReceived,"config")) {
