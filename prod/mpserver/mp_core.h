@@ -21,7 +21,7 @@ typedef struct session_linked_list session_node;
 typedef struct five_tuples five_tuples_t;
 
 void init_mp_core();
-int mp_start_session(int tcp_socket_index,char* session_id, char* sta_ip_addr, char* proxy_ip_addr, int proxy_port, char* report_ip_addr, int report_port, char* app_id, int timer_ms, uint32_t version_num);
+int mp_start_session(char* session_id, char* sta_ip_addr, char* proxy_ip_addr, int proxy_port, char* report_ip_addr, int report_port, char* app_id, int timer_ms, uint32_t version_num);
 void mp_session_unit_test(void);
 //int mp_apply_config(char* session_id, struct apconfig config);
 int mp_apply_config(char* session_id, struct apconfig config, char* result);
