@@ -3792,6 +3792,9 @@ wlc_mutx_eval_dlofdma_admission(wlc_mutx_info_t *mu_info)
 			}
 		}
 
+    /* dump_flag_qqdx */
+	printk("wlc_mutx_eval_dlofdma_admission:wlc_musched_scb_isdlofdma_eligible");
+    /* dump_flag_qqdx */
 		is_dlofdma_eligible = wlc_musched_scb_isdlofdma_eligible(wlc->musched, scb);
 		if ((SCB_DLOFDMA_ADM(scb) && !SCB_IS_UNUSABLE(scb)) &&
 			((tx_type != DLOFDMA) ||

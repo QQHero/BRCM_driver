@@ -1347,6 +1347,9 @@ static void wlc_musched_admit_users_reinit(wlc_muscheduler_info_t *musched, wlc_
 			if (!musched_scb) {
 				continue;
 			}
+    /* dump_flag_qqdx */
+	printk("wlc_musched_admit_users_reinit:wlc_musched_scb_isdlofdma_eligible");
+    /* dump_flag_qqdx */
 			if (!wlc_musched_scb_isdlofdma_eligible(musched, scb)) {
 				continue;
 			}
@@ -1802,6 +1805,10 @@ wlc_musched_admit_users_reset(wlc_muscheduler_info_t *musched, wlc_bsscfg_t *cfg
 		}
 		FOREACH_BSS_SCB(wlc->scbstate, &scbiter, bsscfg, scb) {
 			musched_scb = SCB_MUSCHED(musched, scb);
+			
+    /* dump_flag_qqdx */
+	printk("wlc_musched_admit_users_reset:wlc_musched_scb_isdlofdma_eligible");
+    /* dump_flag_qqdx */
 			if (!wlc_musched_scb_isdlofdma_eligible(musched, scb)) {
 				continue;
 			}

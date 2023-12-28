@@ -5478,6 +5478,9 @@ wlc_he_htc_process_omi(wlc_info_t* wlc, scb_t *scb, d11rxhdr_t *rxh, uint32 omi_
     }
     if (dlmmu_dis_change || bw_change) {
 #ifdef WL_MU_TX
+    /* dump_flag_qqdx */
+	printk("wlc_he_htc_process_omi:wlc_musched_scb_isdlofdma_eligible");
+    /* dump_flag_qqdx */
         if (SCB_HEMMU(scb) && dlmmu_dis_change) {
             wlc_mutx_process_dlhemmu_dis_change(wlc->mutx, scb);
         } else if (SCB_DLOFDMA_ADM(scb) &&
