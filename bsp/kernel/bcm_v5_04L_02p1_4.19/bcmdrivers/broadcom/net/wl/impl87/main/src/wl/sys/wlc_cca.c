@@ -267,6 +267,7 @@ BCMATTACHFN(wlc_cca_channels_num)(wlc_info_t *wlc)
 	int i = 0, channel;
 	FOREACH_WLC_BAND(wlc, bandunit) {
 		band = wlc->bandstate[bandunit];
+		printk("band->first_c")
 		FOREACH_WLC_BAND_CHANNEL20(band, channel) {
 			i++;
 		}

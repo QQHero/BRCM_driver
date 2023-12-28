@@ -3836,6 +3836,9 @@ wlc_test_pkteng_addsta(wlc_test_info_t *test, int usridx)
 	ratesel_rates.rspec[0] = usr->rspec;
 	wlc_ratelinkmem_update_rate_entry(wlc, scb, &ratesel_rates, 0);
 
+        /* dump_flag_qqdx */        
+            printk(KERN_ALERT"----------wlc_test_pkteng_addsta:wlc_scbmusched_set_dlschpos;usr->dl_schpos(%d)----------",usr->dl_schpos);
+        /* dump_flag_qqdx */
 	wlc_scbmusched_set_dlofdma(wlc->musched, scb, TRUE);
 	wlc_scbmusched_set_dlschpos(wlc->musched, scb, usr->dl_schpos);
 	return ret;
@@ -4460,6 +4463,10 @@ wlc_test_set_scheduler(wlc_test_info_t *test, uint16 sch_type)
 		for (i = 0; i < WLC_TEST_PKTENG_MAXUSR; i++) {
 			usr = &info->usr[i];
 			if (usr->scb) {
+				
+        /* dump_flag_qqdx */        
+            printk(KERN_ALERT"----------wlc_test_set_scheduler1:wlc_scbmusched_set_dlschpos----------");
+        /* dump_flag_qqdx */
 				wlc_scbmusched_set_dlofdma(wlc->musched, usr->scb, FALSE);
 				wlc_scbmusched_set_dlschpos(wlc->musched, usr->scb,
 					MCTL2_INVALID_SCHPOS);
@@ -4481,6 +4488,9 @@ wlc_test_set_scheduler(wlc_test_info_t *test, uint16 sch_type)
 				return BCME_ERROR;
 			}
 			wlc_scbmusched_set_dlofdma(wlc->musched, usr->scb, TRUE);
+        /* dump_flag_qqdx */        
+            printk(KERN_ALERT"----------wlc_test_set_scheduler2:wlc_scbmusched_set_dlschpos;usr->dl_schpos(%d)----------",usr->dl_schpos);
+        /* dump_flag_qqdx */
 			if (wlc_scbmusched_set_dlschpos(wlc->musched, usr->scb, usr->dl_schpos)
 				!= BCME_OK) {
 				WL_ERROR(("%s: fail to set sch for usr %d ", __FUNCTION__, i));
