@@ -3796,6 +3796,10 @@ wlc_mutx_eval_dlofdma_admission(wlc_mutx_info_t *mu_info)
 	printk("wlc_mutx_eval_dlofdma_admission:wlc_musched_scb_isdlofdma_eligible");
     /* dump_flag_qqdx */
 		is_dlofdma_eligible = wlc_musched_scb_isdlofdma_eligible(wlc->musched, scb);
+		
+    /* dump_flag_qqdx */
+	printk("wlc_mutx_eval_dlofdma_admission2:wlc_musched_scb_isdlofdma_eligible;is_dlofdma_eligible(%d)",is_dlofdma_eligible);
+    /* dump_flag_qqdx */
 		if ((SCB_DLOFDMA_ADM(scb) && !SCB_IS_UNUSABLE(scb)) &&
 			((tx_type != DLOFDMA) ||
 			(!is_dlofdma_eligible))) {
@@ -3878,6 +3882,7 @@ wlc_mutx_eval_dlofdma_admission(wlc_mutx_info_t *mu_info)
 		}
 	}
 	ASSERT(LIST_IS_EMPTY(mu_info->candidate_ofdma_list));
+	printk("wlc_mutx_eval_dlofdma_admission end:wlc_musched_scb_isdlofdma_eligible");
 }
 
 static void
@@ -4036,6 +4041,7 @@ wlc_mutx_switch_txtech(wlc_mutx_info_t *mu_info)
 		}
 	}
 
+	printk("wlc_mutx_switch_txtech:wlc_mutx_eval_dlofdma_admission");
 	if (LIST_IS_EMPTY(mu_info->admit_ofdma_list)) {
 		wlc_mutx_eval_dlofdma_admission(mu_info);
 	}
@@ -4098,6 +4104,7 @@ wlc_mutx_scb_drained(wlc_info_t *wlc, scb_t *scb)
 		}
 	}
 
+	printk("wlc_mutx_scb_drained:wlc_mutx_eval_dlofdma_admission");
 	if (LIST_IS_EMPTY(mu_info->admit_ofdma_list)) {
 		wlc_mutx_eval_dlofdma_admission(mu_info);
 	}
