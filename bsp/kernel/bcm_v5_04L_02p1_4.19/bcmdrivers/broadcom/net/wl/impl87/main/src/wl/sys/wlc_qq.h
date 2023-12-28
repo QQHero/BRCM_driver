@@ -529,9 +529,9 @@ void timer_callback_start_info_qq(struct timer_list *t) {
             wlc_muscheduler_info_t *musched = wlc_qq->musched;
             wlc_musched_set_dlpolicy(musched, MUSCHED_DL_POLICY_FIXED);
             musched->rualloc = MUSCHED_RUALLOC_RUCFG;
-            musched->dl_schidx = 3;
+            musched->dl_schidx = 1;
             scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
-            musched_scb->dl_schpos = 3;
+            musched_scb->dl_schpos = 1;
         }
         //wlc_musched_admit_dlclients(musched);
     }else{

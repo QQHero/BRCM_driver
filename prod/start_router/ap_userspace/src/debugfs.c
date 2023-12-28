@@ -229,6 +229,11 @@ typedef enum {
 #define MUSCHED_RU_BMP_COL_SZ		((MUSCHED_RU_IDX_NUM - 1) / 8 + 1) /* 9 */
 
 
+#define	ETHER_ADDR_LEN		6
+struct	ether_addr {
+	uint8_t octet[ETHER_ADDR_LEN];
+};
+
 
 /* forward declaration */
 #define MUSCHED_RUCFG_ROW		16
@@ -327,6 +332,7 @@ struct musched_info_qq {
 	uint16_t	txdur_thresh_su;	/* threshold to fall back to SU */
     int8_t dl_schid; /*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
     int8_t dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
+	struct ether_addr ea;
 }musched_info_qq_t;
 
 
@@ -359,11 +365,6 @@ struct wl_rxsts_qq {
     uint32_t  sig_a1;			/* HE  SIG-A1 field */
     uint32_t  sig_a2;			/* HE  SIG-A2 field */
 } wl_mon_rxsts_t;
-
-#define	ETHER_ADDR_LEN		6
-struct	ether_addr {
-	uint8_t octet[ETHER_ADDR_LEN];
-};
 
 #define FC_PVER_MASK		0x3	/* PVER mask */
 #define FC_PVER_SHIFT		0	/* PVER shift */
@@ -773,9 +774,11 @@ void file_io(void) {
             multiuser_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"multi-user info:");
             
-            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u)"\
+            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u);MAC address(%02x:%02x:%02x:%02x:%02x:%02x)"\
                 ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->mu_type\
-                ,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2,musched_info_qq_cur->dl_schpos,musched_info_qq_cur->dl_schid);
+                ,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2,musched_info_qq_cur->dl_schpos,musched_info_qq_cur->dl_schid\
+                ,musched_info_qq_cur->ea.octet[0],musched_info_qq_cur->ea.octet[1],musched_info_qq_cur->ea.octet[2]\
+                ,musched_info_qq_cur->ea.octet[3],musched_info_qq_cur->ea.octet[4],musched_info_qq_cur->ea.octet[5]);
             
             fprintf(stdout,"scb_flagsinfo:WME: %d, AMPDU: %d, AMSDU: %d, AMSDU_IN_AMPDU: %d, DTPC: %d, HT: %d, VHT: %d, ISGF: %d, NONGF: %d, COEX: %d, STBC: %d, HT_LDPC: %d, HT_PROP_RATES: %d, OPER_MODE_NOTIF: %d, HE: %d, IBSS_PEER: %d, PKTC: %d, QOS: %d, P2P: %d, DWDS: %d, DWDS_CAP: %d, MAP: %d, MAP_P2: %d, ECSA: %d, LEGACY_WDS: %d, A4_DATA: %d, A4_NULL_DATA: %d, A4_8021X: %d, MFP: %d, SHA256: %d, QAM_1024: %d, VHTMU: %d, HEMMU: %d, DLOFDMA: %d, ULOFDMA: %d, ULMMU: %d, RRM: %d, FTM: %d, FTM_INITIATOR: %d, FTM_RESPONDER: %d"\
                 ,musched_info_qq_cur->scb_flags.wme, musched_info_qq_cur->scb_flags.ampdu, musched_info_qq_cur->scb_flags.amsdu, musched_info_qq_cur->scb_flags.amsdu_in_ampdu, musched_info_qq_cur->scb_flags.dtpc, musched_info_qq_cur->scb_flags.ht, musched_info_qq_cur->scb_flags.vht, musched_info_qq_cur->scb_flags.isgf, musched_info_qq_cur->scb_flags.nongf, musched_info_qq_cur->scb_flags.coex, musched_info_qq_cur->scb_flags.stbc, musched_info_qq_cur->scb_flags.ht_ldpc, musched_info_qq_cur->scb_flags.ht_prop_rates, musched_info_qq_cur->scb_flags.oper_mode_notif, musched_info_qq_cur->scb_flags.he, musched_info_qq_cur->scb_flags.ibss_peer, musched_info_qq_cur->scb_flags.pktc, musched_info_qq_cur->scb_flags.qos, musched_info_qq_cur->scb_flags.p2p, musched_info_qq_cur->scb_flags.dwds, musched_info_qq_cur->scb_flags.dwds_cap, musched_info_qq_cur->scb_flags.map, musched_info_qq_cur->scb_flags.map_p2, musched_info_qq_cur->scb_flags.ecsa, musched_info_qq_cur->scb_flags.legacy_wds, musched_info_qq_cur->scb_flags.a4_data, musched_info_qq_cur->scb_flags.a4_null_data, musched_info_qq_cur->scb_flags.a4_8021x, musched_info_qq_cur->scb_flags.mfp, musched_info_qq_cur->scb_flags.sha256, musched_info_qq_cur->scb_flags.qam_1024, musched_info_qq_cur->scb_flags.vhtmu, musched_info_qq_cur->scb_flags.hemmu, musched_info_qq_cur->scb_flags.dlofdma, musched_info_qq_cur->scb_flags.ulofdma, musched_info_qq_cur->scb_flags.ulmmu, musched_info_qq_cur->scb_flags.rrm, musched_info_qq_cur->scb_flags.ftm, musched_info_qq_cur->scb_flags.ftm_initiator, musched_info_qq_cur->scb_flags.ftm_responder);

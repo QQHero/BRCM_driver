@@ -11612,7 +11612,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
 
 	/* dump_flag_qqdx */
 	if(start_game_is_on){
-        if((scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
+        if((scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(scb->ea), sizeof(struct ether_addr)) == 0)){
 
             kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
             struct musched_info_qq *musched_info_qq_cur = NULL;
@@ -11625,6 +11625,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
             musched_info_qq_cur->mch2 = mch2;
             musched_info_qq_cur->dl_schpos = dl_schpos_qq;
             musched_info_qq_cur->dl_schid = dl_schid_qq;
+            memcpy(&(musched_info_qq_cur->ea), &(scb->ea), sizeof(musched_info_qq_cur->ea));
             copy_mushed_struct_members(wlc->musched,musched_info_qq_cur);
             memcpy(info_qq, musched_info_qq_cur, sizeof(*musched_info_qq_cur));
             debugfs_set_info_qq(5, info_qq, 1);
