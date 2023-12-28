@@ -4104,7 +4104,9 @@ wlc_mutx_scb_drained(wlc_info_t *wlc, scb_t *scb)
 		}
 	}
 
+    /* dump_flag_qqdx */
 	printk("wlc_mutx_scb_drained:wlc_mutx_eval_dlofdma_admission");
+    /* dump_flag_qqdx */
 	if (LIST_IS_EMPTY(mu_info->admit_ofdma_list)) {
 		wlc_mutx_eval_dlofdma_admission(mu_info);
 	}
