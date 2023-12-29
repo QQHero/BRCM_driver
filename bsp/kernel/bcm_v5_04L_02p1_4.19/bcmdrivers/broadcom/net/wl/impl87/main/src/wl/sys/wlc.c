@@ -11103,6 +11103,10 @@ wlc_doioctl(void *ctx, uint cmd, void *arg, uint len, struct wlc_if *wlcif)
 
     case WLC_UP:
         bcmerror = wlc_do_up(wlc);
+        
+    /* dump_flag_qqdx */
+    wlc_is_down_qq = FALSE;
+    /* dump_flag_qqdx */
         break;
 
 #ifndef BCMNODOWN
@@ -11128,6 +11132,10 @@ wlc_doioctl(void *ctx, uint cmd, void *arg, uint len, struct wlc_if *wlcif)
 
     case WLC_DOWN:
     case WLC_REBOOT:
+    
+    /* dump_flag_qqdx */
+    wlc_is_down_qq = TRUE;
+    /* dump_flag_qqdx */
         wlc_do_down(wlc);
         break;
 
