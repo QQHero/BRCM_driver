@@ -592,11 +592,11 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
                     musched_scb->dl_schpos = 0;
                 }
-                start_game_is_on = TRUE;
-            //wlc_musched_admit_dlclients(musched);
-            }else{
-                start_game_is_on = FALSE;
             }
+            start_game_is_on = TRUE;
+        //wlc_musched_admit_dlclients(musched);
+        }else{
+            start_game_is_on = FALSE;
         }
     }
     // 重新设置定时器    
