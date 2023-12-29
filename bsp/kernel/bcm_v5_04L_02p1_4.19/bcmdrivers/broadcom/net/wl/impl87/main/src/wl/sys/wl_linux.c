@@ -2381,6 +2381,8 @@ static struct dentry *debugfs_dir = NULL;
 static struct dentry *debugfs_classes[DEBUG_MAX_CLASS] = {NULL};
 static info_class_t *kernel_info_list[DEBUG_MAX_CLASS] = {NULL}; 
 static struct mutex info_mtx[DEBUG_MAX_CLASS];
+extern bool start_game_is_on;
+extern bool wlc_is_down_qq;
 
 
 int debugfs_set_info(uint8 class, uint8 type, kernel_info_t value, uint8 ts) {
@@ -4145,6 +4147,9 @@ wl_up(wl_info_t *wl)
 #ifdef BPM_BULK_FREE
     ((osl_pubinfo_t *)wl->osh)->wl_going_down = FALSE;
 #endif /* BPM_BULK_FREE */
+    /* dump_flag_qqdx */
+    wlc_is_down_qq = FALSE;
+    /* dump_flag_qqdx */
     return (error);
 } /* wl_up */
 
@@ -4155,7 +4160,10 @@ wl_down(wl_info_t *wl)
     int monitor = 0;
     uint ret_val = 0;
     int callbacks;
-
+    /* dump_flag_qqdx */
+    start_game_is_on = FALSE;
+    wlc_is_down_qq = TRUE;
+    /* dump_flag_qqdx */
 #ifdef BPM_BULK_FREE
     ((osl_pubinfo_t *)wl->osh)->wl_going_down = TRUE;
     /* Wait for skbfree thread to finish */

@@ -9858,6 +9858,9 @@ wlc_atm_update_perc(wlc_info_t *wlc)
     }
 }
 #endif /* WLATM_PERC */
+    /* dump_flag_qqdx */
+extern bool wlc_is_down_qq;
+    /* dump_flag_qqdx */
 
 /** make interface operational */
 int
@@ -9865,6 +9868,9 @@ BCMINITFN(wlc_up)(wlc_info_t *wlc)
 {
     WL_TRACE(("wl%d: %s:\n", wlc->pub->unit, __FUNCTION__));
 
+    /* dump_flag_qqdx */
+    wlc_is_down_qq = FALSE;
+    /* dump_flag_qqdx */
     /* HW is turned off so don't try to access it */
     if (wlc->pub->hw_off || DEVICEREMOVED(wlc))
         return BCME_RADIOOFF;
@@ -10144,6 +10150,7 @@ BCMUNINITFN(wlc_down_del_timer)(wlc_info_t *wlc)
 }
 #endif /* !BCMNODOWN */
 
+
 /**
  * Mark the interface nonoperational, stop the software mechanisms,
  * disable the hardware, free any transient buffer state.
@@ -10152,6 +10159,10 @@ BCMUNINITFN(wlc_down_del_timer)(wlc_info_t *wlc)
 uint
 BCMUNINITFN(wlc_down)(wlc_info_t *wlc)
 {
+	
+    /* dump_flag_qqdx */
+    wlc_is_down_qq = TRUE;
+    /* dump_flag_qqdx */
 #ifdef BCMNODOWN
     ASSERT(0);  /* BCMNODOWN defined - should never be called */
     return 0;

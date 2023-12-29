@@ -488,6 +488,7 @@ wlc_info_t *wlc_qq;
 phy_info_t qq_pi;
 bool qq_pi_is_set = FALSE;
 bool qq_scb_is_set = FALSE;
+bool wlc_is_down_qq = FALSE;
 struct scb *qq_scb;
 
 
@@ -518,10 +519,9 @@ void timer_callback_start_info_qq(struct timer_list *t) {
         start_sta_info_cur->ea.ether_addr_octet[4],
         start_sta_info_cur->ea.ether_addr_octet[5]);*/
     
-    if(wlc_qq->pub->up){
+    if(wlc_qq->pub->up && (!wlc_is_down_qq)){
         if(start_sta_info_cur->start_is_on>0){
-            if(!start_game_is_on){
-
+            
                 if((qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
             /* dump_flag_qqdx */
                         printk("start set ofdma qq:\n");
@@ -536,7 +536,6 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
                     musched_scb->dl_schpos = 0;
                 }
-            }
             start_game_is_on = TRUE;
             //wlc_musched_admit_dlclients(musched);
         }else{
