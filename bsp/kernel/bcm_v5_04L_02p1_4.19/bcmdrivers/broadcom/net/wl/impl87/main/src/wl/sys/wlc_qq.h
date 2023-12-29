@@ -578,7 +578,7 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                 
             if((qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
                 wlc_ratesel_info_t * wrsi = wlc_qq->wrsi;
-                if(((rcb_t *)(SCB_RATESEL_CUBBY((wlc_ratesel_info_t *)(wrsi), qq_scb, LINK_BW_ENTRY)))!=NULL){//->link_bw
+                if(((rcb_t *)(SCB_RATESEL_CUBBY((wlc_ratesel_info_t *)(wrsi), qq_scb, LINK_BW_ENTRY)))!=NULL){//->link_bw,防止后续因暂时关闭wl而报错。
             /* dump_flag_qqdx */
                         printk("start set ofdma qq:\n");
             /* dump_flag_qqdx */
