@@ -664,7 +664,7 @@ int mp_stop_session(char* session_id, int stop_reason)
 
 	kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 	memcpy(info_qq, start_sta_info_cur, sizeof(*start_sta_info_cur));
-	//write_data(info_qq);//暂时先阻止退出
+	write_data(info_qq);//暂时先阻止退出
 	/*debug_print("sizeof(*start_sta_info_cur)[%d][%d][%d][%d]\n", sizeof(*start_sta_info_cur)\
 	, sizeof(start_sta_info_cur->start_is_on), sizeof(start_sta_info_cur->ea), sizeof(start_sta_info_cur->ac_queue_index));
     for (int i = 0; i < DEBUG_CLASS_MAX_FIELD; ++i) {
