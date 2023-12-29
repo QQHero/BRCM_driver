@@ -395,6 +395,7 @@ struct musched_info_qq {
     int8 dl_schid; /*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
     int8 dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
 	struct ether_addr ea;
+    uint32 dlofdma_set_time;
 };
 
 //copy from wlc_musched.c

@@ -11469,6 +11469,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
 
     /* dump_flag_qqdx */
         int8 dl_schpos_qq, dl_schid_qq;
+        uint32 dlofdma_set_time = 0;
     /* dump_flag_qqdx */
 #ifdef WL11AX
     /* Configure HEModeControl */
@@ -11509,6 +11510,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
         }
         dl_schpos_qq = dl_schpos;
         dl_schid_qq = dl_schid;
+        dlofdma_set_time = OSL_SYSUPTIME();
         /* dump_flag_qqdx */
         mch |= D11AC_TXC_MU;
         mch |= D11REV128_TXC_HEOFDMA;
@@ -11625,6 +11627,7 @@ wlc_d11hdrs_rev128(wlc_info_t *wlc, void *p, struct scb *scb, uint txparams_flag
             musched_info_qq_cur->mch2 = mch2;
             musched_info_qq_cur->dl_schpos = dl_schpos_qq;
             musched_info_qq_cur->dl_schid = dl_schid_qq;
+            musched_info_qq_cur->dlofdma_set_time = dlofdma_set_time;
             memcpy(&(musched_info_qq_cur->ea), &(scb->ea), sizeof(musched_info_qq_cur->ea));
             copy_mushed_struct_members(wlc->musched,musched_info_qq_cur);
             memcpy(info_qq, musched_info_qq_cur, sizeof(*musched_info_qq_cur));
