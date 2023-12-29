@@ -614,6 +614,10 @@ wl_chanim_stats_print(void *ptr, uint32 req_count, uint decimal, bool raw_chansp
 				wf_chspec_ntoa(dtoh16(stats_v4->chanspec), chanspec_string);
 				printf("%s\t ", chanspec_string);
 			}
+		/* dump_flag_qqdx */
+			
+        printk("wl_chanim_stats_print(%s)----------(%d)",chanspec_string,OSL_SYSUPTIME());
+		/* dump_flag_qqdx */
 			for (i = 0; i < CCASTATS_MAX; i++) {
 				if (stats_v4->acc_ms) {
 					percentage = (float)dtoh32(stats_v4->acc_ccastats[i])
