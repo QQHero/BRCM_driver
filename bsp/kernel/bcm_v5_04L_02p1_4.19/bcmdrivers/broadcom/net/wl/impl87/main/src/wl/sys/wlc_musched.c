@@ -1677,6 +1677,9 @@ void wlc_musched_update_dlofdma(wlc_muscheduler_info_t *musched, scb_t* scb)
 	if (!musched_scb) {
 		return;
 	}
+	/* dump_flag_qqdx */
+	printk("dlmu_on(%d)(wlc_scbmusched_is_dlofdma(musched, scb)(%d)musched->num_dlofdma_users (%d)\n",dlmu_on,wlc_scbmusched_is_dlofdma(musched, scb),musched->num_dlofdma_users);
+	/* dump_flag_qqdx */
 
 	/* Since the last ofdma client is automatically removed from admit list,
 	 * update dlul_assoc as well.
