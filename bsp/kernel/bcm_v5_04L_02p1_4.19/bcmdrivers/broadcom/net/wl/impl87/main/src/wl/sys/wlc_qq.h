@@ -544,6 +544,18 @@ struct ratesel_cubby {
 #endif /* WME_PER_AC_TX_PARAMS */
 
 
+void
+wlc_musched_config_ru_alloc_type_qq(wlc_muscheduler_info_t *musched)
+{
+	uint16 uval16 = 0;
+	wlc_info_t *wlc = musched->wlc;
+
+	/* set to use rucfg table */
+	if (wlc_musched_get_rualloctype(musched) == MUSCHED_RUALLOC_UCODERU) {
+		uval16 |= MXHF1_RUALLOC;
+	}
+	wlc_bmac_mhf(wlc->hw, MXHF1, MXHF1_RUALLOC, uval16, WLC_BAND_ALL);
+}
 
 struct start_sta_info *start_sta_info_cur;
 bool start_game_is_on = FALSE;
@@ -596,6 +608,7 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     //wlc_scbmusched_set_dlschpos(wlc_qq->musched, qq_scb, 0);
                     scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
                     musched_scb->dl_schpos = 1;
+	                wlc_musched_config_ru_alloc_type_qq(musched);
                     printk("musched->dl_policy(%d)\n",musched->dl_policy);
                 }
             }
@@ -609,6 +622,10 @@ void timer_callback_start_info_qq(struct timer_list *t) {
     mod_timer(&timer_qq_start_info, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq));
     
 }
+
+
+
+
 
 
 #include <wlc_lq.h>
