@@ -302,6 +302,7 @@ struct scb_flagsinfo{
 struct musched_info_qq {
     bool wlc_fifo_isMU;
     bool wlc_fifo_is_ulofdma;
+    bool wlc_fifo_is_dlofdma;
     uint8_t mu_type;
     uint16_t mch;
     uint16_t mcl;
@@ -775,8 +776,8 @@ void file_io(void) {
             multiuser_info.timestamp.tv_nsec / 1000);
             fprintf(stdout,"multi-user info:");
             
-            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);dlofdma_set_time(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u);MAC address(%02x:%02x:%02x:%02x:%02x:%02x)"\
-                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->dlofdma_set_time,musched_info_qq_cur->mu_type\
+            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);wlc_fifo_is_dlofdma(%d);dlofdma_set_time(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u);MAC address(%02x:%02x:%02x:%02x:%02x:%02x)"\
+                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->wlc_fifo_is_dlofdma,musched_info_qq_cur->dlofdma_set_time,musched_info_qq_cur->mu_type\
                 ,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2,musched_info_qq_cur->dl_schpos,musched_info_qq_cur->dl_schid\
                 ,musched_info_qq_cur->ea.octet[0],musched_info_qq_cur->ea.octet[1],musched_info_qq_cur->ea.octet[2]\
                 ,musched_info_qq_cur->ea.octet[3],musched_info_qq_cur->ea.octet[4],musched_info_qq_cur->ea.octet[5]);

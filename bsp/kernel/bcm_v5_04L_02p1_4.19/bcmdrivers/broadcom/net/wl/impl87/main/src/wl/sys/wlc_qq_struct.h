@@ -364,6 +364,7 @@ void update_scb_flags(struct scb_flagsinfo *my_scb, struct scb *scb);
 struct musched_info_qq {
     bool wlc_fifo_isMU;
     bool wlc_fifo_is_ulofdma;
+    bool wlc_fifo_is_dlofdma;
     uint8 mu_type;
     uint16 mch;
     uint16 mcl;

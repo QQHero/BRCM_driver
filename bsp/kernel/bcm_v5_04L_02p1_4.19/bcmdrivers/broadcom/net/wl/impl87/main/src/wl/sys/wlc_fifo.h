@@ -81,6 +81,9 @@ extern int wlc_fifo_global_remaining(wlc_fifo_info_t *fifo_info);
 extern bool wlc_fifo_all_released(wlc_fifo_info_t *fifo_info);
 extern void wlc_fifo_sta_mu_bitmap(wlc_fifo_info_t *fifo_info, struct scb *scb, void *fifo_bitmap);
 extern bool wlc_fifo_is_ulofdma(wlc_fifo_info_t *fifo_info, struct scb *scb, enum wme_ac);
+	/* dump_flag_qqdx */
+extern bool wlc_fifo_is_dlofdma_qq(wlc_fifo_info_t *fifo_info, struct scb *scb, enum wme_ac ac);
+	/* dump_flag_qqdx */
 extern int wlc_fifo_max_per_ac(wlc_fifo_info_t *fifo_info, mu_type_t mu);
 extern int wlc_scb_mu_fifo_count(wlc_fifo_info_t *fifo_info, struct scb *scb);
 extern int wlc_fifo_user_count(wlc_fifo_info_t *fifo_info, struct scb *scb, enum wme_ac ac);

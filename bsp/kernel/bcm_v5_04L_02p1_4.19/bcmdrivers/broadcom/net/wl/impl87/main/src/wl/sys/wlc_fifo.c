@@ -1494,6 +1494,20 @@ wlc_fifo_is_ulofdma(wlc_fifo_info_t *fifo_info, struct scb *scb, enum wme_ac ac)
 	return mu == WL_MU_ULOFDMA;
 }
 
+
+	/* dump_flag_qqdx */
+bool
+wlc_fifo_is_dlofdma_qq(wlc_fifo_info_t *fifo_info, struct scb *scb, enum wme_ac ac)
+{
+	mu_type_t mu;
+	int fifo_idx;
+	fifo_idx = scb->fifo_idx[ac] - fifo_info->mu_fifo_start_idx;
+	mu = FIFO_MU_TYPE(fifo_info->fifo_state[fifo_idx].ac_mu_type);
+	return mu == WL_MU_DLOFDMA;
+}
+	/* dump_flag_qqdx */
+
+
 bool
 wlc_check_fifo_type(wlc_fifo_info_t *fifo_info, struct scb *scb, enum wme_ac ac, mu_type_t mu)
 {
