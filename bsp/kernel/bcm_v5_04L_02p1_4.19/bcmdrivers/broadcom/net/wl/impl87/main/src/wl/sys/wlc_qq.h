@@ -587,7 +587,7 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     wlc_muscheduler_info_t *musched = wlc_qq->musched;
                     wlc_musched_set_dlpolicy(musched, MUSCHED_DL_POLICY_FIXED);
                     musched->rualloc = MUSCHED_RUALLOC_RUCFG;
-                    musched->dl_schidx = 0;
+                    musched->dl_schidx = 1;
                     //wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
                     //wlc_musched_admit_dlclients(wlc_qq->musched);
                     if(!SCB_DLOFDMA_ADM(qq_scb)){
