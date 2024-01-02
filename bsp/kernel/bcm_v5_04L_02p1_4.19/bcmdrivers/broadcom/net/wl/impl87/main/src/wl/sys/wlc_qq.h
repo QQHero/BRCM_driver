@@ -595,7 +595,7 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     }
                     //wlc_scbmusched_set_dlschpos(wlc_qq->musched, qq_scb, 0);
                     scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
-                    musched_scb->dl_schpos = 0;
+                    musched_scb->dl_schpos = 1;
                 }
             }
             start_game_is_on = TRUE;
