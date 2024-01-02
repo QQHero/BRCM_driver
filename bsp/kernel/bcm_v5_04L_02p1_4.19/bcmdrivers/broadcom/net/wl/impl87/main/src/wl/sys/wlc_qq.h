@@ -590,9 +590,10 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     musched->dl_schidx = 0;
                     //wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
                     //wlc_musched_admit_dlclients(wlc_qq->musched);
-                    
-                    wlc_scbmusched_set_dlofdma(wlc_qq->musched, qq_scb, TRUE);
-                    wlc_scbmusched_set_dlschpos(wlc_qq->musched, qq_scb, 0);
+                    if(!SCB_DLOFDMA_ADM(qq_scb)){
+                        wlc_scbmusched_set_dlofdma(wlc_qq->musched, qq_scb, TRUE);
+                    }
+                    //wlc_scbmusched_set_dlschpos(wlc_qq->musched, qq_scb, 0);
                     scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
                     musched_scb->dl_schpos = 0;
                 }
