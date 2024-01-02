@@ -584,11 +584,12 @@ void timer_callback_start_info_qq(struct timer_list *t) {
             /* dump_flag_qqdx */
                     WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
 
-                    wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
                     wlc_muscheduler_info_t *musched = wlc_qq->musched;
                     wlc_musched_set_dlpolicy(musched, MUSCHED_DL_POLICY_FIXED);
                     musched->rualloc = MUSCHED_RUALLOC_RUCFG;
                     musched->dl_schidx = 0;
+                    //wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
+                    wlc_musched_admit_dlclients(wlc_qq->musched);
                     scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
                     musched_scb->dl_schpos = 0;
                 }
