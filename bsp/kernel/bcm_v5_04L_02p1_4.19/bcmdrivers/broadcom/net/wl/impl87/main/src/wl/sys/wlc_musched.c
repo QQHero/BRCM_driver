@@ -458,7 +458,7 @@ wlc_musched_ackruidx_mapping(uint8 data_ruidx, uint8 ackru_type)
 
 	return ack_ruidx;
 }
-
+/*
 static const uint8 rucfg_init_tbl[MUSCHED_RUCFG_ROW][MUSCHED_RUCFG_COL] = {
 	{67},
 	{65, 66},
@@ -476,7 +476,28 @@ static const uint8 rucfg_init_tbl[MUSCHED_RUCFG_ROW][MUSCHED_RUCFG_COL] = {
 	{53, 54, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
 	{53, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
 	{37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
+};*/
+
+
+static const uint8 rucfg_init_tbl[MUSCHED_RUCFG_ROW][MUSCHED_RUCFG_COL] = {
+	{61},
+	{61, 61},
+	{61, 61, 61},
+	{61, 61, 61, 61},
+	{61, 62, 63, 59, 60},
+	{61, 62, 57, 58, 59, 60},
+	{61, 55, 56, 57, 58, 59, 60},
+	{53, 54, 55, 56, 57, 58, 59, 60},
+	{53, 54, 55, 56, 57, 58, 59, 51, 52},
+	{53, 54, 55, 56, 57, 58, 49, 50, 51, 52},
+	{53, 54, 55, 56, 57, 47, 48, 49, 50, 51, 52},
+	{53, 54, 55, 56, 45, 46, 47, 48, 49, 50, 51, 52},
+	{53, 54, 55, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
+	{53, 54, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
+	{53, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
+	{37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52},
 };
+
 
 /* This includes the auto generated ROM IOCTL/IOVAR patch handler C source file (if auto patching is
  * enabled). It must be included after the prototypes and declarations above (since the generated
