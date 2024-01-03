@@ -10706,6 +10706,9 @@ wlc_bandlock(wlc_info_t *wlc, int val)
     int i, idx;
     wlc_bsscfg_t *bsscfg;
 
+		/* dump_flag_qqdx */
+		printk("wlc_bandlock:start");
+		/* dump_flag_qqdx */
     WL_TRACE(("wl%d: wlc_bandlock: wlc %p val %d\n",
         wlc->pub->unit, wlc, OSL_OBFUSCATE_BUF(val)));
 
@@ -10805,6 +10808,10 @@ wlc_bandlock(wlc_info_t *wlc, int val)
 #endif
             /* switch to first channel in the new band */
             wlc_channels_init_ext(wlc->cmi);
+            
+		/* dump_flag_qqdx */
+		printk("wlc_bandlock:wlc_change_band");
+		/* dump_flag_qqdx */
             wlc_change_band(wlc, bandunit);
             /* XXX APSTA JAS Where does AP update beacon and probe response?
              * Enter a PR?
@@ -12361,6 +12368,10 @@ wlc_doioctl(void *ctx, uint cmd, void *arg, uint len, struct wlc_if *wlcif)
         break;
 
     case WLC_SET_BAND:
+    
+		/* dump_flag_qqdx */
+		printk("wlc_doioctl:wlc_bandlock");
+		/* dump_flag_qqdx */
         bcmerror = wlc_bandlock(wlc, (uint)val);
         break;
 
