@@ -8332,6 +8332,9 @@ wl_chanspec(void *wl, cmd_t *cmd, char **argv)
 		return 0;
 	}
 
+    /* dump_flag_qqdx */
+    printk("wl_chanspec:wf_chspec_aton");
+    /* dump_flag_qqdx */
 	chanspec = wf_chspec_aton(*argv);
 	if (chanspec != 0) {
 		val = wl_chspec32_to_driver(chanspec);
