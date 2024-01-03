@@ -14,6 +14,18 @@
 #define DEBUG_CLASS_PHY 0
 #define DEBUG_PHY_RSSI 0
 
+
+
+#define PRINT_pkt_info 1
+#define PRINT_pkt_count_info 1
+#define PRINT_phy_info 0
+#define PRINT_frameid_info 0
+#define PRINT_multiuser_info 0
+#define PRINT_monitor_info 0
+
+
+
+
 #define MAX_MCS_QQ 30
 struct rates_counts_txs_qq {
 	uint32_t tx_cnt[MAX_MCS_QQ];
@@ -553,62 +565,64 @@ void file_io(void) {
 
             // hexdump(&amp;pkt_info, sizeof(info_class_t));
             // clock_gettime(CLOCK_REALTIME, &amp;pkt_info.timestamp);
-
-            char pkt_info_type[30] = "";
-            if(pkt_qq_cur->free_time>0){
-                strcpy(pkt_info_type,"timeout acked_pktinfo");
-            }
-            else{
-                strcpy(pkt_info_type,"timeout unacked_pktinfo");
-            }
-            if(pkt_qq_cur->pktSEQ>0){
-                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,pkt_info.timestamp.tv_sec,pkt_info.timestamp.tv_nsec / 1000);
-
-                /*fprintf(stdout,"%s: FrameID(%u) pktSEQ(%u) n_pkts(%u) ampdu_seq(%u) APnum(%u) fifo(%u)"
-                    "pkt_qq_chain_len_add(%u:%u:%u) "
-                    "pkt_added_in_wlc_tx(%u:%u:%u) "
-                    "pktnum_to_send(%u:%u:%d) tid(%u) failed_cnt(%u) PHYdelay(%u) ps_dur_trans(%u) " 
-                    "free_time(%u) into_hw_time(%u)  into_CFP_time(%u:%u) droped_withoutACK_time(%u) airtime_self(%u) txop_in_fly(%u) busy_time(%u) "
-                    "ps_pretend_probe(%u) ps_pretend_count(%u) ps_pretend_succ_count(%u) ps_pretend_failed_ack_count(%u) " 
-                    "time_in_pretend_in_fly(%u) ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)\n"
-                    ,pkt_info_type, pkt_qq_cur->FrameID, pkt_qq_cur->pktSEQ, pkt_qq_cur->n_pkts, pkt_qq_cur->ampdu_seq, pkt_qq_cur->APnum, pkt_qq_cur->fifo\
-                    ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
-                    ,pkt_qq_cur->pkt_added_in_wlc_tx_start,pkt_qq_cur->pkt_added_in_wlc_tx_end,pkt_qq_cur->pkt_added_in_wlc_tx_end-pkt_qq_cur->pkt_added_in_wlc_tx_start\
-                    ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->tid, pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->ps_dur_trans\
-                    ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->droped_withoutACK_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
-                    ,pkt_qq_cur->ps_pretend_probe, pkt_qq_cur->ps_pretend_count,pkt_qq_cur->ps_pretend_succ_count,pkt_qq_cur->ps_pretend_failed_ack_count\
-                    ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
-                    ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
-                    ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[5],pkt_qq_cur->ccastats_qq_differ[6]\
-                    ,pkt_qq_cur->ccastats_qq_differ[7],pkt_qq_cur->ccastats_qq_differ[8]);*/
-            
-
-                fprintf(stdout,"%s: FrameID(%u) n_pkts(%u) APnum(%u) fifo(%u)"
-                    "pkt_qq_chain_len_add(%u:%u:%u) "
-                    "pktnum_to_send(%u:%u:%d) failed_cnt(%u) PHYdelay(%u) ps_dur_trans(%u) " 
-                    "free_time(%u) into_hw_time(%u) into_CFP_time(%u:%u) airtime_self(%u) txop_in_fly(%u) busy_time(%u) "
-                    "time_in_pretend_in_fly(%u) ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)TXOP(%u)\n"
-                    ,pkt_info_type, pkt_qq_cur->FrameID, pkt_qq_cur->n_pkts, pkt_qq_cur->APnum, pkt_qq_cur->fifo\
-                    ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
-                    ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->ps_dur_trans\
-                    ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
-                    ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
-                    ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
-                    ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[6]);
+            if(PRINT_pkt_info){
                 
-                if(pkt_qq_cur->failed_cnt>0){
-                    fprintf(stdout,"failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)\n",pkt_qq_cur->failed_time_list_qq[0]\
-                    ,pkt_qq_cur->failed_time_list_qq[1],pkt_qq_cur->failed_time_list_qq[2],pkt_qq_cur->failed_time_list_qq[3]\
-                    ,pkt_qq_cur->failed_time_list_qq[4],pkt_qq_cur->failed_time_list_qq[5],pkt_qq_cur->failed_time_list_qq[6]\
-                    ,pkt_qq_cur->failed_time_list_qq[7],pkt_qq_cur->failed_time_list_qq[8],pkt_qq_cur->failed_time_list_qq[9]);
+                char pkt_info_type[30] = "";
+                if(pkt_qq_cur->free_time>0){
+                    strcpy(pkt_info_type,"timeout acked_pktinfo");
                 }
-                if(pkt_qq_cur->retry_time_list_index>0){
-                    fprintf(stdout,"retry_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)\n",pkt_qq_cur->retry_time_list_qq[0]\
-                    ,pkt_qq_cur->retry_time_list_qq[1],pkt_qq_cur->retry_time_list_qq[2],pkt_qq_cur->retry_time_list_qq[3]\
-                    ,pkt_qq_cur->retry_time_list_qq[4],pkt_qq_cur->retry_time_list_qq[5],pkt_qq_cur->retry_time_list_qq[6]\
-                    ,pkt_qq_cur->retry_time_list_qq[7],pkt_qq_cur->retry_time_list_qq[8],pkt_qq_cur->retry_time_list_qq[9]);
+                else{
+                    strcpy(pkt_info_type,"timeout unacked_pktinfo");
                 }
-            
+                if(pkt_qq_cur->pktSEQ>0){
+                    fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,pkt_info.timestamp.tv_sec,pkt_info.timestamp.tv_nsec / 1000);
+
+                    /*fprintf(stdout,"%s: FrameID(%u) pktSEQ(%u) n_pkts(%u) ampdu_seq(%u) APnum(%u) fifo(%u)"
+                        "pkt_qq_chain_len_add(%u:%u:%u) "
+                        "pkt_added_in_wlc_tx(%u:%u:%u) "
+                        "pktnum_to_send(%u:%u:%d) tid(%u) failed_cnt(%u) PHYdelay(%u) ps_dur_trans(%u) " 
+                        "free_time(%u) into_hw_time(%u)  into_CFP_time(%u:%u) droped_withoutACK_time(%u) airtime_self(%u) txop_in_fly(%u) busy_time(%u) "
+                        "ps_pretend_probe(%u) ps_pretend_count(%u) ps_pretend_succ_count(%u) ps_pretend_failed_ack_count(%u) " 
+                        "time_in_pretend_in_fly(%u) ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)\n"
+                        ,pkt_info_type, pkt_qq_cur->FrameID, pkt_qq_cur->pktSEQ, pkt_qq_cur->n_pkts, pkt_qq_cur->ampdu_seq, pkt_qq_cur->APnum, pkt_qq_cur->fifo\
+                        ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
+                        ,pkt_qq_cur->pkt_added_in_wlc_tx_start,pkt_qq_cur->pkt_added_in_wlc_tx_end,pkt_qq_cur->pkt_added_in_wlc_tx_end-pkt_qq_cur->pkt_added_in_wlc_tx_start\
+                        ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->tid, pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->ps_dur_trans\
+                        ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->droped_withoutACK_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
+                        ,pkt_qq_cur->ps_pretend_probe, pkt_qq_cur->ps_pretend_count,pkt_qq_cur->ps_pretend_succ_count,pkt_qq_cur->ps_pretend_failed_ack_count\
+                        ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
+                        ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
+                        ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[5],pkt_qq_cur->ccastats_qq_differ[6]\
+                        ,pkt_qq_cur->ccastats_qq_differ[7],pkt_qq_cur->ccastats_qq_differ[8]);*/
+                
+
+                    fprintf(stdout,"%s: FrameID(%u) n_pkts(%u) APnum(%u) fifo(%u)"
+                        "pkt_qq_chain_len_add(%u:%u:%u) "
+                        "pktnum_to_send(%u:%u:%d) failed_cnt(%u) PHYdelay(%u) ps_dur_trans(%u) " 
+                        "free_time(%u) into_hw_time(%u) into_CFP_time(%u:%u) airtime_self(%u) txop_in_fly(%u) busy_time(%u) "
+                        "time_in_pretend_in_fly(%u) ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)TXOP(%u)\n"
+                        ,pkt_info_type, pkt_qq_cur->FrameID, pkt_qq_cur->n_pkts, pkt_qq_cur->APnum, pkt_qq_cur->fifo\
+                        ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
+                        ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->ps_dur_trans\
+                        ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
+                        ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
+                        ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
+                        ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[6]);
+                    
+                    if(pkt_qq_cur->failed_cnt>0){
+                        fprintf(stdout,"failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)\n",pkt_qq_cur->failed_time_list_qq[0]\
+                        ,pkt_qq_cur->failed_time_list_qq[1],pkt_qq_cur->failed_time_list_qq[2],pkt_qq_cur->failed_time_list_qq[3]\
+                        ,pkt_qq_cur->failed_time_list_qq[4],pkt_qq_cur->failed_time_list_qq[5],pkt_qq_cur->failed_time_list_qq[6]\
+                        ,pkt_qq_cur->failed_time_list_qq[7],pkt_qq_cur->failed_time_list_qq[8],pkt_qq_cur->failed_time_list_qq[9]);
+                    }
+                    if(pkt_qq_cur->retry_time_list_index>0){
+                        fprintf(stdout,"retry_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)\n",pkt_qq_cur->retry_time_list_qq[0]\
+                        ,pkt_qq_cur->retry_time_list_qq[1],pkt_qq_cur->retry_time_list_qq[2],pkt_qq_cur->retry_time_list_qq[3]\
+                        ,pkt_qq_cur->retry_time_list_qq[4],pkt_qq_cur->retry_time_list_qq[5],pkt_qq_cur->retry_time_list_qq[6]\
+                        ,pkt_qq_cur->retry_time_list_qq[7],pkt_qq_cur->retry_time_list_qq[8],pkt_qq_cur->retry_time_list_qq[9]);
+                    }
+                
+                }
             }
 
             
@@ -631,34 +645,36 @@ void file_io(void) {
         pkt_count_qq_cur = (struct pkt_count_qq *) malloc(sizeof(pkt_count_qq_t));
         memcpy(pkt_count_qq_cur, pkt_count_info.info, sizeof(pkt_count_qq_t));
         if(pre_timestamp_class2.tv_nsec!= pkt_count_info.timestamp.tv_nsec){
-            
-            fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,pkt_count_info.timestamp.tv_sec,
-            pkt_count_info.timestamp.tv_nsec / 1000);
-            // hexdump(&amp;pkt_count_info, sizeof(info_class_t));
-            // clock_gettime(CLOCK_REALTIME, &amp;pkt_count_info.timestamp);
+            if(PRINT_pkt_count_info){
+                
+                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,pkt_count_info.timestamp.tv_sec,
+                pkt_count_info.timestamp.tv_nsec / 1000);
+                // hexdump(&amp;pkt_count_info, sizeof(info_class_t));
+                // clock_gettime(CLOCK_REALTIME, &amp;pkt_count_info.timestamp);
 
-            fprintf(stdout,"pkt count: pkt_qq_chain_len(%u) pkt_chain_add(%u) pkt_qq_chain_len_soft_retry(%u) "
-            "pkt_chain_acked(%u) pkt_chain_unacked(%u) "
-            "pkt_chain_timeout(%u) pkt_chain_outofrange(%u) "
-            "pkt_chain_notfound(%u) pkt_chain_found(%u) "
-            "pkt_phydelay_dict:10(%u)20(%u)30(%u)40(%u)50(%u)60(%u)70(%u)80(%u)90(%u)100(%u)"
-            "110(%u)120(%u)130(%u)140(%u)150(%u)160(%u)170(%u)180(%u)190(%u)200(%u)"
-            "210(%u)220(%u)230(%u)240(%u)250(%u)260(%u)270(%u)280(%u)290(%u)290up(%u)\n"\
-            ,pkt_count_qq_cur->pkt_qq_chain_len_now,pkt_count_qq_cur->pkt_qq_chain_len_add,pkt_count_qq_cur->pkt_qq_chain_len_soft_retry\
-            ,pkt_count_qq_cur->pkt_qq_chain_len_acked, pkt_count_qq_cur->pkt_qq_chain_len_unacked\
-            ,pkt_count_qq_cur->pkt_qq_chain_len_timeout, pkt_count_qq_cur->pkt_qq_chain_len_outofrange\
-            ,pkt_count_qq_cur->pkt_qq_chain_len_notfound,pkt_count_qq_cur->pkt_qq_chain_len_found\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[0]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[1],pkt_count_qq_cur->pkt_phydelay_dict[2],pkt_count_qq_cur->pkt_phydelay_dict[3]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[4],pkt_count_qq_cur->pkt_phydelay_dict[5],pkt_count_qq_cur->pkt_phydelay_dict[6]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[7],pkt_count_qq_cur->pkt_phydelay_dict[8],pkt_count_qq_cur->pkt_phydelay_dict[9],pkt_count_qq_cur->pkt_phydelay_dict[10]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[11],pkt_count_qq_cur->pkt_phydelay_dict[12],pkt_count_qq_cur->pkt_phydelay_dict[13]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[14],pkt_count_qq_cur->pkt_phydelay_dict[15],pkt_count_qq_cur->pkt_phydelay_dict[16]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[17],pkt_count_qq_cur->pkt_phydelay_dict[18],pkt_count_qq_cur->pkt_phydelay_dict[19],pkt_count_qq_cur->pkt_phydelay_dict[20]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[21],pkt_count_qq_cur->pkt_phydelay_dict[22],pkt_count_qq_cur->pkt_phydelay_dict[23]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[24],pkt_count_qq_cur->pkt_phydelay_dict[25],pkt_count_qq_cur->pkt_phydelay_dict[26]\
-            ,pkt_count_qq_cur->pkt_phydelay_dict[27],pkt_count_qq_cur->pkt_phydelay_dict[28],pkt_count_qq_cur->pkt_phydelay_dict[29]);
-            
+                fprintf(stdout,"pkt count: pkt_qq_chain_len(%u) pkt_chain_add(%u) pkt_qq_chain_len_soft_retry(%u) "
+                "pkt_chain_acked(%u) pkt_chain_unacked(%u) "
+                "pkt_chain_timeout(%u) pkt_chain_outofrange(%u) "
+                "pkt_chain_notfound(%u) pkt_chain_found(%u) "
+                "pkt_phydelay_dict:10(%u)20(%u)30(%u)40(%u)50(%u)60(%u)70(%u)80(%u)90(%u)100(%u)"
+                "110(%u)120(%u)130(%u)140(%u)150(%u)160(%u)170(%u)180(%u)190(%u)200(%u)"
+                "210(%u)220(%u)230(%u)240(%u)250(%u)260(%u)270(%u)280(%u)290(%u)290up(%u)\n"\
+                ,pkt_count_qq_cur->pkt_qq_chain_len_now,pkt_count_qq_cur->pkt_qq_chain_len_add,pkt_count_qq_cur->pkt_qq_chain_len_soft_retry\
+                ,pkt_count_qq_cur->pkt_qq_chain_len_acked, pkt_count_qq_cur->pkt_qq_chain_len_unacked\
+                ,pkt_count_qq_cur->pkt_qq_chain_len_timeout, pkt_count_qq_cur->pkt_qq_chain_len_outofrange\
+                ,pkt_count_qq_cur->pkt_qq_chain_len_notfound,pkt_count_qq_cur->pkt_qq_chain_len_found\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[0]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[1],pkt_count_qq_cur->pkt_phydelay_dict[2],pkt_count_qq_cur->pkt_phydelay_dict[3]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[4],pkt_count_qq_cur->pkt_phydelay_dict[5],pkt_count_qq_cur->pkt_phydelay_dict[6]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[7],pkt_count_qq_cur->pkt_phydelay_dict[8],pkt_count_qq_cur->pkt_phydelay_dict[9],pkt_count_qq_cur->pkt_phydelay_dict[10]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[11],pkt_count_qq_cur->pkt_phydelay_dict[12],pkt_count_qq_cur->pkt_phydelay_dict[13]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[14],pkt_count_qq_cur->pkt_phydelay_dict[15],pkt_count_qq_cur->pkt_phydelay_dict[16]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[17],pkt_count_qq_cur->pkt_phydelay_dict[18],pkt_count_qq_cur->pkt_phydelay_dict[19],pkt_count_qq_cur->pkt_phydelay_dict[20]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[21],pkt_count_qq_cur->pkt_phydelay_dict[22],pkt_count_qq_cur->pkt_phydelay_dict[23]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[24],pkt_count_qq_cur->pkt_phydelay_dict[25],pkt_count_qq_cur->pkt_phydelay_dict[26]\
+                ,pkt_count_qq_cur->pkt_phydelay_dict[27],pkt_count_qq_cur->pkt_phydelay_dict[28],pkt_count_qq_cur->pkt_phydelay_dict[29]);
+                
+            }
 
             pre_timestamp_class2 = pkt_count_info.timestamp;
         }
@@ -681,38 +697,43 @@ void file_io(void) {
         phy_info_qq_cur = (struct phy_info_qq *) malloc(sizeof(phy_info_qq_t));
         memcpy(phy_info_qq_cur, phy_info.info, sizeof(phy_info_qq_t));
         if(pre_timestamp_class3.tv_nsec!= phy_info.timestamp.tv_nsec){
-            
-            fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,phy_info.timestamp.tv_sec,
-            phy_info.timestamp.tv_nsec / 1000);
-            // hexdump(&amp;phy_info_qq, sizeof(info_class_t));
-            // clock_gettime(CLOCK_REALTIME, &amp;phy_info_qq.timestamp);
-                        //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
-
-            /*fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
-            ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
-            phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
-            */
-            fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d)\n"\
-            ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel);
-            
-            uint8_t rssi_ring_buffer_index_cur = (phy_info_qq_cur->rssi_ring_buffer_index- 1) % RSSI_RING_SIZE;
-            if(pre_FrameID != cur_FrameID){
-
-                fprintf(stdout,"time:rssi:noise");
-                for(int8_t i = 0;i<RSSI_RING_SIZE;i++){
-                    //if(rates_counts_txs_qq_differ.txsucc_cnt[i]>0){
-                        fprintf(stdout,"(%d:%d:%d)",pkt_qq_cur->free_time-phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].timestamp\
-                        ,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].RSSI,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].noiselevel);
-                    //}
-                    if(cur_into_hw_time>phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].timestamp){
-                        break;
-                    }
-                rssi_ring_buffer_index_cur = (rssi_ring_buffer_index_cur - 1) % RSSI_RING_SIZE;
+            if(PRINT_phy_info){
                 
-                }
-                fprintf(stdout,"\n");
+                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,phy_info.timestamp.tv_sec,
+                phy_info.timestamp.tv_nsec / 1000);
+                // hexdump(&amp;phy_info_qq, sizeof(info_class_t));
+                // clock_gettime(CLOCK_REALTIME, &amp;phy_info_qq.timestamp);
+                            //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
 
-                pre_FrameID = cur_FrameID;
+                /*fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
+                ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
+                phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
+                */
+                fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d)\n"\
+                ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel);
+            
+            }
+            if(PRINT_pkt_info){
+                
+                uint8_t rssi_ring_buffer_index_cur = (phy_info_qq_cur->rssi_ring_buffer_index- 1) % RSSI_RING_SIZE;
+                if(pre_FrameID != cur_FrameID){
+
+                    fprintf(stdout,"time:rssi:noise");
+                    for(int8_t i = 0;i<RSSI_RING_SIZE;i++){
+                        //if(rates_counts_txs_qq_differ.txsucc_cnt[i]>0){
+                            fprintf(stdout,"(%d:%d:%d)",pkt_qq_cur->free_time-phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].timestamp\
+                            ,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].RSSI,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].noiselevel);
+                        //}
+                        if(cur_into_hw_time>phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].timestamp){
+                            break;
+                        }
+                    rssi_ring_buffer_index_cur = (rssi_ring_buffer_index_cur - 1) % RSSI_RING_SIZE;
+                    
+                    }
+                    fprintf(stdout,"\n");
+
+                    pre_FrameID = cur_FrameID;
+                }
             }
             pre_timestamp_class3 = phy_info.timestamp;
         }
@@ -737,17 +758,19 @@ void file_io(void) {
         pkt_ergodic_cur = (struct pkt_ergodic *) malloc(sizeof(pkt_ergodic_t));
         memcpy(pkt_ergodic_cur, frameid_info.info, sizeof(pkt_ergodic_t));
         if(pre_timestamp_class5.tv_nsec!= frameid_info.timestamp.tv_nsec){
-            
-            fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,frameid_info.timestamp.tv_sec,
-            frameid_info.timestamp.tv_nsec / 1000);
-            fprintf(stdout,"frameID:");
-            
-            fprintf(stdout,"frameID:(%u:%u:%u)",pkt_ergodic_cur->print_loc,pkt_ergodic_cur->pkt_len,pkt_ergodic_cur->real_pkt_num);
-            for(int nn = 0;(nn<pkt_ergodic_cur->pkt_len)&&(nn<pkt_ergodic_cur->real_pkt_num);nn++){
-                fprintf(stdout,"(%u:%u)",nn,pkt_ergodic_cur->pkt_FrameID[nn]);
-            }
+            if(PRINT_frameid_info){
+                
+                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,frameid_info.timestamp.tv_sec,
+                frameid_info.timestamp.tv_nsec / 1000);
+                fprintf(stdout,"frameID:");
+                
+                fprintf(stdout,"frameID:(%u:%u:%u)",pkt_ergodic_cur->print_loc,pkt_ergodic_cur->pkt_len,pkt_ergodic_cur->real_pkt_num);
+                for(int nn = 0;(nn<pkt_ergodic_cur->pkt_len)&&(nn<pkt_ergodic_cur->real_pkt_num);nn++){
+                    fprintf(stdout,"(%u:%u)",nn,pkt_ergodic_cur->pkt_FrameID[nn]);
+                }
 
-            fprintf(stdout,"\n");
+                fprintf(stdout,"\n");
+            }
             pre_timestamp_class5 = frameid_info.timestamp;
         }
 
@@ -771,21 +794,23 @@ void file_io(void) {
         musched_info_qq_cur = (struct musched_info_qq *) malloc(sizeof(musched_info_qq_t));
         memcpy(musched_info_qq_cur, multiuser_info.info, sizeof(musched_info_qq_t));
         if(pre_timestamp_class6.tv_nsec!= multiuser_info.timestamp.tv_nsec){
-            
-            fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,multiuser_info.timestamp.tv_sec,
-            multiuser_info.timestamp.tv_nsec / 1000);
-            fprintf(stdout,"multi-user info:");
-            
-            fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);wlc_fifo_is_dlofdma(%d);dlofdma_set_time(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u);MAC address(%02x:%02x:%02x:%02x:%02x:%02x)"\
-                ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->wlc_fifo_is_dlofdma,musched_info_qq_cur->dlofdma_set_time,musched_info_qq_cur->mu_type\
-                ,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2,musched_info_qq_cur->dl_schpos,musched_info_qq_cur->dl_schid\
-                ,musched_info_qq_cur->ea.octet[0],musched_info_qq_cur->ea.octet[1],musched_info_qq_cur->ea.octet[2]\
-                ,musched_info_qq_cur->ea.octet[3],musched_info_qq_cur->ea.octet[4],musched_info_qq_cur->ea.octet[5]);
-            
-            fprintf(stdout,"scb_flagsinfo:WME: %d, AMPDU: %d, AMSDU: %d, AMSDU_IN_AMPDU: %d, DTPC: %d, HT: %d, VHT: %d, ISGF: %d, NONGF: %d, COEX: %d, STBC: %d, HT_LDPC: %d, HT_PROP_RATES: %d, OPER_MODE_NOTIF: %d, HE: %d, IBSS_PEER: %d, PKTC: %d, QOS: %d, P2P: %d, DWDS: %d, DWDS_CAP: %d, MAP: %d, MAP_P2: %d, ECSA: %d, LEGACY_WDS: %d, A4_DATA: %d, A4_NULL_DATA: %d, A4_8021X: %d, MFP: %d, SHA256: %d, QAM_1024: %d, VHTMU: %d, HEMMU: %d, DLOFDMA: %d, ULOFDMA: %d, ULMMU: %d, RRM: %d, FTM: %d, FTM_INITIATOR: %d, FTM_RESPONDER: %d"\
-                ,musched_info_qq_cur->scb_flags.wme, musched_info_qq_cur->scb_flags.ampdu, musched_info_qq_cur->scb_flags.amsdu, musched_info_qq_cur->scb_flags.amsdu_in_ampdu, musched_info_qq_cur->scb_flags.dtpc, musched_info_qq_cur->scb_flags.ht, musched_info_qq_cur->scb_flags.vht, musched_info_qq_cur->scb_flags.isgf, musched_info_qq_cur->scb_flags.nongf, musched_info_qq_cur->scb_flags.coex, musched_info_qq_cur->scb_flags.stbc, musched_info_qq_cur->scb_flags.ht_ldpc, musched_info_qq_cur->scb_flags.ht_prop_rates, musched_info_qq_cur->scb_flags.oper_mode_notif, musched_info_qq_cur->scb_flags.he, musched_info_qq_cur->scb_flags.ibss_peer, musched_info_qq_cur->scb_flags.pktc, musched_info_qq_cur->scb_flags.qos, musched_info_qq_cur->scb_flags.p2p, musched_info_qq_cur->scb_flags.dwds, musched_info_qq_cur->scb_flags.dwds_cap, musched_info_qq_cur->scb_flags.map, musched_info_qq_cur->scb_flags.map_p2, musched_info_qq_cur->scb_flags.ecsa, musched_info_qq_cur->scb_flags.legacy_wds, musched_info_qq_cur->scb_flags.a4_data, musched_info_qq_cur->scb_flags.a4_null_data, musched_info_qq_cur->scb_flags.a4_8021x, musched_info_qq_cur->scb_flags.mfp, musched_info_qq_cur->scb_flags.sha256, musched_info_qq_cur->scb_flags.qam_1024, musched_info_qq_cur->scb_flags.vhtmu, musched_info_qq_cur->scb_flags.hemmu, musched_info_qq_cur->scb_flags.dlofdma, musched_info_qq_cur->scb_flags.ulofdma, musched_info_qq_cur->scb_flags.ulmmu, musched_info_qq_cur->scb_flags.rrm, musched_info_qq_cur->scb_flags.ftm, musched_info_qq_cur->scb_flags.ftm_initiator, musched_info_qq_cur->scb_flags.ftm_responder);
+            if(PRINT_multiuser_info){
+                
+                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,multiuser_info.timestamp.tv_sec,
+                multiuser_info.timestamp.tv_nsec / 1000);
+                fprintf(stdout,"multi-user info:");
+                
+                fprintf(stdout,"wlc_fifo_isMU(%d);wlc_fifo_is_ulofdma(%d);wlc_fifo_is_dlofdma(%d);dlofdma_set_time(%d);mu_type(%u);mch(%u);mcl(%u);mch2(%u);dl_schpos(%u)dl_schid(%u);MAC address(%02x:%02x:%02x:%02x:%02x:%02x)"\
+                    ,musched_info_qq_cur->wlc_fifo_isMU,musched_info_qq_cur->wlc_fifo_is_ulofdma,musched_info_qq_cur->wlc_fifo_is_dlofdma,musched_info_qq_cur->dlofdma_set_time,musched_info_qq_cur->mu_type\
+                    ,musched_info_qq_cur->mch,musched_info_qq_cur->mcl,musched_info_qq_cur->mch2,musched_info_qq_cur->dl_schpos,musched_info_qq_cur->dl_schid\
+                    ,musched_info_qq_cur->ea.octet[0],musched_info_qq_cur->ea.octet[1],musched_info_qq_cur->ea.octet[2]\
+                    ,musched_info_qq_cur->ea.octet[3],musched_info_qq_cur->ea.octet[4],musched_info_qq_cur->ea.octet[5]);
+                
+                fprintf(stdout,"scb_flagsinfo:WME: %d, AMPDU: %d, AMSDU: %d, AMSDU_IN_AMPDU: %d, DTPC: %d, HT: %d, VHT: %d, ISGF: %d, NONGF: %d, COEX: %d, STBC: %d, HT_LDPC: %d, HT_PROP_RATES: %d, OPER_MODE_NOTIF: %d, HE: %d, IBSS_PEER: %d, PKTC: %d, QOS: %d, P2P: %d, DWDS: %d, DWDS_CAP: %d, MAP: %d, MAP_P2: %d, ECSA: %d, LEGACY_WDS: %d, A4_DATA: %d, A4_NULL_DATA: %d, A4_8021X: %d, MFP: %d, SHA256: %d, QAM_1024: %d, VHTMU: %d, HEMMU: %d, DLOFDMA: %d, ULOFDMA: %d, ULMMU: %d, RRM: %d, FTM: %d, FTM_INITIATOR: %d, FTM_RESPONDER: %d"\
+                    ,musched_info_qq_cur->scb_flags.wme, musched_info_qq_cur->scb_flags.ampdu, musched_info_qq_cur->scb_flags.amsdu, musched_info_qq_cur->scb_flags.amsdu_in_ampdu, musched_info_qq_cur->scb_flags.dtpc, musched_info_qq_cur->scb_flags.ht, musched_info_qq_cur->scb_flags.vht, musched_info_qq_cur->scb_flags.isgf, musched_info_qq_cur->scb_flags.nongf, musched_info_qq_cur->scb_flags.coex, musched_info_qq_cur->scb_flags.stbc, musched_info_qq_cur->scb_flags.ht_ldpc, musched_info_qq_cur->scb_flags.ht_prop_rates, musched_info_qq_cur->scb_flags.oper_mode_notif, musched_info_qq_cur->scb_flags.he, musched_info_qq_cur->scb_flags.ibss_peer, musched_info_qq_cur->scb_flags.pktc, musched_info_qq_cur->scb_flags.qos, musched_info_qq_cur->scb_flags.p2p, musched_info_qq_cur->scb_flags.dwds, musched_info_qq_cur->scb_flags.dwds_cap, musched_info_qq_cur->scb_flags.map, musched_info_qq_cur->scb_flags.map_p2, musched_info_qq_cur->scb_flags.ecsa, musched_info_qq_cur->scb_flags.legacy_wds, musched_info_qq_cur->scb_flags.a4_data, musched_info_qq_cur->scb_flags.a4_null_data, musched_info_qq_cur->scb_flags.a4_8021x, musched_info_qq_cur->scb_flags.mfp, musched_info_qq_cur->scb_flags.sha256, musched_info_qq_cur->scb_flags.qam_1024, musched_info_qq_cur->scb_flags.vhtmu, musched_info_qq_cur->scb_flags.hemmu, musched_info_qq_cur->scb_flags.dlofdma, musched_info_qq_cur->scb_flags.ulofdma, musched_info_qq_cur->scb_flags.ulmmu, musched_info_qq_cur->scb_flags.rrm, musched_info_qq_cur->scb_flags.ftm, musched_info_qq_cur->scb_flags.ftm_initiator, musched_info_qq_cur->scb_flags.ftm_responder);
 
-            fprintf(stdout,"\n");
+                fprintf(stdout,"\n");
+            }
             pre_timestamp_class6 = multiuser_info.timestamp;
         }
 
@@ -811,25 +836,27 @@ void file_io(void) {
         monitor_info_qq_cur = (struct monitor_info_qq *) malloc(sizeof(monitor_info_qq_t));
         memcpy(monitor_info_qq_cur, monitor_info.info, sizeof(monitor_info_qq_t));
         if(pre_timestamp_class7.tv_nsec!= monitor_info.timestamp.tv_nsec){
-            
-            fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,monitor_info.timestamp.tv_sec,
-            monitor_info.timestamp.tv_nsec / 1000);
-            fprintf(stdout,"monitor info:");
-            fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
-            ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
-            
-            fprintf(stdout,"monitor_loc(%u);wlc_pub_promisc(%d);wlc_clk(%d);wlc_hw_maccontrol(%u);ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);subtype(%u);MAC address h1.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
-                ";MAC address h1.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
-                ,monitor_info_qq_cur->monitor_loc,monitor_info_qq_cur->wlc_pub_promisc,monitor_info_qq_cur->wlc_clk,monitor_info_qq_cur->wlc_hw_maccontrol,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
-                monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(ltoh16(monitor_info_qq_cur->h1.fc) & FC_TYPE_MASK)>> FC_TYPE_SHIFT,(ltoh16(monitor_info_qq_cur->h1.fc) & FC_SUBTYPE_MASK)>> FC_SUBTYPE_SHIFT,\
-                            monitor_info_qq_cur->h1.a1.octet[0],monitor_info_qq_cur->h1.a1.octet[1],monitor_info_qq_cur->h1.a1.octet[2],\
-                            monitor_info_qq_cur->h1.a1.octet[3],monitor_info_qq_cur->h1.a1.octet[4],monitor_info_qq_cur->h1.a1.octet[5],\
-                            monitor_info_qq_cur->h1.a2.octet[0],monitor_info_qq_cur->h1.a2.octet[1],monitor_info_qq_cur->h1.a2.octet[2],\
-                            monitor_info_qq_cur->h1.a2.octet[3],monitor_info_qq_cur->h1.a2.octet[4],monitor_info_qq_cur->h1.a2.octet[5],\
-                            monitor_info_qq_cur->h1.a3.octet[0],monitor_info_qq_cur->h1.a3.octet[1],monitor_info_qq_cur->h1.a3.octet[2],\
-                            monitor_info_qq_cur->h1.a3.octet[3],monitor_info_qq_cur->h1.a3.octet[4],monitor_info_qq_cur->h1.a3.octet[5]);
+            if(PRINT_monitor_info){
+                
+                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,monitor_info.timestamp.tv_sec,
+                monitor_info.timestamp.tv_nsec / 1000);
+                fprintf(stdout,"monitor info:");
+                fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq)(%u:%u:%u)"\
+                ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct monitor_info_qq));
+                
+                fprintf(stdout,"monitor_loc(%u);wlc_pub_promisc(%d);wlc_clk(%d);wlc_hw_maccontrol(%u);ru_type(%u);ruidx(%u);bw(%u);mcs(%u);chanspec(0x%04x);sig_a1(%u);sig_a2(%u);type(%u);subtype(%u);MAC address h1.a1(%02x:%02x:%02x:%02x:%02x:%02x)"\
+                    ";MAC address h1.a2(%02x:%02x:%02x:%02x:%02x:%02x);MAC address h1.a3(%02x:%02x:%02x:%02x:%02x:%02x)"\
+                    ,monitor_info_qq_cur->monitor_loc,monitor_info_qq_cur->wlc_pub_promisc,monitor_info_qq_cur->wlc_clk,monitor_info_qq_cur->wlc_hw_maccontrol,monitor_info_qq_cur->ru_type,monitor_info_qq_cur->ruidx,monitor_info_qq_cur->wl_mon_rxsts.bw,monitor_info_qq_cur->wl_mon_rxsts.mcs,\
+                    monitor_info_qq_cur->wl_mon_rxsts.chanspec,monitor_info_qq_cur->wl_mon_rxsts.sig_a1,monitor_info_qq_cur->wl_mon_rxsts.sig_a2,(ltoh16(monitor_info_qq_cur->h1.fc) & FC_TYPE_MASK)>> FC_TYPE_SHIFT,(ltoh16(monitor_info_qq_cur->h1.fc) & FC_SUBTYPE_MASK)>> FC_SUBTYPE_SHIFT,\
+                                monitor_info_qq_cur->h1.a1.octet[0],monitor_info_qq_cur->h1.a1.octet[1],monitor_info_qq_cur->h1.a1.octet[2],\
+                                monitor_info_qq_cur->h1.a1.octet[3],monitor_info_qq_cur->h1.a1.octet[4],monitor_info_qq_cur->h1.a1.octet[5],\
+                                monitor_info_qq_cur->h1.a2.octet[0],monitor_info_qq_cur->h1.a2.octet[1],monitor_info_qq_cur->h1.a2.octet[2],\
+                                monitor_info_qq_cur->h1.a2.octet[3],monitor_info_qq_cur->h1.a2.octet[4],monitor_info_qq_cur->h1.a2.octet[5],\
+                                monitor_info_qq_cur->h1.a3.octet[0],monitor_info_qq_cur->h1.a3.octet[1],monitor_info_qq_cur->h1.a3.octet[2],\
+                                monitor_info_qq_cur->h1.a3.octet[3],monitor_info_qq_cur->h1.a3.octet[4],monitor_info_qq_cur->h1.a3.octet[5]);
 
-            fprintf(stdout,"\n");
+                fprintf(stdout,"\n");
+            }
             pre_timestamp_class7 = monitor_info.timestamp;
         }
 
