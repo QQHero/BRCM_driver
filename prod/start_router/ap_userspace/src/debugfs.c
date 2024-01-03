@@ -577,37 +577,39 @@ void file_io(void) {
                 if(pkt_qq_cur->pktSEQ>0){
                     fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,pkt_info.timestamp.tv_sec,pkt_info.timestamp.tv_nsec / 1000);
 
-                    /*fprintf(stdout,"%s: FrameID(%u) pktSEQ(%u) n_pkts(%u) ampdu_seq(%u) APnum(%u) fifo(%u)"
+                    fprintf(stdout,"%s: FrameID(%u) pktSEQ(%u) n_pkts(%u) ampdu_seq(%u) APnum(%u) fifo(%u)"
                         "pkt_qq_chain_len_add(%u:%u:%u) "
                         "pkt_added_in_wlc_tx(%u:%u:%u) "
-                        "pktnum_to_send(%u:%u:%d) tid(%u) failed_cnt(%u) PHYdelay(%u) ps_dur_trans(%u) " 
+                        "pktnum_to_send(%u:%u:%d) tid(%u) failed_cnt(%u) PHYdelay(%u) cfp+PHYdelay(%u) ps_dur_trans(%u) " 
                         "free_time(%u) into_hw_time(%u)  into_CFP_time(%u:%u) droped_withoutACK_time(%u) airtime_self(%u) txop_in_fly(%u) busy_time(%u) "
                         "ps_pretend_probe(%u) ps_pretend_count(%u) ps_pretend_succ_count(%u) ps_pretend_failed_ack_count(%u) " 
                         "time_in_pretend_in_fly(%u) ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)\n"
                         ,pkt_info_type, pkt_qq_cur->FrameID, pkt_qq_cur->pktSEQ, pkt_qq_cur->n_pkts, pkt_qq_cur->ampdu_seq, pkt_qq_cur->APnum, pkt_qq_cur->fifo\
                         ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
                         ,pkt_qq_cur->pkt_added_in_wlc_tx_start,pkt_qq_cur->pkt_added_in_wlc_tx_end,pkt_qq_cur->pkt_added_in_wlc_tx_end-pkt_qq_cur->pkt_added_in_wlc_tx_start\
-                        ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->tid, pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->ps_dur_trans\
+                        ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->tid\
+                        , pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->free_time-pkt_qq_cur->into_CFP_time,pkt_qq_cur->ps_dur_trans\
                         ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->droped_withoutACK_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
                         ,pkt_qq_cur->ps_pretend_probe, pkt_qq_cur->ps_pretend_count,pkt_qq_cur->ps_pretend_succ_count,pkt_qq_cur->ps_pretend_failed_ack_count\
                         ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
                         ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
                         ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[5],pkt_qq_cur->ccastats_qq_differ[6]\
-                        ,pkt_qq_cur->ccastats_qq_differ[7],pkt_qq_cur->ccastats_qq_differ[8]);*/
+                        ,pkt_qq_cur->ccastats_qq_differ[7],pkt_qq_cur->ccastats_qq_differ[8]);
                 
 
-                    fprintf(stdout,"%s: FrameID(%u) n_pkts(%u) APnum(%u) fifo(%u)"
+                    /*fprintf(stdout,"%s: FrameID(%u) n_pkts(%u) APnum(%u) fifo(%u)"
                         "pkt_qq_chain_len_add(%u:%u:%u) "
-                        "pktnum_to_send(%u:%u:%d) failed_cnt(%u) PHYdelay(%u) ps_dur_trans(%u) " 
+                        "pktnum_to_send(%u:%u:%d) failed_cnt(%u) PHYdelay(%u) cfp+PHYdelay(%u) ps_dur_trans(%u) " 
                         "free_time(%u) into_hw_time(%u) into_CFP_time(%u:%u) airtime_self(%u) txop_in_fly(%u) busy_time(%u) "
                         "time_in_pretend_in_fly(%u) ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)TXOP(%u)\n"
                         ,pkt_info_type, pkt_qq_cur->FrameID, pkt_qq_cur->n_pkts, pkt_qq_cur->APnum, pkt_qq_cur->fifo\
                         ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
-                        ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->ps_dur_trans\
+                        ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->failed_cnt\
+                        ,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->free_time-pkt_qq_cur->into_CFP_time,pkt_qq_cur->ps_dur_trans\
                         ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
                         ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
                         ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
-                        ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[6]);
+                        ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[6]);*/
                     
                     if(pkt_qq_cur->failed_cnt>0){
                         fprintf(stdout,"failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)\n",pkt_qq_cur->failed_time_list_qq[0]\
@@ -705,10 +707,6 @@ void file_io(void) {
                 // clock_gettime(CLOCK_REALTIME, &amp;phy_info_qq.timestamp);
                             //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
 
-                /*fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
-                ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
-                phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
-                */
                 fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d)\n"\
                 ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel);
             
@@ -721,6 +719,10 @@ void file_io(void) {
                     fprintf(stdout,"time:rssi:noise");
                     for(int8_t i = 0;i<RSSI_RING_SIZE;i++){
                         //if(rates_counts_txs_qq_differ.txsucc_cnt[i]>0){
+                            fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
+                            ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
+                            phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
+
                             fprintf(stdout,"(%d:%d:%d)",pkt_qq_cur->free_time-phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].timestamp\
                             ,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].RSSI,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].noiselevel);
                         //}

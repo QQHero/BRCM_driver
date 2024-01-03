@@ -2715,7 +2715,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
                 debugfs_set_info_qq(2, info_qq, 1);
                 MFREE(osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
-                if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1){//如果时延较高就打印出来
+                if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1 || pkt_qq_cur->free_time - pkt_qq_cur->into_CFP_time >= 20){//如果时延较高就打印出来
                     //printk("**************debug5+5*******************");
                     //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
                     //int dump_rand_flag = OSL_RAND() % 10000;
