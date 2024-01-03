@@ -8344,6 +8344,9 @@ wl_chanspec(void *wl, cmd_t *cmd, char **argv)
 			err = BCME_USAGE_ERROR;
 		}
 	} else {
+    /* dump_flag_qqdx */
+    printk("wl_chanspec:miniopt_init");
+    /* dump_flag_qqdx */
 		miniopt_init(&to, fn_name, NULL, FALSE);
 		while ((opt_err = miniopt(&to, argv)) != -1) {
 			if (opt_err == 1) {
