@@ -8336,6 +8336,9 @@ wl_chanspec(void *wl, cmd_t *cmd, char **argv)
 	if (chanspec != 0) {
 		val = wl_chspec32_to_driver(chanspec);
 		if (val != INVCHANSPEC) {
+    /* dump_flag_qqdx */
+    printk("wl_chanspec:wlu_iovar_setint1");
+    /* dump_flag_qqdx */
 			err = wlu_iovar_setint(wl, cmd->name, val);
 		} else {
 			err = BCME_USAGE_ERROR;
@@ -8444,6 +8447,9 @@ wl_chanspec(void *wl, cmd_t *cmd, char **argv)
 		if (ch_set && band_set && bw_set && ctl_sb_set) {
 			val = wl_chspec32_to_driver(chanspec);
 			if (val != INVCHANSPEC) {
+    /* dump_flag_qqdx */
+    printk("wl_chanspec:wlu_iovar_setint2");
+    /* dump_flag_qqdx */
 				err = wlu_iovar_setint(wl, cmd->name, val);
 			} else {
 				err = BCME_USAGE_ERROR;
