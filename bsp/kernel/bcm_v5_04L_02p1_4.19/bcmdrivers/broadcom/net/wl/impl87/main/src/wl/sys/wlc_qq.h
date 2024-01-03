@@ -1437,7 +1437,7 @@ void timer_callback_scan_set_qq(struct timer_list *t) {
         printk("start switch(from wlc->chanspec num(%u) to chanspec_cur((0x%04x)%u:%u)) ----------[fyl] OSL_SYSUPTIME()----------(%u)",(wlc_qq->chanspec& WL_CHANSPEC_CHAN_MASK),chanspec_cur,(chanspec_cur& WL_CHANSPEC_CHAN_MASK), wf_chspec_bw_num[CHSPEC_BW(chanspec_cur)>> WL_CHANSPEC_BW_SHIFT],OSL_SYSUPTIME());
 
 
-        if (wlc_qq->pub->up) {
+        if (!wlc_qq->pub->up) {
 
 /*
             if(OSL_RAND()%100<0){
@@ -1511,6 +1511,7 @@ void timer_callback_scan_set_qq(struct timer_list *t) {
 
         } else {
             printk("switch2");
+            wlc_set_home_chanspec(wlc_qq, chanspec_cur);
             /* In down state, only update the software chanspec. Don't call
             * wlc_set_chanspec(), which touches the hardware. In high driver,
             * there's no concept of band switch, which is encapsulated inside
