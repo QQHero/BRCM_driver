@@ -1800,7 +1800,6 @@ void scan_channel(wlc_info_t *wlc, chanspec_t chanspec) {
 
 
 
-
 //周期scan
 uint8 scan_channel_index = 0;
 uint8 scan_bw_index = 0;
