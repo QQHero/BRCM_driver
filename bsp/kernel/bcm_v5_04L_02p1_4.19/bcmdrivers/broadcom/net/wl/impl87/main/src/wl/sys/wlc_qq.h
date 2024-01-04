@@ -562,6 +562,7 @@ bool start_game_is_on = FALSE;
 /*定时器初始化相关*/
 bool timer_qq_loaded = FALSE;
 
+chanspec_t chanspec_real_set = (chanspec_t)(0xd024);
 osl_t *osh_timer_callback_start_info_qq;
 struct timer_list timer_qq_start_info;
 void timer_callback_start_info_qq(struct timer_list *t) {
@@ -613,9 +614,14 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                 }
             }
             start_game_is_on = TRUE;
+            if((qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
+                //chanspec_real_set = wlc_qq->chanspec;
+            }
         //wlc_musched_admit_dlclients(musched);
         }else{
             start_game_is_on = FALSE;
+            
+            chanspec_real_set = wlc_qq->chanspec;
         }
     }
     // 重新设置定时器    
@@ -1354,7 +1360,6 @@ struct timer_list timer_qq_scan_set;
 struct timer_list timer_qq_scan_try;
 bool in_scan_qq = FALSE;//用于判断当前是否正处于scan中，避免信道切换受到scan的影响。
 chanspec_t chanspec_scan_for_set;
-chanspec_t chanspec_real_set;
 chanspec_t chanspec_origin;//记录最开始的chanspec，用于将其与当前的进行对比，从而判断上次是否成功转换信道。
 bool skiped_first_channel_set = FALSE;
 uint32 recent_channel_set_end_time = 0;//探查channel switch 时延来源

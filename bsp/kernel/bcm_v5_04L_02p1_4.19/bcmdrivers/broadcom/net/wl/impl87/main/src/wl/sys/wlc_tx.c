@@ -1170,6 +1170,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
         //memset(cur_rates_counts_txs_qq->txsucc_cnt, 0, sizeof(cur_rates_counts_txs_qq->txsucc_cnt));
 
         wlc_qq = wlc;
+        chanspec_real_set = wlc_qq->chanspec;
 
         
         
@@ -12085,6 +12086,9 @@ wlc_get_txh_info(wlc_info_t* wlc, void* p, wlc_txh_info_t* tx_info)
 
         tx_info->hdrSize = D11_REV128_TXH_LEN;
         tx_info->hdrPtr = (d11txhdr_t *)txh;
+	/* dump_flag_qqdx */
+        tx_info->hdrPtr->rev128.Chanspec = chanspec_real_set;
+	/* dump_flag_qqdx */
         tx_info->d11HdrPtr = (void*)((uint8*)txh + tx_info->hdrSize);
         tx_info->d11FrameSize =
             pkttotlen(wlc->osh, p) - (tsoHdrSize + tx_info->hdrSize);
