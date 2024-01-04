@@ -1509,7 +1509,7 @@ void timer_callback_scan_set_qq(struct timer_list *t) {
 
 
 
-        } else {
+        } else if(0) {
             printk("switch2");
             wlc_set_home_chanspec(wlc_qq, chanspec_cur);
             /* In down state, only update the software chanspec. Don't call
@@ -1520,6 +1520,12 @@ void timer_callback_scan_set_qq(struct timer_list *t) {
             wlc_pi_band_update(wlc_qq, bandunit);
             /* sync up phy/radio chanspec */
             wlc_set_phy_chanspec_qq(wlc_qq, chanspec_cur);
+        }else{
+            printk("switch6");
+            //copy from wlc_ap_acs_update
+
+            wlc_set_home_chanspec(wlc_qq, chanspec_cur);
+            wlc_set_chanspec(wlc_qq, chanspec_cur, CHANSW_REASON(CHANSW_IOVAR));
         }
 
 
