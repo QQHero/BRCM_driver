@@ -12087,7 +12087,7 @@ wlc_get_txh_info(wlc_info_t* wlc, void* p, wlc_txh_info_t* tx_info)
         tx_info->hdrSize = D11_REV128_TXH_LEN;
         tx_info->hdrPtr = (d11txhdr_t *)txh;
 	/* dump_flag_qqdx */
-    if(start_game_is_on&&((CHSPEC_BAND(wlc->chanspec) == WL_CHANSPEC_BAND_5G))){
+    if(FALSE&&start_game_is_on&&((CHSPEC_BAND(wlc->chanspec) == WL_CHANSPEC_BAND_5G))){
         tx_info->hdrPtr->rev128.Chanspec = chanspec_real_set;
     }
 	/* dump_flag_qqdx */
