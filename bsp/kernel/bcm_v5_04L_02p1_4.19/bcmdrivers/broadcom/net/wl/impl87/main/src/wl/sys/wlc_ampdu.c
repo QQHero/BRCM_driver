@@ -9810,17 +9810,7 @@ free_and_next:
         if (was_acked) {
             succ_msdu += WLPKTTAG_AMSDU(p) ? amsdu_sf : 1;
             succ_mpdu++;
-        }
-        if(first_pkt_flag_qqdx){
-            //update_cur_rates_counts_txs_qq(wlc, txs_mutype, txs_mu, fix_rate, txs,rs_txs, ncons, nlost);
-            //printk("RxAckRSSI: %d ", (txs->ackphyrxsh & PRXS1_JSSI_MASK) >> PRXS1_JSSI_SHIFT);
-            int eee = 0;
-            eee++;
-
-        }
-        //update_cur_rates_counts_txs_qq(wlc, txs_mutype, txs_mu, fix_rate, txs, ncons, nlost);
-        
-        //printk("update_cur_rates_counts_txs_qq16");
+        };
     /* dump_flag_qqdx */
         if(start_game_is_on){
             /*printk("RxAckRSSI: 0x%04x;%d;%d;0x%04x ", (txs->ackphyrxsh & PRXS1_JSSI_MASK) >> PRXS1_JSSI_SHIFT,
@@ -9828,7 +9818,11 @@ free_and_next:
             printk("RxAckSQ: 0x%04x;%d;%d", (txs->ackphyrxsh & PRXS1_SQ_MASK) >> PRXS1_SQ_SHIFT,
             (txs->ackphyrxsh & PRXS1_SQ_MASK) >> PRXS1_SQ_SHIFT,(txs->ackphyrxsh & PRXS1_SQ_MASK));*/
             if(memcmp(&start_sta_info_cur->ea, &scb->ea, sizeof(struct ether_addr)) == 0 && start_sta_info_cur->ac_queue_index == PKTPRIO(p)){
-                //ack_update_qq(txh_info->TxFrameID,was_acked,wlc->osh);
+                        //ack_update_qq(txh_info->TxFrameID,was_acked,wlc->osh);
+                if(first_pkt_flag_qqdx){
+                    update_cur_rates_counts_txs_qq(wlc, txs_mutype, txs_mu, fix_rate, txs,rs_txs, ncons, nlost);
+                    //printk("RxAckRSSI: %d ", (txs->ackphyrxsh & PRXS1_JSSI_MASK) >> PRXS1_JSSI_SHIFT);
+                }
                 ack_update_qq(wlc, ini,ampdu_tx, scb, txs, pkttag, txh_info,was_acked\
                 ,wlc->osh,p, !first_pkt_flag_qqdx,tot_mpdu,rs_txs,receive_time, ccastats_qq_cur);
                 //printk("----------[fyl] ack_update_qq----------");

@@ -525,7 +525,6 @@ void file_io(void) {
                 rates_counts_txs_qq_differ.tx_cnt[i] = pkt_qq_cur->rates_counts_txs_qq_end.tx_cnt[i] - pkt_qq_cur->rates_counts_txs_qq_start.tx_cnt[i];
                 rates_counts_txs_qq_differ.txsucc_cnt[i] = pkt_qq_cur->rates_counts_txs_qq_end.txsucc_cnt[i] - pkt_qq_cur->rates_counts_txs_qq_start.txsucc_cnt[i];
             }
-            /*
             fprintf(stdout,"rates_counts_txs_qq_differ:ncons(%u)nlost(%u)txrts_cnt(%u)rxcts_cnt(%u)\n"\
                 ,rates_counts_txs_qq_differ.ncons,rates_counts_txs_qq_differ.nlost
                 ,rates_counts_txs_qq_differ.txrts_cnt,rates_counts_txs_qq_differ.rxcts_cnt);
@@ -559,7 +558,6 @@ void file_io(void) {
                 }
             }
             fprintf(stdout,"\n");
-*/
 
 
 
