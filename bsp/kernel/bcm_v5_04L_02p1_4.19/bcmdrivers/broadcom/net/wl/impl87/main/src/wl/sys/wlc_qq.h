@@ -921,7 +921,7 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
     rs_txs_cur.txsucc_cnt[2] = 0;
     rs_txs_cur.tx_cnt[3]     = 0;
     rs_txs_cur.txsucc_cnt[3] = 0;
-    printk("update_cur_rates_counts_txs_qq1");
+    //printk("update_cur_rates_counts_txs_qq1");
     if (fix_rate && !txs_mu) {
         /* if using fix rate, retrying 64 mpdus >=4 times can overflow 8-bit cnt.
          * So ucode treats fix rate specially.
@@ -975,12 +975,12 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
 
         rs_txs_cur.txrspec[i] = rs_txs.txrspec[i];
         uint cur_mcs = wf_rspec_to_mcs_qq(rs_txs_cur.txrspec[i]);
-        //printk("update_cur_rates_counts_txs_qq13(%u)",cur_mcs);
+        printk("update_cur_rates_counts_txs_qq13(%u)",cur_mcs);
 
         cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs] += rs_txs_cur.txsucc_cnt[i];
-        //printk("update_cur_rates_counts_txs_qq131");
+        printk("update_cur_rates_counts_txs_qq131");
         cur_rates_counts_txs_qq->tx_cnt[cur_mcs] += rs_txs_cur.tx_cnt[i];
-        //printk("update_cur_rates_counts_txs_qq132");
+        printk("update_cur_rates_counts_txs_qq132");
         //printk("tx_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->tx_cnt[cur_mcs],rs_txs_cur.tx_cnt[i]);
 
         //printk("txsucc_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs],rs_txs_cur.txsucc_cnt[i]);
