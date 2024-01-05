@@ -928,33 +928,33 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
          */
         rs_txs_cur.tx_cnt[0]     = (TX_STATUS_MACTXS_S3(txs)) & 0xffff;
         rs_txs_cur.txsucc_cnt[0] = (TX_STATUS_MACTXS_S3(txs) >> 16) & 0xffff;
-        printk("update_cur_rates_counts_txs_qq2");
+        //printk("update_cur_rates_counts_txs_qq2");
     } else {
-        printk("update_cur_rates_counts_txs_qq3");
+        //printk("update_cur_rates_counts_txs_qq3");
         txs_mutype = TX_STATUS_MUTYP(wlc->pub->corerev, TX_STATUS_MACTXS_S5(txs));
-        printk("update_cur_rates_counts_txs_qq4");
+        //printk("update_cur_rates_counts_txs_qq4");
         if (txs_mu) { /* MU case */
-        printk("update_cur_rates_counts_txs_qq5");
+        //printk("update_cur_rates_counts_txs_qq5");
             
             /* MU txstatus uses RT1~RT3 for other purposes */
             if (txs_mutype == TX_STATUS_MUTP_HEOM) {
-        printk("update_cur_rates_counts_txs_qq6");
+        //printk("update_cur_rates_counts_txs_qq6");
                 rtidx = TX_STATUS128_HEOM_RTIDX(TX_STATUS_MACTXS_S4(txs));
-        printk("update_cur_rates_counts_txs_qq7");
+        //printk("update_cur_rates_counts_txs_qq7");
                 //ASSERT(rtidx < RATESEL_MFBR_NUM);
             }
         } else { /* SU Case */
-        printk("update_cur_rates_counts_txs_qq8");
+        //printk("update_cur_rates_counts_txs_qq8");
             rs_txs_cur.tx_cnt[1]     = (TX_STATUS_MACTXS_S3(txs) >> 16) & 0xff;
             rs_txs_cur.txsucc_cnt[1] = (TX_STATUS_MACTXS_S3(txs) >> 24) & 0xff;
             rs_txs_cur.tx_cnt[2]     = (TX_STATUS_MACTXS_S4(txs) >>  0) & 0xff;
             rs_txs_cur.txsucc_cnt[2] = (TX_STATUS_MACTXS_S4(txs) >>  8) & 0xff;
             rs_txs_cur.tx_cnt[3]     = (TX_STATUS_MACTXS_S4(txs) >> 16) & 0xff;
             rs_txs_cur.txsucc_cnt[3] = (TX_STATUS_MACTXS_S4(txs) >> 24) & 0xff;
-        printk("update_cur_rates_counts_txs_qq9");
+        //printk("update_cur_rates_counts_txs_qq9");
         }
         if(rtidx<RATESEL_MFBR_NUM){
-        printk("update_cur_rates_counts_txs_qq10");
+        //printk("update_cur_rates_counts_txs_qq10");
         //printk("TX_STATUS_MACTXS_S3(txs)(%u)",TX_STATUS_MACTXS_S3(txs));
         //printk("TX_STATUS_MACTXS_S3(txs)(%u)",TX_STATUS_MACTXS_S3(txs) >> 8);
         //printk("TX_STATUS_MACTXS_S3(txs)(%u)",TX_STATUS_MACTXS_S3(txs));
@@ -970,23 +970,24 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
 
 
     }
+        printk("update_cur_rates_counts_txs_qq11");
     for(uint i = 0; i<RATESEL_MFBR_NUM; i++){
 
         rs_txs_cur.txrspec[i] = rs_txs.txrspec[i];
         uint cur_mcs = wf_rspec_to_mcs_qq(rs_txs_cur.txrspec[i]);
-        printk("update_cur_rates_counts_txs_qq13(%u)",cur_mcs);
+        //printk("update_cur_rates_counts_txs_qq13(%u)",cur_mcs);
 
         cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs] += rs_txs_cur.txsucc_cnt[i];
-        printk("update_cur_rates_counts_txs_qq131");
+        //printk("update_cur_rates_counts_txs_qq131");
         cur_rates_counts_txs_qq->tx_cnt[cur_mcs] += rs_txs_cur.tx_cnt[i];
-        printk("update_cur_rates_counts_txs_qq132");
+        //printk("update_cur_rates_counts_txs_qq132");
         //printk("tx_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->tx_cnt[cur_mcs],rs_txs_cur.tx_cnt[i]);
 
         //printk("txsucc_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs],rs_txs_cur.txsucc_cnt[i]);
         //printk("tx_cnt(%u:%u:%u)",cur_mcs,rs_txs_cur.tx_cnt[i],cur_rates_counts_txs_qq->tx_cnt[cur_mcs]);
     }
         printk("update_cur_rates_counts_txs_qq14");
-        printk("update_cur_rates_counts_txs_qq15");
+        //printk("update_cur_rates_counts_txs_qq15");
 
 }
 
