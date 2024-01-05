@@ -970,17 +970,17 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
 
 
     }
-        printk("update_cur_rates_counts_txs_qq11");
+        //printk("update_cur_rates_counts_txs_qq11");
     for(uint i = 0; i<RATESEL_MFBR_NUM; i++){
 
         rs_txs_cur.txrspec[i] = rs_txs.txrspec[i];
         int cur_mcs = wf_rspec_to_mcs_qq(rs_txs_cur.txrspec[i]);
         if(cur_mcs<0){
-            printk("update_cur_rates_counts_txs_qq12(%d)",wf_rspec_to_rate(rs_txs_cur.txrspec[i]));
+            //printk("update_cur_rates_counts_txs_qq12(%d)",wf_rspec_to_rate(rs_txs_cur.txrspec[i]));
             break;
 
         }
-        printk("update_cur_rates_counts_txs_qq13(%d)",cur_mcs);
+        //printk("update_cur_rates_counts_txs_qq13(%d)",cur_mcs);
 
         cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs] += rs_txs_cur.txsucc_cnt[i];
         //printk("update_cur_rates_counts_txs_qq131");
@@ -991,7 +991,7 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
         //printk("txsucc_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs],rs_txs_cur.txsucc_cnt[i]);
         //printk("tx_cnt(%u:%u:%u)",cur_mcs,rs_txs_cur.tx_cnt[i],cur_rates_counts_txs_qq->tx_cnt[cur_mcs]);
     }
-        printk("update_cur_rates_counts_txs_qq14");
+        //printk("update_cur_rates_counts_txs_qq14");
         //printk("update_cur_rates_counts_txs_qq15");
 
 }
