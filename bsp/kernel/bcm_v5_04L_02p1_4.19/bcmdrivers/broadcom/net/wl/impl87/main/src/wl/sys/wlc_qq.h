@@ -728,10 +728,10 @@ void wf_rspec_to_phyinfo_qq(ratesel_txs_t rs_txs, struct phy_info_qq *phy_info_q
 
 }
 
-uint wf_rspec_to_mcs_qq(ratespec_t rspec)
+int wf_rspec_to_mcs_qq(ratespec_t rspec)
 {
 	uint rate = (uint)(-1);
-	uint mcs, nss;
+	int mcs = -2, nss;
 
 	switch (rspec & WL_RSPEC_ENCODING_MASK) {
 		case WL_RSPEC_ENCODE_HE:
@@ -780,7 +780,7 @@ uint wf_rspec_to_mcs_qq(ratespec_t rspec)
 			ASSERT(0);
 			break;
 	}
-    return mcs;
+    return (rate == 0) ? (int)(-1) : mcs;
 
 }
 
@@ -974,13 +974,18 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
     for(uint i = 0; i<RATESEL_MFBR_NUM; i++){
 
         rs_txs_cur.txrspec[i] = rs_txs.txrspec[i];
-        uint cur_mcs = wf_rspec_to_mcs_qq(rs_txs_cur.txrspec[i]);
-        printk("update_cur_rates_counts_txs_qq13(%u)",cur_mcs);
+        int cur_mcs = wf_rspec_to_mcs_qq(rs_txs_cur.txrspec[i]);
+        if(cur_mcs<0){
+            printk("update_cur_rates_counts_txs_qq12(%d)",wf_rspec_to_rate(rs_txs_cur.txrspec[i]));
+            break;
+
+        }
+        printk("update_cur_rates_counts_txs_qq13(%d)",cur_mcs);
 
         cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs] += rs_txs_cur.txsucc_cnt[i];
-        printk("update_cur_rates_counts_txs_qq131");
+        //printk("update_cur_rates_counts_txs_qq131");
         cur_rates_counts_txs_qq->tx_cnt[cur_mcs] += rs_txs_cur.tx_cnt[i];
-        printk("update_cur_rates_counts_txs_qq132");
+        //printk("update_cur_rates_counts_txs_qq132");
         //printk("tx_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->tx_cnt[cur_mcs],rs_txs_cur.tx_cnt[i]);
 
         //printk("txsucc_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs],rs_txs_cur.txsucc_cnt[i]);
