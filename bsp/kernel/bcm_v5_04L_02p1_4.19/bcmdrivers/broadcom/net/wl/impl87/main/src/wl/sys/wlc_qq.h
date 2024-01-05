@@ -2530,7 +2530,8 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
                 memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
                 debugfs_set_info_qq(0, info_qq, 1);
                 
-                phy_info_qq_rx_new.RSSI_loc = 222;
+                phy_info_qq_rx_new.RSSI_loc = 222;			
+				memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
                 kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
                 memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
                 debugfs_set_info_qq(2, info_qq2, 1);
@@ -2735,6 +2736,8 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 phy_info_qq_rx_new.RSSI_type = FC_TYPE(fc_qq);
                 phy_info_qq_rx_new.RSSI_subtype = FC_SUBTYPE(fc_qq);
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+                			
+                memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
                 memcpy(info_qq, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
                 if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1 || pkt_qq_cur->free_time - pkt_qq_cur->into_CFP_time >= 20){//如果时延较高就打印出来
                     //printk("**************debug5+5*******************");
