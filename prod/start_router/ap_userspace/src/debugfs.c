@@ -714,13 +714,13 @@ void file_io(void) {
                 uint8_t rssi_ring_buffer_index_cur = (phy_info_qq_cur->rssi_ring_buffer_index- 1) % RSSI_RING_SIZE;
                 if(pre_FrameID != cur_FrameID){
 
+                    fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
+                    ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
+                    phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
+
                     fprintf(stdout,"time:rssi:noise");
                     for(int8_t i = 0;i<RSSI_RING_SIZE;i++){
                         //if(rates_counts_txs_qq_differ.txsucc_cnt[i]>0){
-                            fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
-                            ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
-                            phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
-
                             fprintf(stdout,"(%d:%d:%d)",pkt_qq_cur->free_time-phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].timestamp\
                             ,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].RSSI,phy_info_qq_cur->rssi_ring_buffer[rssi_ring_buffer_index_cur].noiselevel);
                         //}

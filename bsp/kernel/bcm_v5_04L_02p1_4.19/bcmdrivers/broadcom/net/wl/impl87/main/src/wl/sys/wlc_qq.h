@@ -2042,8 +2042,13 @@ void get_and_print_rssi_from_ant(wlc_info_t *wlc){
 		phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(wlc->osh, sizeof(*phy_info_qq_cur));
 		phy_info_qq_cur->RSSI = rxpwr;
 		phy_info_qq_cur->RSSI_loc = 666;
+        
+        phy_info_qq_rx_new.noiselevel = wlc_lq_chanim_phy_noise(wlc);
+        phy_info_qq_rx_new.RSSI = phy_info_qq_cur->RSSI;
+        save_rssi(phy_info_qq_rx_new.RSSI,phy_info_qq_rx_new.noiselevel);			
+        memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
 		memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
-		debugfs_set_info_qq(2, info_qq, 1);
+		//debugfs_set_info_qq(2, info_qq, 1);
 		MFREE(wlc->osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
     }
 
@@ -2524,6 +2529,11 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
                 pkt_qq_cur->droped_withoutACK_time = cur_time;
                 memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
                 debugfs_set_info_qq(0, info_qq, 1);
+                
+                phy_info_qq_rx_new.RSSI_loc = 222;
+                kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
+                memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
+                debugfs_set_info_qq(2, info_qq2, 1);
 #endif
                 pkt_qq_delete(pkt_qq_cur,osh);
                 pkt_qq_chain_len_timeout ++;
@@ -2696,22 +2706,18 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 pkt_qq_cur->time_in_pretend_in_fly = time_in_pretend_tot_qq - pkt_qq_cur->time_in_pretend_tot;
                 pkt_qq_cur->ampdu_seq = cur_mpdu_index;
 
-                struct phy_info_qq *phy_info_qq_cur = NULL;
-                phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(osh, sizeof(*phy_info_qq_cur));
-                phy_info_qq_cur->fix_rate = (ltoh16(txh_info->MacTxControlHigh) & D11AC_TXC_FIX_RATE) ? 1:0;
-                wf_rspec_to_phyinfo_qq(rs_txs, phy_info_qq_cur);
-                //phy_info_qq_cur->RSSI = TGTXS_PHYRSSI(TX_STATUS_MACTXS_S8(txs));
-                //phy_info_qq_cur->RSSI = ((phy_info_qq_cur->RSSI) & PHYRSSI_SIGN_MASK) ? (phy_info_qq_cur->RSSI - PHYRSSI_2SCOMPLEMENT) : phy_info_qq_cur->RSSI;
-                //phy_info_qq_cur->RSSI = pkttag->pktinfo.misc.rssi;
+                phy_info_qq_rx_new.fix_rate = (ltoh16(txh_info->MacTxControlHigh) & D11AC_TXC_FIX_RATE) ? 1:0;
+                wf_rspec_to_phyinfo_qq(rs_txs, &phy_info_qq_rx_new);
+                //phy_info_qq_rx_new.RSSI = TGTXS_PHYRSSI(TX_STATUS_MACTXS_S8(txs));
+                //phy_info_qq_rx_new.RSSI = ((phy_info_qq_rx_new.RSSI) & PHYRSSI_SIGN_MASK) ? (phy_info_qq_rx_new.RSSI - PHYRSSI_2SCOMPLEMENT) : phy_info_qq_rx_new.RSSI;
+                //phy_info_qq_rx_new.RSSI = pkttag->pktinfo.misc.rssi;
                 //wlc_d11rxhdr_t	*wrxh = (wlc_d11rxhdr_t *)PKTDATA(osh, p);
-                //phy_info_qq_cur->RSSI = phy_rssi_compute_rssi(WLC_PI(wlc), wrxh);
-                //phy_info_qq_cur->RSSI = wrxh->rssi;
+                //phy_info_qq_rx_new.RSSI = phy_rssi_compute_rssi(WLC_PI(wlc), wrxh);
+                //phy_info_qq_rx_new.RSSI = wrxh->rssi;
                 
                 //printk("**************debug5+4*******************");
-                phy_info_qq_cur->RSSI = phy_info_qq_rx_new.RSSI;
-                memcpy(phy_info_qq_cur->rssi_ring_buffer, phy_info_qq_rx_new.rssi_ring_buffer, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
 
-                //printk("rssi12345135345(%d,%d,%d)SNR(%d)",phy_info_qq_cur->RSSI,phy_info_qq_rx_new.RSSI,pkttag->pktinfo.misc.rssi,pkttag->pktinfo.misc.snr);
+                //printk("rssi12345135345(%d,%d,%d)SNR(%d)",phy_info_qq_rx_new.RSSI,phy_info_qq_rx_new.RSSI,pkttag->pktinfo.misc.rssi,pkttag->pktinfo.misc.snr);
                 
                 #if defined(DONGLEBUILD)
                         /* Get to dot11 header */
@@ -2722,16 +2728,14 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                             D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
                 #endif /* ! DONGLEBUILD */
 				uint16 fc_qq = ltoh16(h->fc);
-                phy_info_qq_cur->SNR = pkttag->pktinfo.misc.snr;
-                phy_info_qq_cur->noiselevel = wlc_lq_chanim_phy_noise(wlc);
-                phy_info_qq_cur->rssi_ring_buffer_index = rssi_ring_buffer_index;
-                phy_info_qq_cur->RSSI_loc = 111;
-                phy_info_qq_cur->RSSI_type = FC_TYPE(fc_qq);
-                phy_info_qq_cur->RSSI_subtype = FC_SUBTYPE(fc_qq);
+                phy_info_qq_rx_new.SNR = pkttag->pktinfo.misc.snr;
+                phy_info_qq_rx_new.noiselevel = wlc_lq_chanim_phy_noise(wlc);
+                phy_info_qq_rx_new.rssi_ring_buffer_index = rssi_ring_buffer_index;
+                phy_info_qq_rx_new.RSSI_loc = 111;
+                phy_info_qq_rx_new.RSSI_type = FC_TYPE(fc_qq);
+                phy_info_qq_rx_new.RSSI_subtype = FC_SUBTYPE(fc_qq);
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
-                memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
-                debugfs_set_info_qq(2, info_qq, 1);
-                MFREE(osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
+                memcpy(info_qq, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
                 if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1 || pkt_qq_cur->free_time - pkt_qq_cur->into_CFP_time >= 20){//如果时延较高就打印出来
                     //printk("**************debug5+5*******************");
                     //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
@@ -2739,6 +2743,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                     kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                     memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
                     debugfs_set_info_qq(0, info_qq, 1);
+                    debugfs_set_info_qq(2, info_qq, 1);
                     //if (!use_last_pkt) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
                     if (0) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
                         printk("----------[fyl] OSL_SYSUPTIME()1----------(%u)",OSL_SYSUPTIME());
