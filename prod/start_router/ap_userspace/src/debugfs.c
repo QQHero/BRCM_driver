@@ -18,7 +18,7 @@
 
 #define PRINT_pkt_info 1
 #define PRINT_pkt_count_info 1
-#define PRINT_phy_info 0
+#define PRINT_phy_info 1
 #define PRINT_frameid_info 0
 #define PRINT_multiuser_info 0
 #define PRINT_monitor_info 0
