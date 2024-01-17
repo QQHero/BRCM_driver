@@ -310,6 +310,7 @@ bsd_watchdog(bsd_info_t*info, uint ticks)
 {
 /* dump_flag_qqdx */
     printk("----------bsd_watchdog [fyl] OSL_SYSUPTIME17(%u)---",OSL_SYSUPTIME());
+	printf("----------bsd bsd_watchdog(bsd_info_t*info, uint ticks) [fyl]---");
 /* dump_flag_qqdx */
 
 	BSD_ENTER();
@@ -618,6 +619,7 @@ int main(int argc, char *argv[])
 
 /* dump_flag_qqdx */
     printk("----------bsd main(int argc, char *argv[]) [fyl] OSL_SYSUPTIME17(%u)---",OSL_SYSUPTIME());
+	printf("----------bsd main(int argc, char *argv[]) [fyl]---");
 /* dump_flag_qqdx */
 	if (argc > 1) {
 		while ((c = getopt(argc, argv, "chHfFilsSrt")) != -1) {
