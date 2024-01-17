@@ -917,12 +917,13 @@ wlc_recv(wlc_info_t *wlc, void *p)
 skip_plcp_error:
 	/* dump_flag_qqdx */
     skip_plcp_error_index++;
+    //每秒打印一下相关结果，暂时屏蔽掉
     if(skip_plcp_error_index>skip_plcp_error_index_last+1000){
         skip_plcp_error_index_last = skip_plcp_error_index;
-        printk("cur_time(%u):wlc->monitor(%d);wlc->channum(%d)(MONITOR_ENAB(wlc)(%d) &&"
+        /*printk("cur_time(%u):wlc->monitor(%d);wlc->channum(%d)(MONITOR_ENAB(wlc)(%d) &&"
         "(MONITOR_PROMISC_ENAB((wlc)->mon_info)(%d) || (wlc->rx_mgmt)(%d) ||"
         "(STAMON_ENAB(pub)(%d) && STA_MONITORING(wlc, &h->a2))(%d)))",OSL_SYSUPTIME(),wlc->monitor,(wlc->chanspec& WL_CHANSPEC_CHAN_MASK),MONITOR_ENAB(wlc),MONITOR_PROMISC_ENAB((wlc)->mon_info),(wlc->rx_mgmt),
-        STAMON_ENAB(pub),STA_MONITORING(wlc, &h->a2));
+        STAMON_ENAB(pub),STA_MONITORING(wlc, &h->a2));*/
     }
     /* dump_flag_qqdx */
     /* monitor mode. Send all runt/bad fcs/bad proto up as well */
