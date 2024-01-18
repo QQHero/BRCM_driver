@@ -2737,6 +2737,23 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 phy_info_qq_rx_new.RSSI_subtype = FC_SUBTYPE(fc_qq);
                 phy_info_qq_rx_new.channel_index = wlc->chanspec & WL_CHANSPEC_CHAN_MASK;
                 phy_info_qq_rx_new.real_BW = wf_chspec_bw_num[CHSPEC_BW(wlc->chanspec)>> WL_CHANSPEC_BW_SHIFT];
+                /* PHY parameters */
+                phy_info_qq_rx_new.chanspec = wlc->chanspec;		/**< target operational channel */
+                phy_info_qq_rx_new.usr_fragthresh = wlc->usr_fragthresh;		/**< user configured fragmentation threshold */
+                memcpy(phy_info_qq_rx_new.fragthresh, wlc->fragthresh, sizeof(phy_info_qq_rx_new.fragthresh));
+                //phy_info_qq_rx_new.fragthresh[AC_COUNT];	/**< per-AC fragmentation thresholds */
+                phy_info_qq_rx_new.RTSThresh = wlc->RTSThresh;		/**< 802.11 dot11RTSThreshold */
+                phy_info_qq_rx_new.SRL = wlc->SRL;			/**< 802.11 dot11ShortRetryLimit */
+                phy_info_qq_rx_new.LRL = wlc->LRL;			/**< 802.11 dot11LongRetryLimit */
+                phy_info_qq_rx_new.SFBL = wlc->SFBL;			/**< Short Frame Rate Fallback Limit */
+                phy_info_qq_rx_new.LFBL = wlc->LFBL;			/**< Long Frame Rate Fallback Limit */
+
+                /* network config */
+                phy_info_qq_rx_new.shortslot = wlc->shortslot;		/**< currently using 11g ShortSlot timing */
+                phy_info_qq_rx_new.shortslot_override = wlc->shortslot_override;	/**< 11g ShortSlot override */
+                phy_info_qq_rx_new.ignore_bcns = wlc->ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
+                phy_info_qq_rx_new.interference_mode_crs = wlc->interference_mode_crs;	/**< aphy crs state for interference mitigation */
+                phy_info_qq_rx_new.legacy_probe = wlc->legacy_probe;		/**< restricts probe requests to CCK rates */
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                 			
                 memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);

@@ -147,6 +147,7 @@ typedef struct {
 } DataPoint_qq;
 
 #define RATESEL_MFBR_NUM      4
+#define AC_COUNT		4	/* number of ACs */
 struct phy_info_qq {
     uint8_t fix_rate;
     uint32_t mcs[RATESEL_MFBR_NUM];
@@ -164,6 +165,23 @@ struct phy_info_qq {
     DataPoint_qq rssi_ring_buffer[RSSI_RING_SIZE];
     uint8_t channel_index;
     uint8_t real_BW;
+    
+    /* PHY parameters */
+	uint16_t    	chanspec;		/**< target operational channel */
+	uint16_t		usr_fragthresh;		/**< user configured fragmentation threshold */
+	uint16_t		fragthresh[AC_COUNT];	/**< per-AC fragmentation thresholds */
+	uint16_t		RTSThresh;		/**< 802.11 dot11RTSThreshold */
+	uint16_t		SRL;			/**< 802.11 dot11ShortRetryLimit */
+	uint16_t		LRL;			/**< 802.11 dot11LongRetryLimit */
+	uint16_t		SFBL;			/**< Short Frame Rate Fallback Limit */
+	uint16_t		LFBL;			/**< Long Frame Rate Fallback Limit */
+
+	/* network config */
+	bool		shortslot;		/**< currently using 11g ShortSlot timing */
+	int8_t		shortslot_override;	/**< 11g ShortSlot override */
+	bool		ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
+	bool		interference_mode_crs;	/**< aphy crs state for interference mitigation */
+	bool		legacy_probe;		/**< restricts probe requests to CCK rates */
 }phy_info_qq_t;
 
 //#endif

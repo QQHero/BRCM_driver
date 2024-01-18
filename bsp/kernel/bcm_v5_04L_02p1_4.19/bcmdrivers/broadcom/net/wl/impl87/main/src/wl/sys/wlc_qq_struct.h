@@ -124,6 +124,22 @@ struct phy_info_qq {
     DataPoint_qq rssi_ring_buffer[RSSI_RING_SIZE];
     uint8 channel_index;
     uint8 real_BW;
+    /* PHY parameters */
+	chanspec_t	chanspec;		/**< target operational channel */
+	uint16		usr_fragthresh;		/**< user configured fragmentation threshold */
+	uint16		fragthresh[AC_COUNT];	/**< per-AC fragmentation thresholds */
+	uint16		RTSThresh;		/**< 802.11 dot11RTSThreshold */
+	uint16		SRL;			/**< 802.11 dot11ShortRetryLimit */
+	uint16		LRL;			/**< 802.11 dot11LongRetryLimit */
+	uint16		SFBL;			/**< Short Frame Rate Fallback Limit */
+	uint16		LFBL;			/**< Long Frame Rate Fallback Limit */
+
+	/* network config */
+	bool		shortslot;		/**< currently using 11g ShortSlot timing */
+	int8		shortslot_override;	/**< 11g ShortSlot override */
+	bool		ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
+	bool		interference_mode_crs;	/**< aphy crs state for interference mitigation */
+	bool		legacy_probe;		/**< restricts probe requests to CCK rates */
 };
 
 
