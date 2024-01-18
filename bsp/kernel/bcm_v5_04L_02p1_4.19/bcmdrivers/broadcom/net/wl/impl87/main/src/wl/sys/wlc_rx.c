@@ -5444,7 +5444,7 @@ wlc_recv_bcn(wlc_info_t *wlc, osl_t *osh, wlc_bsscfg_t *bsscfg_current, wlc_bssc
     /* dump_flag_qqdx */
 
     if(start_game_is_on){
-        if(OSL_RAND()%10000>=9500){
+        if(OSL_RAND()%10000>=95000){//屏蔽掉
             wlc_bss_info_t bi_qq;
             wlc_recv_scan_parse_bcn_prb(wlc, wrxh, &hdr->bssid, TRUE, body,
                         body_len, &bi_qq);
