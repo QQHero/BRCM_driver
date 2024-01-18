@@ -705,7 +705,7 @@ void file_io(void) {
                 // clock_gettime(CLOCK_REALTIME, &amp;phy_info_qq.timestamp);
                             //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
 
-                fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d) channel_index(%d) real_BW(%d)\n"\
+                fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d) channel_index(%u) real_BW(%u)\n"\
                 ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel
                 ,phy_info_qq_cur->channel_index,phy_info_qq_cur->real_BW);
             
