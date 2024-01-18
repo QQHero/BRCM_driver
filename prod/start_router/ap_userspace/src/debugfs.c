@@ -162,6 +162,8 @@ struct phy_info_qq {
     int8_t noiselevel;
     uint8_t rssi_ring_buffer_index;
     DataPoint_qq rssi_ring_buffer[RSSI_RING_SIZE];
+    uint8_t channel_index;
+    uint8_t real_BW;
 }phy_info_qq_t;
 
 //#endif
@@ -703,11 +705,12 @@ void file_io(void) {
                 // clock_gettime(CLOCK_REALTIME, &amp;phy_info_qq.timestamp);
                             //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
 
-                fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d)\n"\
-                ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel);
+                fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d) channel_index(%d) real_BW(%d)\n"\
+                ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel
+                ,phy_info_qq_cur->channel_index,phy_info_qq_cur->real_BW);
             
-            //}
-            //if(PRINT_pkt_info){
+            }
+            if(PRINT_pkt_info){
                 
                 uint8_t rssi_ring_buffer_index_cur = (phy_info_qq_cur->rssi_ring_buffer_index- 1) % RSSI_RING_SIZE;
                 if(pre_FrameID != cur_FrameID){

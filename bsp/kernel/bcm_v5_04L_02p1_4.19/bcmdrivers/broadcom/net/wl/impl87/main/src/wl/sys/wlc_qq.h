@@ -2735,6 +2735,8 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 phy_info_qq_rx_new.RSSI_loc = 111;
                 phy_info_qq_rx_new.RSSI_type = FC_TYPE(fc_qq);
                 phy_info_qq_rx_new.RSSI_subtype = FC_SUBTYPE(fc_qq);
+                phy_info_qq_rx_new.channel_index = wlc->chanspec & WL_CHANSPEC_CHAN_MASK;
+                phy_info_qq_rx_new.real_BW = wf_chspec_bw_num[CHSPEC_BW(wlc->chanspec)>> WL_CHANSPEC_BW_SHIFT];
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                 			
                 memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);

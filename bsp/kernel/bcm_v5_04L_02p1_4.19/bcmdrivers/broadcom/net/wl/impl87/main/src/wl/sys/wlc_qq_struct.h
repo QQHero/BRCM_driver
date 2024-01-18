@@ -122,6 +122,8 @@ struct phy_info_qq {
     int8 noiselevel;
     uint8 rssi_ring_buffer_index;
     DataPoint_qq rssi_ring_buffer[RSSI_RING_SIZE];
+    uint8 channel_index;
+    uint8 real_BW;
 };
 
 
