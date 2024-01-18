@@ -2855,6 +2855,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 for(int i = 0; i<pkt_phydelay_dict_len; i++){
                     index_i = i;
                     if(i*pkt_phydelay_dict_step+pkt_phydelay_dict_step>pkt_qq_cur_PHYdelay){
+                        break;
                         
                     }
                 }
