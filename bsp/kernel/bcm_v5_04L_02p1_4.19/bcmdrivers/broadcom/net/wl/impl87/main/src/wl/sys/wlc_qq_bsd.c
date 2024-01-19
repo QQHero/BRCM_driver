@@ -28,7 +28,7 @@ void update_wlc_info_qq_record(wlc_info_t *wlc){
     }else{
         return;
     }
-    if(wlc_info_qq_record_cur->bandtype < 0){        
+    if(wlc_info_qq_record_cur->wlc == NULL ||!wlc_info_qq_record_cur->wlc->pub->up|| wlc_info_qq_record_cur->bandtype < 0){        
         wlc_info_qq_record_cur->wlc = wlc;
         wlc_info_qq_record_cur->bandtype = wlc->band->bandtype;
         wlc_info_qq_record_cur->desired_BSSID = wlc->desired_BSSID;
