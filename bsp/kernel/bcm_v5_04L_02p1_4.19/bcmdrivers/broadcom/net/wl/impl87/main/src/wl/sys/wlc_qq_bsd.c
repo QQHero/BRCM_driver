@@ -117,9 +117,10 @@ int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype){
     create_bss_trans_req_data(sta_mac, wlc_info_qq_record_cur->desired_BSSID, wlc_info_qq_record_cur->chanspec, data, &len);
 
     // 发送BSS Transition请求帧
-    wl_gas_tx_actframe(wlc, bsscfg_idx, (uint32)OSL_RAND(), wlc->chanspec, dwell_time, NULL, &sta_mac, len, data);
+    int ret;
+    ret = wl_gas_tx_actframe(wlc, bsscfg_idx, (uint32)OSL_RAND(), wlc->chanspec, dwell_time, NULL, &sta_mac, len, data);
 
     // 在这里添加处理响应的逻辑，例如根据响应更新终端设备状态、处理拒绝情况等
 
-    return 1;
+    return ret;
 }
