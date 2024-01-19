@@ -474,3 +474,21 @@ struct monitor_info_qq {
     bool wlc_clk;
     uint32 wlc_hw_maccontrol;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+//bsd相关
+void update_wlc_info_qq_record(wlc_info_t *wlc);
+int send_bss_trans_request(const char *ifname, struct ether_addr sta_mac, struct ether_addr target_bssid, uint16 target_chanspec);
+int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype);
+

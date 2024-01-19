@@ -17349,57 +17349,57 @@ Linker script and memory map
  .rodata        0x00000000c0801be0      0x193 kernel/module.o
  *fill*         0x00000000c0801d73        0x1 
  .rodata        0x00000000c0801d74       0x90 kernel/kallsyms.o
- .rodata        0x00000000c0801e04     0x510a kernel/configs.o
- *fill*         0x00000000c0806f0e        0x2 
- .rodata        0x00000000c0806f10      0x760 kernel/bpf/core.o
-                0x00000000c0807490                bpf_tail_call_proto
-                0x00000000c08074b0                bpf_get_local_storage_proto
-                0x00000000c08074d0                bpf_get_current_cgroup_id_proto
-                0x00000000c08074f0                bpf_sock_hash_update_proto
-                0x00000000c0807510                bpf_sock_map_update_proto
-                0x00000000c0807530                bpf_get_current_comm_proto
-                0x00000000c0807550                bpf_get_current_uid_gid_proto
-                0x00000000c0807570                bpf_get_current_pid_tgid_proto
-                0x00000000c0807590                bpf_ktime_get_ns_proto
-                0x00000000c08075b0                bpf_get_numa_node_id_proto
-                0x00000000c08075d0                bpf_get_smp_processor_id_proto
-                0x00000000c08075f0                bpf_get_prandom_u32_proto
-                0x00000000c0807610                bpf_map_delete_elem_proto
-                0x00000000c0807630                bpf_map_update_elem_proto
-                0x00000000c0807650                bpf_map_lookup_elem_proto
- .rodata        0x00000000c0807670       0x11 kernel/rseq.o
- *fill*         0x00000000c0807681        0x3 
- .rodata        0x00000000c0807684       0x34 mm/filemap.o
-                0x00000000c0807684                generic_file_vm_ops
- .rodata        0x00000000c08076b8       0x11 mm/oom_kill.o
- *fill*         0x00000000c08076c9        0x3 
- .rodata        0x00000000c08076cc       0xc8 mm/page_alloc.o
-                0x00000000c0807774                compound_page_dtors
-                0x00000000c080777c                migratetype_names
- .rodata        0x00000000c0807794       0x1c mm/vmscan.o
- .rodata        0x00000000c08077b0       0xf8 mm/vmstat.o
-                0x00000000c08077b0                vmstat_text
- .rodata        0x00000000c08078a8       0x94 mm/backing-dev.o
- .rodata        0x00000000c080793c       0x90 mm/slab_common.o
- .rodata        0x00000000c08079cc      0x2c8 mm/debug.o
-                0x00000000c08079cc                vmaflag_names
-                0x00000000c0807ac4                gfpflag_names
-                0x00000000c0807be4                pageflag_names
- .rodata        0x00000000c0807c94       0x80 mm/memory.o
- .rodata        0x00000000c0807d14       0x84 mm/mmap.o
-                0x00000000c0807d90                mmap_rnd_bits_max
-                0x00000000c0807d94                mmap_rnd_bits_min
- .rodata        0x00000000c0807d98       0x20 mm/vmalloc.o
- .rodata        0x00000000c0807db8       0xf5 mm/memblock.o
- *fill*         0x00000000c0807ead        0x3 
- .rodata        0x00000000c0807eb0       0x3c mm/slub.o
- .rodata        0x00000000c0807eec       0x10 mm/early_ioremap.o
- .rodata        0x00000000c0807efc        0xa mm/cma.o
- *fill*         0x00000000c0807f06        0x2 
- .rodata        0x00000000c0807f08       0x80 fs/open.o
- .rodata        0x00000000c0807f88       0x80 fs/read_write.o
-                0x00000000c0807f88                generic_ro_fops
- *fill*         0x00000000c0808008       0x38 
+ .rodata        0x00000000c0801e04     0x5119 kernel/configs.o
+ *fill*         0x00000000c0806f1d        0x3 
+ .rodata        0x00000000c0806f20      0x760 kernel/bpf/core.o
+                0x00000000c08074a0                bpf_tail_call_proto
+                0x00000000c08074c0                bpf_get_local_storage_proto
+                0x00000000c08074e0                bpf_get_current_cgroup_id_proto
+                0x00000000c0807500                bpf_sock_hash_update_proto
+                0x00000000c0807520                bpf_sock_map_update_proto
+                0x00000000c0807540                bpf_get_current_comm_proto
+                0x00000000c0807560                bpf_get_current_uid_gid_proto
+                0x00000000c0807580                bpf_get_current_pid_tgid_proto
+                0x00000000c08075a0                bpf_ktime_get_ns_proto
+                0x00000000c08075c0                bpf_get_numa_node_id_proto
+                0x00000000c08075e0                bpf_get_smp_processor_id_proto
+                0x00000000c0807600                bpf_get_prandom_u32_proto
+                0x00000000c0807620                bpf_map_delete_elem_proto
+                0x00000000c0807640                bpf_map_update_elem_proto
+                0x00000000c0807660                bpf_map_lookup_elem_proto
+ .rodata        0x00000000c0807680       0x11 kernel/rseq.o
+ *fill*         0x00000000c0807691        0x3 
+ .rodata        0x00000000c0807694       0x34 mm/filemap.o
+                0x00000000c0807694                generic_file_vm_ops
+ .rodata        0x00000000c08076c8       0x11 mm/oom_kill.o
+ *fill*         0x00000000c08076d9        0x3 
+ .rodata        0x00000000c08076dc       0xc8 mm/page_alloc.o
+                0x00000000c0807784                compound_page_dtors
+                0x00000000c080778c                migratetype_names
+ .rodata        0x00000000c08077a4       0x1c mm/vmscan.o
+ .rodata        0x00000000c08077c0       0xf8 mm/vmstat.o
+                0x00000000c08077c0                vmstat_text
+ .rodata        0x00000000c08078b8       0x94 mm/backing-dev.o
+ .rodata        0x00000000c080794c       0x90 mm/slab_common.o
+ .rodata        0x00000000c08079dc      0x2c8 mm/debug.o
+                0x00000000c08079dc                vmaflag_names
+                0x00000000c0807ad4                gfpflag_names
+                0x00000000c0807bf4                pageflag_names
+ .rodata        0x00000000c0807ca4       0x80 mm/memory.o
+ .rodata        0x00000000c0807d24       0x84 mm/mmap.o
+                0x00000000c0807da0                mmap_rnd_bits_max
+                0x00000000c0807da4                mmap_rnd_bits_min
+ .rodata        0x00000000c0807da8       0x20 mm/vmalloc.o
+ .rodata        0x00000000c0807dc8       0xf5 mm/memblock.o
+ *fill*         0x00000000c0807ebd        0x3 
+ .rodata        0x00000000c0807ec0       0x3c mm/slub.o
+ .rodata        0x00000000c0807efc       0x10 mm/early_ioremap.o
+ .rodata        0x00000000c0807f0c        0xa mm/cma.o
+ *fill*         0x00000000c0807f16        0x2 
+ .rodata        0x00000000c0807f18       0x80 fs/open.o
+ .rodata        0x00000000c0807f98       0x80 fs/read_write.o
+                0x00000000c0807f98                generic_ro_fops
+ *fill*         0x00000000c0808018       0x28 
  .rodata        0x00000000c0808040       0x40 fs/file_table.o
  .rodata        0x00000000c0808080       0x58 fs/super.o
  .rodata        0x00000000c08080d8       0x80 fs/char_dev.o

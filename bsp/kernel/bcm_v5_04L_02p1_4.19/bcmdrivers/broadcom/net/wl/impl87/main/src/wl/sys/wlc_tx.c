@@ -1110,6 +1110,10 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
 #endif
     hnddma_t *di;
     uint fifo;
+    
+/* dump_flag_qqdx */
+    update_wlc_info_qq_record(wlc);
+/* dump_flag_qqdx */
 
     sw_ampdu = (AMPDU_ENAB(pub) && AMPDU_HOST_ENAB(pub));
     if (sw_ampdu) {

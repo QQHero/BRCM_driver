@@ -561,6 +561,7 @@ struct start_sta_info *start_sta_info_cur;
 bool start_game_is_on = FALSE;
 /*定时器初始化相关*/
 bool timer_qq_loaded = FALSE;
+uint32 game_start_time_qq = 0;
 
 chanspec_t chanspec_real_set = (chanspec_t)(0xd024);
 osl_t *osh_timer_callback_start_info_qq;
@@ -613,6 +614,13 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                     printk("musched->dl_policy(%d)\n",musched->dl_policy);
                 }
             }
+            if(!start_game_is_on){
+
+                game_start_time_qq = OSL_SYSUPTIME();
+            }
+            if((game_start_time_qq + 30000000) <= OSL_SYSUPTIME()){//如果开玩30s就尝试切换
+                btm_qq_send(wlc_qq, start_sta_info_cur->ea, WLC_BAND_2G);
+            }
             start_game_is_on = TRUE;
             if((qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
                 //chanspec_real_set = wlc_qq->chanspec;
@@ -626,7 +634,6 @@ void timer_callback_start_info_qq(struct timer_list *t) {
     }
     // 重新设置定时器    
     mod_timer(&timer_qq_start_info, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq));
-    
 }
 
 

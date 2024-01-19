@@ -3095,7 +3095,12 @@ ifeq ($(WLCFP),1)
 	# See wlc_cfp.h to modify debug level
 	#WLFLAGS += -DCFP_DEBUG
 	WLFILES_SRC += src/wl/sys/wlc_cfp.c
+	#/* dump_flag_qqdx */
+	WLFILES_SRC += src/wl/sys/wlc_qq_bsd.c
+	#/* dump_flag_qqdx */
 endif
+
+
 
 # bulk DMA processing
 ifeq ($(BULKDMA),1)
