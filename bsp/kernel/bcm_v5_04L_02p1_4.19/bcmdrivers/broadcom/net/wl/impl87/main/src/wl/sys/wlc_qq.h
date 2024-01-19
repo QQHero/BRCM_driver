@@ -618,7 +618,7 @@ void timer_callback_start_info_qq(struct timer_list *t) {
 
                 game_start_time_qq = OSL_SYSUPTIME();
             }
-            if((game_start_time_qq + 30*TIMER_INTERVAL_S_qq) <= OSL_SYSUPTIME()&&((game_start_time_qq + 32*TIMER_INTERVAL_S_qq) > OSL_SYSUPTIME())){//如果开玩30s就尝试切换
+            if(((game_start_time_qq + 30*TIMER_INTERVAL_S_qq) <= OSL_SYSUPTIME())&&((game_start_time_qq + 32*TIMER_INTERVAL_S_qq) > OSL_SYSUPTIME())){//如果开玩30s就尝试切换
             
                 int ret_qq_bsd;
                 ret_qq_bsd = btm_qq_send(wlc_qq, start_sta_info_cur->ea, WLC_BAND_2G);
