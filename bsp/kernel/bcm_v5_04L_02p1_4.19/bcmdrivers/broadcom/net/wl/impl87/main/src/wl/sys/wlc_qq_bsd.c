@@ -50,7 +50,8 @@ void update_wlc_info_qq_record(wlc_info_t *wlc){
 								wlc_info_qq_record_cur->desired_BSSID.octet[5]);
         return;
     }
-    if(wlc_info_qq_record_cur->wlc->pub->_cnt->txframe<wlc->pub->_cnt->txframe){
+    //if(wlc_info_qq_record_cur->wlc->pub->_cnt->txframe<wlc->pub->_cnt->txframe){
+    if(wlc_info_qq_record_cur->desired_BSSID.octet[5]<wlc->hw->etheraddr.octet[5]){
         wlc_info_qq_record_cur->wlc = wlc;
         wlc_info_qq_record_cur->desired_BSSID = wlc->hw->etheraddr;
         wlc_info_qq_record_cur->chanspec = wlc->chanspec;
