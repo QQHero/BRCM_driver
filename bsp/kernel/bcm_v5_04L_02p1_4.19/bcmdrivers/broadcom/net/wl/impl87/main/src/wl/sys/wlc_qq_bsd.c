@@ -8,6 +8,7 @@
 #include <wlc.h>
 #include <wlc_types.h>
 #include <wl_gas.h>
+#include <wlc_hw_priv.h>
 
 struct wlc_info_qq_record{
     wlc_info_t *wlc;
@@ -28,11 +29,17 @@ void update_wlc_info_qq_record(wlc_info_t *wlc){
     }else{
         return;
     }
-    if(wlc_info_qq_record_cur->bandtype < 0){        
+    
+    if(wlc == NULL ||!wlc->pub->up|| wlc->hw->etheraddr.octet[0] == 0|| wlc->hw->etheraddr.octet[1] == 0){  
+        return;
+    }
+    if(wlc_info_qq_record_cur->wlc == NULL ||!wlc_info_qq_record_cur->wlc->pub->up|| wlc_info_qq_record_cur->bandtype < 0){        
+            
         wlc_info_qq_record_cur->wlc = wlc;
         wlc_info_qq_record_cur->bandtype = wlc->band->bandtype;
-        wlc_info_qq_record_cur->desired_BSSID = wlc->desired_BSSID;
+        wlc_info_qq_record_cur->desired_BSSID = wlc->hw->etheraddr;
         wlc_info_qq_record_cur->chanspec = wlc->chanspec;
+        
         printk("update_wlc_info_qq_record1:OSL_SYSUPTIME()-(%u)band(%d)MAC address (hdr): %02x:%02x:%02x:%02x:%02x:%02x"
             ,OSL_SYSUPTIME(),wlc_info_qq_record_cur->bandtype,
 								wlc_info_qq_record_cur->desired_BSSID.octet[0],
@@ -45,7 +52,7 @@ void update_wlc_info_qq_record(wlc_info_t *wlc){
     }
     if(wlc_info_qq_record_cur->wlc->pub->_cnt->txframe<wlc->pub->_cnt->txframe){
         wlc_info_qq_record_cur->wlc = wlc;
-        wlc_info_qq_record_cur->desired_BSSID = wlc->desired_BSSID;
+        wlc_info_qq_record_cur->desired_BSSID = wlc->hw->etheraddr;
         wlc_info_qq_record_cur->chanspec = wlc->chanspec;
         
         printk("update_wlc_info_qq_record2:OSL_SYSUPTIME()-(%u)band(%d)MAC address (hdr): %02x:%02x:%02x:%02x:%02x:%02x"
@@ -99,6 +106,14 @@ int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype){
         
         wlc_info_qq_record_cur = &wlc_info_qq_record_5G;
     }else{
+        printk("in btm_qq_send1:OSL_SYSUPTIME()-(%u)band(%d)MAC address (hdr): %02x:%02x:%02x:%02x:%02x:%02x"
+            ,OSL_SYSUPTIME(),wlc->band->bandtype,
+                            wlc->hw->etheraddr.octet[0],
+                            wlc->hw->etheraddr.octet[1],
+                            wlc->hw->etheraddr.octet[2],
+                            wlc->hw->etheraddr.octet[3],
+                            wlc->hw->etheraddr.octet[4],
+                            wlc->hw->etheraddr.octet[5]);
         return 0;
     }
     // void *w; // 无线控制器指针
@@ -120,6 +135,14 @@ int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype){
     int ret;
     ret = wl_gas_tx_actframe(wlc, bsscfg_idx, (uint32)OSL_RAND(), wlc->chanspec, dwell_time, NULL, &sta_mac, len, data);
     // 在这里添加处理响应的逻辑，例如根据响应更新终端设备状态、处理拒绝情况等
+    printk("in btm_qq_send2:OSL_SYSUPTIME()-(%u);band(%d);ret(%d);MAC address (hdr): %02x:%02x:%02x:%02x:%02x:%02x"
+        ,OSL_SYSUPTIME(), wlc_info_qq_record_cur->bandtype, ret,
+                            wlc_info_qq_record_cur->desired_BSSID.octet[0],
+                            wlc_info_qq_record_cur->desired_BSSID.octet[1],
+                            wlc_info_qq_record_cur->desired_BSSID.octet[2],
+                            wlc_info_qq_record_cur->desired_BSSID.octet[3],
+                            wlc_info_qq_record_cur->desired_BSSID.octet[4],
+                            wlc_info_qq_record_cur->desired_BSSID.octet[5]);
 
     return ret;
 }

@@ -2186,6 +2186,11 @@ wlc_bmac_recv(wlc_hw_info_t *wlc_hw, uint fifo, bool bound, wlc_worklet_info_t *
     ASSERT(bound_limit > 0);
     BCM_REFERENCE(n);
 
+/* dump_flag_qqdx */
+    if(start_game_is_on){
+        update_wlc_info_qq_record(wlc);
+    }
+/* dump_flag_qqdx */
 #if defined(WLCFP)
 #if defined(DONGLEBUILD)
 

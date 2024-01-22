@@ -421,6 +421,8 @@
 #include <wl_linux.h>
 //extern struct phy_info_qq phy_info_qq
 extern struct phy_info_qq phy_info_qq_rx_new;
+extern struct phy_info_qq phy_info_qq_rx_new_2G;
+extern struct phy_info_qq phy_info_qq_rx_new_5G;
 extern struct start_sta_info *start_sta_info_cur;
 extern bool start_game_is_on;
 extern uint rssi_ring_buffer_index;
@@ -648,6 +650,12 @@ wlc_recv(wlc_info_t *wlc, void *p)
     osh = wlc->osh;
     corerev = pub->corerev;
 
+/* dump_flag_qqdx */
+    if(start_game_is_on){
+        update_wlc_info_qq_record(wlc);
+    }
+/* dump_flag_qqdx */
+
 #if defined(PKTC) || defined(PKTC_DONGLE)
     /* Clear DA for pktc */
     PKTC_HDA_VALID_SET(wlc->pktc_info, FALSE);
@@ -802,6 +810,12 @@ wlc_recv(wlc_info_t *wlc, void *p)
                         save_rssi(wrxh->rssi,phy_info_qq_rx_new.noiselevel);						
                         memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
                         
+                        if(wlc->band->bandtype == WLC_BAND_2G){
+                            memcpy(&phy_info_qq_rx_new_2G,&phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
+                        }else if(wlc->band->bandtype == WLC_BAND_5G){
+                            
+                            memcpy(&phy_info_qq_rx_new_5G,&phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
+                        }	
 
                         kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                         struct phy_info_qq *phy_info_qq_cur = NULL;
@@ -812,7 +826,7 @@ wlc_recv(wlc_info_t *wlc, void *p)
                         phy_info_qq_cur->RSSI_type = FC_TYPE(fc_qq);
                         phy_info_qq_cur->RSSI_subtype = FC_SUBTYPE(fc_qq);
                         memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
-                        debugfs_set_info_qq(2, info_qq, 1);
+                        //debugfs_set_info_qq(2, info_qq, 1);
                         MFREE(wlc->osh, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
                     }
                     

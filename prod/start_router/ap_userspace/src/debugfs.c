@@ -727,8 +727,8 @@ void file_io(void) {
                 ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel
                 ,phy_info_qq_cur->channel_index,phy_info_qq_cur->real_BW);
             
-            }
-            if(PRINT_pkt_info){
+            //}
+            //if(PRINT_pkt_info){
                 
                 uint8_t rssi_ring_buffer_index_cur = (phy_info_qq_cur->rssi_ring_buffer_index- 1) % RSSI_RING_SIZE;
                 if(pre_FrameID != cur_FrameID){

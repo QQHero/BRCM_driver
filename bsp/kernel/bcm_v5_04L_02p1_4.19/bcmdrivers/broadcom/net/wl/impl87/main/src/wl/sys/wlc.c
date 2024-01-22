@@ -3761,6 +3761,10 @@ wlc_cwmin_gphy_update(wlc_info_t *wlc, wlc_rateset_t *rs, bool associated)
     wlc_set_cwmin(wlc, cwmin);
 }
 
+		/* dump_flag_qqdx */
+extern bool start_game_is_on;
+#include <wlc_qq_struct.h>
+		/* dump_flag_qqdx */
 /** propagate home chanspec to all bsscfgs in case bsscfg->current_bss->chanspec is referenced */
 void
 wlc_set_home_chanspec(wlc_info_t *wlc, chanspec_t chanspec)
@@ -7736,6 +7740,11 @@ BCMATTACHFN(wlc_attach)(void *wl, uint16 vendor, uint16 device, uint unit, uint 
        WL_ERROR(("wl%d: init Special scb failed\n",unit));
    }
 #endif
+/* dump_flag_qqdx */
+    //if(start_game_is_on){
+        update_wlc_info_qq_record(wlc);
+    //}
+/* dump_flag_qqdx */
 
     return ((void*)wlc);
 
