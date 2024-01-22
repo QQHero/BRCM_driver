@@ -634,7 +634,9 @@ wlc_recv(wlc_info_t *wlc, void *p)
     uint16 *prxs0;
     uint16 unsrate;
 /* dump_flag_qqdx */
-    update_wlc_info_qq_record(wlc);
+    if(start_game_is_on){
+        update_wlc_info_qq_record(wlc);
+    }
 /* dump_flag_qqdx */
 #ifdef WLAMSDU
     amsdu_info_t *ami = wlc->ami;
