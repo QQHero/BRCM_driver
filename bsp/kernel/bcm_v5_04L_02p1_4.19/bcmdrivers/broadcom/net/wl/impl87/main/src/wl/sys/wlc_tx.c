@@ -1112,9 +1112,13 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
     uint fifo;
     
 /* dump_flag_qqdx */
+<<<<<<< HEAD
     if(start_game_is_on){
         update_wlc_info_qq_record(wlc);
     }
+=======
+    //update_wlc_info_qq_record(wlc);
+>>>>>>> 88d7bd9e2e944fa0ae3efc9d6c6b230e9748d42f
 /* dump_flag_qqdx */
 
     sw_ampdu = (AMPDU_ENAB(pub) && AMPDU_HOST_ENAB(pub));

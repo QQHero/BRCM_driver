@@ -633,6 +633,11 @@ wlc_recv(wlc_info_t *wlc, void *p)
     bool rxhdrshort;
     uint16 *prxs0;
     uint16 unsrate;
+/* dump_flag_qqdx */
+    if(start_game_is_on){
+        update_wlc_info_qq_record(wlc);
+    }
+/* dump_flag_qqdx */
 #ifdef WLAMSDU
     amsdu_info_t *ami = wlc->ami;
     bool amsdu_rx_enabled = wlc->_amsdu_rx;

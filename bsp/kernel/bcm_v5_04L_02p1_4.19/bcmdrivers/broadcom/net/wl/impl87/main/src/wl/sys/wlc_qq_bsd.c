@@ -28,7 +28,7 @@ void update_wlc_info_qq_record(wlc_info_t *wlc){
     }else{
         return;
     }
-    if(wlc_info_qq_record_cur->bandtype < 0){        
+    if(wlc_info_qq_record_cur->wlc == NULL ||!wlc_info_qq_record_cur->wlc->pub->up|| wlc_info_qq_record_cur->bandtype < 0){        
         wlc_info_qq_record_cur->wlc = wlc;
         wlc_info_qq_record_cur->bandtype = wlc->band->bandtype;
         wlc_info_qq_record_cur->desired_BSSID = wlc->desired_BSSID;
@@ -119,6 +119,10 @@ int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype){
     // 发送BSS Transition请求帧
     int ret;
     ret = wl_gas_tx_actframe(wlc, bsscfg_idx, (uint32)OSL_RAND(), wlc->chanspec, dwell_time, NULL, &sta_mac, len, data);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 88d7bd9e2e944fa0ae3efc9d6c6b230e9748d42f
     // 在这里添加处理响应的逻辑，例如根据响应更新终端设备状态、处理拒绝情况等
 
     return ret;
