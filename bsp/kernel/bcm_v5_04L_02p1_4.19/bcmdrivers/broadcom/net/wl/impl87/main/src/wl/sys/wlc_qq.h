@@ -2777,10 +2777,10 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 phy_info_qq_cur->ignore_bcns = wlc->ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
                 phy_info_qq_cur->interference_mode_crs = wlc->interference_mode_crs;	/**< aphy crs state for interference mitigation */
                 phy_info_qq_cur->legacy_probe = wlc->legacy_probe;		/**< restricts probe requests to CCK rates */
-                kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+                kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
                 			
                 memcpy(phy_info_qq_cur->rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
-                memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
+                memcpy(info_qq2, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
                 if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1 || pkt_qq_cur->free_time - pkt_qq_cur->into_CFP_time >= 20){//如果时延较高就打印出来
                     //printk("**************debug5+5*******************");
                     //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
@@ -2788,7 +2788,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                     kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                     memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
                     debugfs_set_info_qq(0, info_qq, 1);
-                    debugfs_set_info_qq(2, info_qq, 1);
+                    debugfs_set_info_qq(2, info_qq2, 1);
                     //if (!use_last_pkt) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
                     if (0) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
                         printk("----------[fyl] OSL_SYSUPTIME()1----------(%u)",OSL_SYSUPTIME());

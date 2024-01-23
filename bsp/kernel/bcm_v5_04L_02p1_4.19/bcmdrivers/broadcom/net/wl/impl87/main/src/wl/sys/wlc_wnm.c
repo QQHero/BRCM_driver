@@ -8132,6 +8132,9 @@ wlc_wnm_send_bsstrans_request(wlc_wnm_info_t *wnm, wlc_bsscfg_t *bsscfg, struct 
 
     maxlen = DOT11_BSSTRANS_REQ_LEN;
 
+    /* dump_flag_qqdx */
+    printk("in wlc_wnm_send_bsstrans_request2");
+    /* dump_flag_qqdx */
     if (reqmode & DOT11_BSSTRANS_REQMODE_BSS_TERM_INCL)
         maxlen += TLV_HDR_LEN + DOT11_NGBR_BSS_TERM_DUR_SE_LEN;
     if (reqmode & DOT11_BSSTRANS_REQMODE_ESS_DISASSOC_IMNT)
@@ -8148,6 +8151,9 @@ wlc_wnm_send_bsstrans_request(wlc_wnm_info_t *wnm, wlc_bsscfg_t *bsscfg, struct 
             TLV_HDR_LEN + DOT11_WIDE_BW_IE_LEN);
 
         btq_nbr_elem = wnm_cfg->btq_nbr_list_head;
+    /* dump_flag_qqdx */
+        printk("in wlc_wnm_send_bsstrans_request3:(%u)(%u)",scb?1:0,btq_nbr_elem?1:0);
+    /* dump_flag_qqdx */
         while (scb && btq_nbr_elem) {
             if (memcmp(&scb->bsscfg->BSSID, &(btq_nbr_elem->nbr_elt.bssid),
                 ETHER_ADDR_LEN) == 0) {
@@ -8157,6 +8163,16 @@ wlc_wnm_send_bsstrans_request(wlc_wnm_info_t *wnm, wlc_bsscfg_t *bsscfg, struct 
 #endif /* WL_MBO && !WL_MBO_DISABLED && MBO_AP */
             }
             btq_nbr_elem = btq_nbr_elem->next;
+            
+    /* dump_flag_qqdx */
+    printk("in wlc_wnm_send_bsstrans_request:OSL_SYSUPTIME()-(%u)MAC address (hdr): %02x:%02x:%02x:%02x:%02x:%02x"
+            ,OSL_SYSUPTIME(), btq_nbr_elem->nbr_elt.bssid.octet[0],
+                            btq_nbr_elem->nbr_elt.bssid.octet[1],
+                            btq_nbr_elem->nbr_elt.bssid.octet[2],
+                            btq_nbr_elem->nbr_elt.bssid.octet[3],
+                            btq_nbr_elem->nbr_elt.bssid.octet[4],
+                            btq_nbr_elem->nbr_elt.bssid.octet[5]);
+    /* dump_flag_qqdx */
         }
     }
 

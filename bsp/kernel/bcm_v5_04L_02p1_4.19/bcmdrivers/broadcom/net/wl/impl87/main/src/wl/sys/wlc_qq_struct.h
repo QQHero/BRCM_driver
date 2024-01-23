@@ -492,3 +492,11 @@ void update_wlc_info_qq_record(wlc_info_t *wlc);
 int send_bss_trans_request(const char *ifname, struct ether_addr sta_mac, struct ether_addr target_bssid, uint16 target_chanspec);
 int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype);
 
+
+
+struct wlc_info_qq_record{
+    wlc_info_t *wlc;
+    int    bandtype;        /**< WLC_BAND_2G, WLC_BAND_5G, .. */
+    struct ether_addr    desired_BSSID;    /**< allow this station */
+    chanspec_t    chanspec;        /**< target operational channel */
+};
