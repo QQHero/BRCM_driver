@@ -103,6 +103,10 @@ int btm_qq_send(wlc_info_t *wlc, struct ether_addr sta_mac, int bandtype){
     struct wlc_info_qq_record *wlc_info_qq_record_cur;
     if(bandtype == WLC_BAND_2G){
         wlc_info_qq_record_cur = &wlc_info_qq_record_2G;
+        struct ether_addr G2_ether_addr = {
+            .octet = {0xB8, 0x3A, 0x08, 0xB6, 0x83, 0xF2}
+        };
+        wlc_info_qq_record_cur->desired_BSSID = G2_ether_addr;
     }else if(bandtype == WLC_BAND_5G){
         
         wlc_info_qq_record_cur = &wlc_info_qq_record_5G;
