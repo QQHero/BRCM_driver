@@ -726,11 +726,11 @@ void wf_rspec_to_phyinfo_qq(ratesel_txs_t rs_txs, struct phy_info_qq *phy_info_q
 			ASSERT(0);
 			break;
 	}
-    phy_info_qq_cur->mcs[rnum] = mcs;
-    phy_info_qq_cur->nss[rnum] = nss;
-    phy_info_qq_cur->rate[rnum] = rate;
-    phy_info_qq_cur->BW[rnum] = RSPEC_BW(rspec) >> WL_RSPEC_BW_SHIFT;;
-    phy_info_qq_cur->ISSGI[rnum] = RSPEC_ISSGI(rspec);
+    phy_info_qq_cur->mcs[rnum] = (uint32)mcs;
+    phy_info_qq_cur->nss[rnum] = (uint32)nss;
+    phy_info_qq_cur->rate[rnum] = (uint32)rate;
+    phy_info_qq_cur->BW[rnum] = (uint8)(RSPEC_BW(rspec) >> WL_RSPEC_BW_SHIFT);
+    phy_info_qq_cur->ISSGI[rnum] = (uint32)RSPEC_ISSGI(rspec);
     rnum++;
     }while (!(phy_info_qq_cur->fix_rate>0) && rnum < RATESEL_MFBR_NUM); /* loop over rates */
 
@@ -2724,14 +2724,14 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 pkt_qq_cur->time_in_pretend_in_fly = time_in_pretend_tot_qq - pkt_qq_cur->time_in_pretend_tot;
                 pkt_qq_cur->ampdu_seq = cur_mpdu_index;
                 struct phy_info_qq *phy_info_qq_cur = NULL;
-                    phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(osh, sizeof(*phy_info_qq_cur));
+                phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(osh, sizeof(*phy_info_qq_cur));
                 if(wlc->band->bandtype == WLC_BAND_2G){
-                    memcpy(phy_info_qq_cur,&phy_info_qq_rx_new_2G, sizeof(phy_info_qq_rx_new));
+                    memcpy(phy_info_qq_cur,&phy_info_qq_rx_new_2G, sizeof(*phy_info_qq_cur));
                 }else if(wlc->band->bandtype == WLC_BAND_5G){
-                    memcpy(phy_info_qq_cur,&phy_info_qq_rx_new_5G, sizeof(phy_info_qq_rx_new));
+                    memcpy(phy_info_qq_cur,&phy_info_qq_rx_new_5G, sizeof(*phy_info_qq_cur));
                 }	
                 phy_info_qq_cur->fix_rate = (ltoh16(txh_info->MacTxControlHigh) & D11AC_TXC_FIX_RATE) ? 1:0;
-                wf_rspec_to_phyinfo_qq(rs_txs, &phy_info_qq_rx_new);
+                wf_rspec_to_phyinfo_qq(rs_txs, phy_info_qq_cur);
                 //phy_info_qq_cur->RSSI = TGTXS_PHYRSSI(TX_STATUS_MACTXS_S8(txs));
                 //phy_info_qq_cur->RSSI = ((phy_info_qq_cur->RSSI) & PHYRSSI_SIGN_MASK) ? (phy_info_qq_cur->RSSI - PHYRSSI_2SCOMPLEMENT) : phy_info_qq_cur->RSSI;
                 //phy_info_qq_cur->RSSI = pkttag->pktinfo.misc.rssi;
@@ -2780,7 +2780,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                 			
                 memcpy(phy_info_qq_cur->rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
-                memcpy(info_qq, phy_info_qq_cur, sizeof(phy_info_qq_rx_new));
+                memcpy(info_qq, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
                 if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1 || pkt_qq_cur->free_time - pkt_qq_cur->into_CFP_time >= 20){//如果时延较高就打印出来
                     //printk("**************debug5+5*******************");
                     //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
