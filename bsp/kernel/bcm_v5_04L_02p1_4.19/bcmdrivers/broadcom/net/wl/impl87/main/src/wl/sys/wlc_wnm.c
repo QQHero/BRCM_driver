@@ -8155,6 +8155,9 @@ wlc_wnm_send_bsstrans_request(wlc_wnm_info_t *wnm, wlc_bsscfg_t *bsscfg, struct 
         printk("in wlc_wnm_send_bsstrans_request3:(%u)(%u)",scb?1:0,btq_nbr_elem?1:0);
     /* dump_flag_qqdx */
         while (scb && btq_nbr_elem) {
+    /* dump_flag_qqdx */
+    printk("in wlc_wnm_send_bsstrans_request4");
+    /* dump_flag_qqdx */
             if (memcmp(&scb->bsscfg->BSSID, &(btq_nbr_elem->nbr_elt.bssid),
                 ETHER_ADDR_LEN) == 0) {
 #if defined(WL_MBO) && !defined(WL_MBO_DISABLED) && defined(MBO_AP)
@@ -8162,8 +8165,9 @@ wlc_wnm_send_bsstrans_request(wlc_wnm_info_t *wnm, wlc_bsscfg_t *bsscfg, struct 
                 add_self = FALSE;
 #endif /* WL_MBO && !WL_MBO_DISABLED && MBO_AP */
             }
-            btq_nbr_elem = btq_nbr_elem->next;
-            
+    /* dump_flag_qqdx */
+    printk("in wlc_wnm_send_bsstrans_request5");
+    /* dump_flag_qqdx */
     /* dump_flag_qqdx */
     printk("in wlc_wnm_send_bsstrans_request:OSL_SYSUPTIME()-(%u)MAC address (hdr): %02x:%02x:%02x:%02x:%02x:%02x"
             ,OSL_SYSUPTIME(), btq_nbr_elem->nbr_elt.bssid.octet[0],
@@ -8173,6 +8177,8 @@ wlc_wnm_send_bsstrans_request(wlc_wnm_info_t *wnm, wlc_bsscfg_t *bsscfg, struct 
                             btq_nbr_elem->nbr_elt.bssid.octet[4],
                             btq_nbr_elem->nbr_elt.bssid.octet[5]);
     /* dump_flag_qqdx */
+            btq_nbr_elem = btq_nbr_elem->next;
+            
         }
     }
 
@@ -11888,12 +11894,18 @@ wlc_create_nbr_element_own_bss(wlc_info_t* wlc, wlc_bsscfg_t *bsscfg, uint8 **pt
     dot11_ngbr_bsstrans_pref_se_t *pref;
     int bssid_info = 0x00;
 
+    /* dump_flag_qqdx */
+    printk("in wlc_create_nbr_element_own_bss1:OSL_SYSUPTIME()-(%u)",OSL_SYSUPTIME());
+    /* dump_flag_qqdx */
     /* Fill AP's Own BSS information in Neighbor report element */
     nbrrep = (dot11_neighbor_rep_ie_t *)*ptr;
     nbrrep->id = DOT11_MNG_NEIGHBOR_REP_ID;
     nbrrep->len = DOT11_NEIGHBOR_REP_IE_FIXED_LEN +
             DOT11_NGBR_BSSTRANS_PREF_SE_LEN + TLV_HDR_LEN;
 
+    /* dump_flag_qqdx */
+    printk("in wlc_create_nbr_element_own_bss2:OSL_SYSUPTIME()-(%u)",OSL_SYSUPTIME());
+    /* dump_flag_qqdx */
     memcpy(&nbrrep->bssid, &(bsscfg->BSSID.octet), ETHER_ADDR_LEN);
 
     store32_ua((uint8 *)&nbrrep->bssid_info, bssid_info);
@@ -11917,6 +11929,9 @@ wlc_create_nbr_element_own_bss(wlc_info_t* wlc, wlc_bsscfg_t *bsscfg, uint8 **pt
         nbrrep->phytype = 0;
     }
 
+    /* dump_flag_qqdx */
+    printk("in wlc_create_nbr_element_own_bss3:OSL_SYSUPTIME()-(%u)",OSL_SYSUPTIME());
+    /* dump_flag_qqdx */
     /* Add preference subelement */
     pref = (dot11_ngbr_bsstrans_pref_se_t*) nbrrep->data;
     pref->sub_id = DOT11_NGBR_BSSTRANS_PREF_SE_ID;
@@ -11924,8 +11939,14 @@ wlc_create_nbr_element_own_bss(wlc_info_t* wlc, wlc_bsscfg_t *bsscfg, uint8 **pt
     /* preference of its own BSS */
     pref->preference = DOT11_NGBR_BSSTRANS_PREF_SE_HIGHEST;
 
+    /* dump_flag_qqdx */
+    printk("in wlc_create_nbr_element_own_bss4:OSL_SYSUPTIME()-(%u)",OSL_SYSUPTIME());
+    /* dump_flag_qqdx */
     *ptr += TLV_HDR_LEN + DOT11_NEIGHBOR_REP_IE_FIXED_LEN + TLV_HDR_LEN
             + DOT11_NGBR_BSSTRANS_PREF_SE_LEN;
+    /* dump_flag_qqdx */
+    printk("in wlc_create_nbr_element_own_bss5:OSL_SYSUPTIME()-(%u)",OSL_SYSUPTIME());
+    /* dump_flag_qqdx */
 } /* wlc_create_nbr_element_own_bss */
 
 #endif /* (WL_MBO && MBO_AP) || 11K_AP */
