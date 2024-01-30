@@ -1113,7 +1113,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
     
 /* dump_flag_qqdx */
     if(start_game_is_on){
-        update_wlc_info_qq_record(wlc);
+        //update_wlc_info_qq_record(wlc);
     }
 /* dump_flag_qqdx */
 

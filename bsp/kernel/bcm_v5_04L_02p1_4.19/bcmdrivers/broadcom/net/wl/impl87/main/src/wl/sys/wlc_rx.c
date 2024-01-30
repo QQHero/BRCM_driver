@@ -652,7 +652,7 @@ wlc_recv(wlc_info_t *wlc, void *p)
 
 /* dump_flag_qqdx */
     if(start_game_is_on){
-        update_wlc_info_qq_record(wlc);
+        //update_wlc_info_qq_record(wlc);
     }
 /* dump_flag_qqdx */
 
