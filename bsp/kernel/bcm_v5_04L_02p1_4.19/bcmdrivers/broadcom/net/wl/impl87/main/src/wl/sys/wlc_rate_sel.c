@@ -3802,6 +3802,13 @@ wlc_ratesel_checksgi(rcb_t *state, bool is_sgi)
 	return hold_rate;
 }
 
+
+    /* dump_flag_qqdx */
+#include <wlc_qq_struct.h>
+#include <wl_linux.h>
+extern bool start_game_is_on;
+    /* dump_flag_qqdx */
+
 /** Function to determine whether to move up in the rateset select_rates[] */
 static bool
 #if RSSI_PRI_ON
@@ -3904,6 +3911,38 @@ make_decision:
 		bool hopping;
 		/* change rate FIRST and do clean up work if necessary */
 		ratespec_t prv_rspec = RATESPEC_OF_I(state_cmn, *rateid);
+
+
+    /* dump_flag_qqdx */
+		if(start_game_is_on){
+			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+			struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
+			rate_change_info_qq_cur = (struct rate_change_info_qq *) MALLOCZ(rsi->wlc->osh, sizeof(*rate_change_info_qq_cur));
+			//memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
+			rate_change_info_qq_cur->fix_rate = 0;
+			rate_change_info_qq_cur->change_mode = 1;//上调还是下调还是别的，0是下调，1是上调
+			rate_change_info_qq_cur->cur_rateid = *rateid;
+			rate_change_info_qq_cur->next_rateid = down_rateid;
+			rate_change_info_qq_cur->up_rateid = 0;
+			rate_change_info_qq_cur->down_rateid = down_rateid;
+			rate_change_info_qq_cur->psr_fbr = fbr->psr;
+			rate_change_info_qq_cur->psr_cur = cur->psr;    
+			rate_change_info_qq_cur->psr_dnp = dnp->psr;    
+			rate_change_info_qq_cur->psr_upp = 0;
+			rate_change_info_qq_cur->prate_cur = prate_cur;
+			rate_change_info_qq_cur->prate_up = 0;
+			rate_change_info_qq_cur->prate_dn = prate_dn;
+			rate_change_info_qq_cur->prate_fbr = prate_fbr;
+			//copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
+			//memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
+			debugfs_set_info_qq(7, info_qq, 1);
+		}
+    /* dump_flag_qqdx */
+
+
+
+
 		*rateid = down_rateid;
 		if (SP_MODE(state) == SP_EXT) {
 			if (IS_MCS(prv_rspec) && (WL_RSPEC_RATE_MASK & prv_rspec) == MCS8) {
@@ -4079,6 +4118,39 @@ wlc_ratesel_goup(rcb_t *state, rcb_rtcmn_t *state_cmn)
 		/* change rate FIRST and do clean up work if necessary */
 		ratespec_t prv_rspec = RATESPEC_OF_I(state_cmn, *rateid);
 		uint8 prev_mcs = WL_RSPEC_RATE_MASK & prv_rspec;
+
+
+    /* dump_flag_qqdx */
+		if(start_game_is_on){
+			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+			struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
+			rate_change_info_qq_cur = (struct rate_change_info_qq *) MALLOCZ(state->rsi->wlc->osh, sizeof(*rate_change_info_qq_cur));
+			//memcpy(&monitor_info_qq_cur->h, h, sizeof(struct dot11_header));
+			rate_change_info_qq_cur->fix_rate = 0;
+			rate_change_info_qq_cur->change_mode = 1;//上调还是下调还是别的，0是下调，1是上调
+			rate_change_info_qq_cur->cur_rateid = *rateid;
+			rate_change_info_qq_cur->next_rateid = up_rateid;
+			rate_change_info_qq_cur->up_rateid = up_rateid;
+			rate_change_info_qq_cur->down_rateid = 0;
+			rate_change_info_qq_cur->psr_fbr = fbr->psr;
+			rate_change_info_qq_cur->psr_cur = cur->psr;    
+			rate_change_info_qq_cur->psr_dnp = 0;    
+			rate_change_info_qq_cur->psr_upp = upp->psr;
+			rate_change_info_qq_cur->prate_cur = prate_cur;
+			rate_change_info_qq_cur->prate_up = prate_up;
+			rate_change_info_qq_cur->prate_dn = 0;
+			rate_change_info_qq_cur->prate_fbr = prate_fbr;
+			//copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
+			//memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
+			debugfs_set_info_qq(7, info_qq, 1);
+		}
+		
+    /* dump_flag_qqdx */
+
+
+
+
 		*rateid = up_rateid;
 		if (IS_MCS(prv_rspec) && (prev_mcs == MCS12 || prev_mcs == MCS21) &&
 		    (state_cmn->mcs_sp == -1 || state_cmn->mcs_sp < prev_mcs)) {

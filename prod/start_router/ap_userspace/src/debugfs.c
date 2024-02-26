@@ -8,7 +8,7 @@
 #include <sys/mman.h>
 #include <stdbool.h>
 
-#define DEBUG_MAX_CLASS 7
+#define DEBUG_MAX_CLASS 8
 #define DEBUG_CLASS_MAX_FIELD 240
 
 #define DEBUG_CLASS_PHY 0
@@ -22,6 +22,7 @@
 #define PRINT_frameid_info 0
 #define PRINT_multiuser_info 0
 #define PRINT_monitor_info 0
+#define PRINT_rate_change_info 1
 
 
 
@@ -437,6 +438,26 @@ uint16_t ltoh16(uint16_t little_endian_value) {
 
 
 
+
+//rate change info
+struct rate_change_info_qq {
+    uint8 fix_rate;
+    uint8 change_mode;//上调还是下调还是别的，0是下调，1是上调
+    uint8 cur_rateid;
+    uint8 next_rateid;
+    uint8 up_rateid;
+    uint8 down_rateid;
+    uint32 psr_fbr;
+    uint32 psr_cur;    
+    uint32 psr_dnp;    
+    uint32 psr_upp;
+    uint32 prate_cur;
+    uint32 prate_up;
+    uint32 prate_dn;
+    uint32 prate_fbr;
+};
+
+
 void hexdump(const void *data, size_t size) {
     const uint8_t *bytes = (const uint8_t *)data;
     for (size_t i = 0; i < size; i++) {
@@ -463,6 +484,7 @@ void file_io(void) {
     info_class_t frameid_info;
     info_class_t multiuser_info;
     info_class_t monitor_info;
+    info_class_t rate_change_info;
     ssize_t bytes_read;
 
     // Open the debugfs file for reading
@@ -882,6 +904,44 @@ void file_io(void) {
 
 
 
+// Read the content of the debugfs file 8 into the buffer
+        bytes_read = read(fd8, (uint8_t *)&rate_change_info, sizeof(info_class_t));
+        if (bytes_read != sizeof(info_class_t)) {
+            fprintf(stderr, "wrong bytes read: %d, shoud be %d\n", bytes_read,
+                    sizeof(info_class_t));
+            close(fd8);
+            return;
+        }
+
+        lseek(fd8, 0, SEEK_SET);
+        // hexdump(&phy_info_qq, sizeof(info_class_t));
+        // clock_gettime(CLOCK_REALTIME, &phy_info_qq.timestamp);
+        struct rate_change_info_qq *rate_change_info_qq_cur;
+        rate_change_info_qq_cur = (struct rate_change_info_qq *) malloc(sizeof(struct rate_change_info_qq));
+        memcpy(rate_change_info_qq_cur, rate_change_info.info, sizeof(struct rate_change_info_qq));
+        if(pre_timestamp_class8.tv_nsec!= rate_change_info.timestamp.tv_nsec){
+            if(PRINT_rate_change_info){
+                
+                fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,rate_change_info.timestamp.tv_sec,
+                rate_change_info.timestamp.tv_nsec / 1000);
+                fprintf(stdout,"rate_change info:");
+                fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq)(%u:%u:%u)"\
+                ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq));
+                
+                fprintf(stdout,"fix_rate(%u);change_mode(%u);cur_rateid, 
+                    rate_change_info_qq_cur->next_rateid(%u);up_rateid(%u);down_rateid,
+                    (%u);psr_fbr(%u);psr_cur(%u);psr_dnp(%u);psr_upp = upp->psr
+                    (%u);prate_cur(%u);prate_up(%u);prate_dn(%u);prate_fbr(%u)"\
+                    ,rate_change_info_qq_cur->fix_rate, rate_change_info_qq_cur->change_mode,rate_change_info_qq_cur->cur_rateid, 
+                    rate_change_info_qq_cur->next_rateid, rate_change_info_qq_cur->up_rateid, rate_change_info_qq_cur->down_rateid,
+                    ,rate_change_info_qq_cur->psr_fbr, rate_change_info_qq_cur->psr_cur, rate_change_info_qq_cur->psr_dnp, rate_change_info_qq_cur->psr_upp = upp->psr
+                    ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr);
+
+                fprintf(stdout,"\n");
+            }
+            pre_timestamp_class8= rate_change_info.timestamp;
+        }
+
 
 
 
@@ -893,6 +953,7 @@ void file_io(void) {
         free(pkt_ergodic_cur);
         free(musched_info_qq_cur);
         free(monitor_info_qq_cur);
+        free(rate_change_info_qq_cur);
         loop_num++;
     }
 

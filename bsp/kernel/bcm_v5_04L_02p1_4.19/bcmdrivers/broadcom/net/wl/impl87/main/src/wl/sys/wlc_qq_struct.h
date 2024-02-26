@@ -500,3 +500,25 @@ struct wlc_info_qq_record{
     struct ether_addr    desired_BSSID;    /**< allow this station */
     chanspec_t    chanspec;        /**< target operational channel */
 };
+
+
+
+
+
+//rate change info
+struct rate_change_info_qq {
+    uint8 fix_rate;
+    uint8 change_mode;//上调还是下调还是别的，0是下调，1是上调
+    uint8 cur_rateid;
+    uint8 next_rateid;
+    uint8 up_rateid;
+    uint8 down_rateid;
+    uint32 psr_fbr;
+    uint32 psr_cur;    
+    uint32 psr_dnp;    
+    uint32 psr_upp;
+    uint32 prate_cur;
+    uint32 prate_up;
+    uint32 prate_dn;
+    uint32 prate_fbr;
+};
