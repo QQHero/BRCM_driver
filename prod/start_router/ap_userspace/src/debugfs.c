@@ -43,56 +43,56 @@ typedef uint32_t kernel_info_t;
 typedef struct pkt_qq {
     uint32_t tcp_seq;/* Starting sequence number */
     uint32_t ampdu_seq;/* preassigned seqnum for AMPDU */
-    uint32_t packetid;/* 未知变量packetid */
-    uint16_t FrameID;//每个数据帧生命周期不变的
-    uint16_t pktSEQ;//也许每个数据包生命周期不变的
+    uint32_t packetid;/* 鏈煡鍙橀噺packetid */
+    uint16_t FrameID;//姣忎釜鏁版嵁甯х敓鍛藉懆鏈熶笉鍙樼殑
+    uint16_t pktSEQ;//涔熻姣忎釜鏁版嵁鍖呯敓鍛藉懆鏈熶笉鍙樼殑
 	uint16_t n_pkts;       /**< number of queued packets */
     uint32_t fifo;
     uint8_t tid;//tid
-    uint8_t APnum;//AP数量
-    uint32_t pkt_qq_chain_len_add_start;//记录是第几个送入硬件的包
-    uint32_t pkt_qq_chain_len_add_end;//记录数据包被释放时有多少包被送入硬件
-    uint32_t pktnum_to_send_start;//本包送入硬件时硬件待发送队列包量
-    uint32_t pktnum_to_send_end;//数据包被释放时硬件待发送队列包量
-    uint32_t pkt_added_in_wlc_tx_start;//本包送入硬件时wlc_tx文件中实际准备发送的数据包量（不仅仅start数据）
-    uint32_t pkt_added_in_wlc_tx_end;//数据包被释放时wlc_tx文件中实际准备发送的数据包量
+    uint8_t APnum;//AP鏁伴噺
+    uint32_t pkt_qq_chain_len_add_start;//璁板綍鏄鍑犱釜閫佸叆纭欢鐨勫寘
+    uint32_t pkt_qq_chain_len_add_end;//璁板綍鏁版嵁鍖呰閲婃斁鏃舵湁澶氬皯鍖呰閫佸叆纭欢
+    uint32_t pktnum_to_send_start;//鏈寘閫佸叆纭欢鏃剁‖浠跺緟鍙戦?侀槦鍒楀寘閲?
+    uint32_t pktnum_to_send_end;//鏁版嵁鍖呰閲婃斁鏃剁‖浠跺緟鍙戦?侀槦鍒楀寘閲?
+    uint32_t pkt_added_in_wlc_tx_start;//鏈寘閫佸叆纭欢鏃秝lc_tx鏂囦欢涓疄闄呭噯澶囧彂閫佺殑鏁版嵁鍖呴噺锛堜笉浠呬粎start鏁版嵁锛?
+    uint32_t pkt_added_in_wlc_tx_end;//鏁版嵁鍖呰閲婃斁鏃秝lc_tx鏂囦欢涓疄闄呭噯澶囧彂閫佺殑鏁版嵁鍖呴噺
     struct rates_counts_txs_qq rates_counts_txs_qq_start;
     struct rates_counts_txs_qq rates_counts_txs_qq_end;
-    uint32_t into_CFP_time;/*进入CFP的时间*/
-    uint8_t into_CFP_time_record_loc;/*记录进入CFP的时间的位置*/
-    uint32_t into_hw_time;/*进入硬件队列的时间*/
-    uint32_t free_time;/*传输成功被释放的时间*/
-    uint32_t into_hw_txop;/*进入硬件队列的txop*/
-    uint32_t free_txop;/*传输成功被释放的txop*/
-    uint32_t txop_in_fly;/*传输过程中的busy_time*/
-    uint32_t busy_time;/*传输过程中的txop*/
-    uint32_t drop_time;/*传输失败被丢弃的时间*/
-    uint32_t droped_withoutACK_time;/*传输失败被丢弃的时间*/
-    uint8_t failed_cnt;/*发射失败次数*/
-    uint32_t ps_totaltime;/*该scb设备进入ps的总时间，为了这个统计，我在wl_mk中添加了WL_PS_STATS = 1，但是失败了，路由器崩溃
-    所以我在多处增加了#ifndef WL_PS_STATS #define WL_PS_STATS*/
-    uint32_t ps_dur_trans;//传输过程中的PS统计
-    uint32_t airtime_self;/*该数据包所在帧的airtime*/
-    uint32_t airtime_all;/*该数据包进入硬件发送队列以后所有已发送帧的airtime之和*/
-    uint32_t failed_time_list_qq[10];/*发射失败时间列表*/
-    uint32_t retry_time_list_qq[10];/*发射失败重传时间列表*/
-    uint32_t retry_time_list_index;/*发射失败重传时间列表当前index*/
-    uint32_t ccastats_qq[CCASTATS_MAX];/*一些发送时间相关的变量*/
+    uint32_t into_CFP_time;/*杩涘叆CFP鐨勬椂闂?*/
+    uint8_t into_CFP_time_record_loc;/*璁板綍杩涘叆CFP鐨勬椂闂寸殑浣嶇疆*/
+    uint32_t into_hw_time;/*杩涘叆纭欢闃熷垪鐨勬椂闂?*/
+    uint32_t free_time;/*浼犺緭鎴愬姛琚噴鏀剧殑鏃堕棿*/
+    uint32_t into_hw_txop;/*杩涘叆纭欢闃熷垪鐨則xop*/
+    uint32_t free_txop;/*浼犺緭鎴愬姛琚噴鏀剧殑txop*/
+    uint32_t txop_in_fly;/*浼犺緭杩囩▼涓殑busy_time*/
+    uint32_t busy_time;/*浼犺緭杩囩▼涓殑txop*/
+    uint32_t drop_time;/*浼犺緭澶辫触琚涪寮冪殑鏃堕棿*/
+    uint32_t droped_withoutACK_time;/*浼犺緭澶辫触琚涪寮冪殑鏃堕棿*/
+    uint8_t failed_cnt;/*鍙戝皠澶辫触娆℃暟*/
+    uint32_t ps_totaltime;/*璇cb璁惧杩涘叆ps鐨勬?绘椂闂达紝涓轰簡杩欎釜缁熻锛屾垜鍦╳l_mk涓坊鍔犱簡WL_PS_STATS = 1锛屼絾鏄け璐ヤ簡锛岃矾鐢卞櫒宕╂簝
+    鎵?浠ユ垜鍦ㄥ澶勫鍔犱簡#ifndef WL_PS_STATS #define WL_PS_STATS*/
+    uint32_t ps_dur_trans;//浼犺緭杩囩▼涓殑PS缁熻
+    uint32_t airtime_self;/*璇ユ暟鎹寘鎵?鍦ㄥ抚鐨刟irtime*/
+    uint32_t airtime_all;/*璇ユ暟鎹寘杩涘叆纭欢鍙戦?侀槦鍒椾互鍚庢墍鏈夊凡鍙戦?佸抚鐨刟irtime涔嬪拰*/
+    uint32_t failed_time_list_qq[10];/*鍙戝皠澶辫触鏃堕棿鍒楄〃*/
+    uint32_t retry_time_list_qq[10];/*鍙戝皠澶辫触閲嶄紶鏃堕棿鍒楄〃*/
+    uint32_t retry_time_list_index;/*鍙戝皠澶辫触閲嶄紶鏃堕棿鍒楄〃褰撳墠index*/
+    uint32_t ccastats_qq[CCASTATS_MAX];/*涓?浜涘彂閫佹椂闂寸浉鍏崇殑鍙橀噺*/
     uint32_t ccastats_qq_differ[CCASTATS_MAX];
-    /*PPS相关变量*/
+    /*PPS鐩稿叧鍙橀噺*/
 	uint32_t ps_pretend_probe;
 	uint32_t ps_pretend_count;
 	uint8_t  ps_pretend_succ_count;
 	uint8_t  ps_pretend_failed_ack_count;
     uint32_t time_in_pretend_tot;
     uint32_t time_in_pretend_in_fly;
-    /*总的进入PPS 时间
-    该统计博通并未开启，通过BCMDBG宏来关闭相关统计，需要一个一个开启（将BCMDBG改为BCMDBG_PPS_qq并define），如下是所开启的相关部分：
-    1.wlc_pspretend_scb_time_upd相关（wlc_pspretend.h，wlc_pspretend.c,wlc_app.c）
-    2.wlc_pspretend.h中增加#ifndef BCMDBG_PPS_qq   #define BCMDBG_PPS_qq   #endif
-    3.wlc_pspretend_supr_upd相关（wlc_pspretend.h，wlc_pspretend.c,wlc_app.c,wlc_ampdu.c,wlc_txs.c）
-    4.scb_pps_info_t定义处（wlc_pspretend.c）
-    5.本文件   PPS时间统计相关   部分
+    /*鎬荤殑杩涘叆PPS 鏃堕棿
+    璇ョ粺璁″崥閫氬苟鏈紑鍚紝閫氳繃BCMDBG瀹忔潵鍏抽棴鐩稿叧缁熻锛岄渶瑕佷竴涓竴涓紑鍚紙灏咮CMDBG鏀逛负BCMDBG_PPS_qq骞禿efine锛夛紝濡備笅鏄墍寮?鍚殑鐩稿叧閮ㄥ垎锛?
+    1.wlc_pspretend_scb_time_upd鐩稿叧锛坵lc_pspretend.h锛寃lc_pspretend.c,wlc_app.c锛?
+    2.wlc_pspretend.h涓鍔?#ifndef BCMDBG_PPS_qq   #define BCMDBG_PPS_qq   #endif
+    3.wlc_pspretend_supr_upd鐩稿叧锛坵lc_pspretend.h锛寃lc_pspretend.c,wlc_app.c,wlc_ampdu.c,wlc_txs.c锛?
+    4.scb_pps_info_t瀹氫箟澶勶紙wlc_pspretend.c锛?
+    5.鏈枃浠?   PPS鏃堕棿缁熻鐩稿叧   閮ㄥ垎
     */
 
     uint32_t qq_pkttag_pointer;
@@ -123,12 +123,13 @@ struct pkt_ergodic {
 }pkt_ergodic_t;
 
 
-static struct timespec pre_timestamp_class1;//上次打印的时间戳
-static struct timespec pre_timestamp_class2;//上次打印的时间戳
-static struct timespec pre_timestamp_class3;//上次打印的时间戳
-static struct timespec pre_timestamp_class5;//上次打印的时间戳
-static struct timespec pre_timestamp_class6;//上次打印的时间戳
-static struct timespec pre_timestamp_class7;//上次打印的时间戳
+static struct timespec pre_timestamp_class1;//涓婃鎵撳嵃鐨勬椂闂存埑
+static struct timespec pre_timestamp_class2;//涓婃鎵撳嵃鐨勬椂闂存埑
+static struct timespec pre_timestamp_class3;//涓婃鎵撳嵃鐨勬椂闂存埑
+static struct timespec pre_timestamp_class5;//涓婃鎵撳嵃鐨勬椂闂存埑
+static struct timespec pre_timestamp_class6;//涓婃鎵撳嵃鐨勬椂闂存埑
+static struct timespec pre_timestamp_class7;//涓婃鎵撳嵃鐨勬椂闂存埑
+static struct timespec pre_timestamp_class8;//涓婃鎵撳嵃鐨勬椂闂存埑
 
 typedef struct {
     struct timespec timestamp;  // for debugging
@@ -138,7 +139,7 @@ typedef struct {
 
 
 
-/*rssi的ring buffer*/
+/*rssi鐨剅ing buffer*/
 #define RSSI_RING_SIZE 40
 
 typedef struct {
@@ -159,8 +160,8 @@ struct phy_info_qq {
     int8_t SNR;
     int32_t RSSI;
     int16_t RSSI_loc;//0:wlc_cfp.c;1:wlc_qq.c;2:wlc_rx;3.wlc_lq_rssi_get
-    int16_t RSSI_type;//数据包类型
-    int16_t RSSI_subtype;//数据包类型
+    int16_t RSSI_type;//鏁版嵁鍖呯被鍨?
+    int16_t RSSI_subtype;//鏁版嵁鍖呯被鍨?
     int8_t noiselevel;
     uint8_t rssi_ring_buffer_index;
     DataPoint_qq rssi_ring_buffer[RSSI_RING_SIZE];
@@ -362,8 +363,8 @@ struct musched_info_qq {
 	bool	aggx;		/* aggx feature */
 	uint16_t	txdur_thresh_mu;	/* threshold to enforce dl ofdma */
 	uint16_t	txdur_thresh_su;	/* threshold to fall back to SU */
-    int8_t dl_schid; /*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
-    int8_t dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)处的*/
+    int8_t dl_schid; /*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)澶勭殑*/
+    int8_t dl_schpos;/*wlc_scbmusched_get_dlsch(wlc->musched, scb, &dl_schid, &dl_schpos)澶勭殑*/
 	struct ether_addr ea;
     uint32_t dlofdma_set_time;
 }musched_info_qq_t;
@@ -441,21 +442,21 @@ uint16_t ltoh16(uint16_t little_endian_value) {
 
 //rate change info
 struct rate_change_info_qq {
-    uint8 fix_rate;
-    uint8 change_mode;//上调还是下调还是别的，0是下调，1是上调
-    uint8 cur_rateid;
-    uint8 next_rateid;
-    uint8 up_rateid;
-    uint8 down_rateid;
-    uint32 psr_fbr;
-    uint32 psr_cur;    
-    uint32 psr_dnp;    
-    uint32 psr_upp;
-    uint32 prate_cur;
-    uint32 prate_up;
-    uint32 prate_dn;
-    uint32 prate_fbr;
-};
+    uint8_t fix_rate;
+    uint8_t change_mode;//涓婅皟杩樻槸涓嬭皟杩樻槸鍒殑锛?0鏄笅璋冿紝1鏄笂璋?
+    uint8_t cur_rateid;
+    uint8_t next_rateid;
+    uint8_t up_rateid;
+    uint8_t down_rateid;
+    uint32_t psr_fbr;
+    uint32_t psr_cur;    
+    uint32_t psr_dnp;    
+    uint32_t psr_upp;
+    uint32_t prate_cur;
+    uint32_t prate_up;
+    uint32_t prate_dn;
+    uint32_t prate_fbr;
+}rate_change_info_qq_t;
 
 
 void hexdump(const void *data, size_t size) {
@@ -495,6 +496,7 @@ void file_io(void) {
     int fd5 = open("/sys/kernel/debug/kernel_info/class5", O_RDONLY);
     int fd6 = open("/sys/kernel/debug/kernel_info/class6", O_RDONLY);
     int fd7 = open("/sys/kernel/debug/kernel_info/class7", O_RDONLY);
+    int fd8 = open("/sys/kernel/debug/kernel_info/class8", O_RDONLY);
 
     if (fd1 < 0) {
         perror("Error opening debugfs file1");
@@ -519,6 +521,10 @@ void file_io(void) {
     }
     if (fd7 < 0) {
         perror("Error opening debugfs file7");
+        return;
+    }
+    if (fd8 < 0) {
+        perror("Error opening debugfs file8");
         return;
     }
     int32_t loop_num=0;
@@ -928,13 +934,13 @@ void file_io(void) {
                 fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq)(%u:%u:%u)"\
                 ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq));
                 
-                fprintf(stdout,"fix_rate(%u);change_mode(%u);cur_rateid, 
-                    rate_change_info_qq_cur->next_rateid(%u);up_rateid(%u);down_rateid,
-                    (%u);psr_fbr(%u);psr_cur(%u);psr_dnp(%u);psr_upp = upp->psr
-                    (%u);prate_cur(%u);prate_up(%u);prate_dn(%u);prate_fbr(%u)"\
-                    ,rate_change_info_qq_cur->fix_rate, rate_change_info_qq_cur->change_mode,rate_change_info_qq_cur->cur_rateid, 
-                    rate_change_info_qq_cur->next_rateid, rate_change_info_qq_cur->up_rateid, rate_change_info_qq_cur->down_rateid,
-                    ,rate_change_info_qq_cur->psr_fbr, rate_change_info_qq_cur->psr_cur, rate_change_info_qq_cur->psr_dnp, rate_change_info_qq_cur->psr_upp = upp->psr
+                fprintf(stdout,"fix_rate(%u);change_mode(%u);cur_rateid(%u);"\
+                    "next_rateid(%u);up_rateid(%u);down_rateid,"\
+                    "(%u);psr_fbr(%u);psr_cur(%u);psr_dnp(%u);psr_upp(%u);"\
+                    "prate_cur(%u);prate_up(%u);prate_dn(%u);prate_fbr(%u)"\
+                    ,rate_change_info_qq_cur->fix_rate, rate_change_info_qq_cur->change_mode,rate_change_info_qq_cur->cur_rateid
+                    ,rate_change_info_qq_cur->next_rateid, rate_change_info_qq_cur->up_rateid, rate_change_info_qq_cur->down_rateid
+                    ,rate_change_info_qq_cur->psr_fbr, rate_change_info_qq_cur->psr_cur, rate_change_info_qq_cur->psr_dnp, rate_change_info_qq_cur->psr_upp
                     ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr);
 
                 fprintf(stdout,"\n");
@@ -964,6 +970,7 @@ void file_io(void) {
     close(fd5);
     close(fd6);
     close(fd7);
+    close(fd8);
 }
 
 #define GET_FIELD(ptr, x) (((info_class_t*)ptr)->info[x])

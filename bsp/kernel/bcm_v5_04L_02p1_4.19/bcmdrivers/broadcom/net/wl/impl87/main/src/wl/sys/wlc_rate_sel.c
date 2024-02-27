@@ -3915,6 +3915,7 @@ make_decision:
 
     /* dump_flag_qqdx */
 		if(start_game_is_on){
+			printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
 			rate_change_info_qq_cur = (struct rate_change_info_qq *) MALLOCZ(rsi->wlc->osh, sizeof(*rate_change_info_qq_cur));
@@ -4122,6 +4123,7 @@ wlc_ratesel_goup(rcb_t *state, rcb_rtcmn_t *state_cmn)
 
     /* dump_flag_qqdx */
 		if(start_game_is_on){
+			printk("rate change time:wlc_ratesel_goup:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
 			rate_change_info_qq_cur = (struct rate_change_info_qq *) MALLOCZ(state->rsi->wlc->osh, sizeof(*rate_change_info_qq_cur));
