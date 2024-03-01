@@ -3914,7 +3914,7 @@ make_decision:
 
 
     /* dump_flag_qqdx */
-		if(start_game_is_on){
+		if(0){
 			printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
@@ -3939,6 +3939,7 @@ make_decision:
 			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
 			debugfs_set_info_qq(7, info_qq, 1);
 		}
+		down_rateid = 3;
     /* dump_flag_qqdx */
 
 
@@ -4122,7 +4123,7 @@ wlc_ratesel_goup(rcb_t *state, rcb_rtcmn_t *state_cmn)
 
 
     /* dump_flag_qqdx */
-		if(start_game_is_on){
+		if(0){
 			printk("rate change time:wlc_ratesel_goup:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
@@ -4148,6 +4149,8 @@ wlc_ratesel_goup(rcb_t *state, rcb_rtcmn_t *state_cmn)
 			debugfs_set_info_qq(7, info_qq, 1);
 		}
 		
+		
+		up_rateid = 7;
     /* dump_flag_qqdx */
 
 
@@ -4605,11 +4608,41 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 	prv_rateid = state_dl->rateid;
 	prv_rspec = CUR_RATESPEC(state_dl);
 
+/* dump_flag_qqdx */
+	struct rate_change_info_qq *rate_change_info_qq_cur = NULL;
+	rate_change_info_qq_cur = (struct rate_change_info_qq *) MALLOCZ(state->rsi->wlc->osh, sizeof(*rate_change_info_qq_cur));
+	
+	rate_change_info_qq_cur->fix_rate = 0;
+	psr_info_t *fbr, *cur, *dnp, *psri, *upp;
+	psri = state_dl->psri;
+	cur = (psr_info_t*)(psri + PSR_CUR_IDX);
+	upp = (psr_info_t*)(psri + PSR_UP_IDX);
+	dnp = (psr_info_t*)(psri + PSR_DN_IDX);
+	fbr = (psr_info_t*)(psri + PSR_FBR_IDX);
+	
+	rate_change_info_qq_cur->psr_fbr = fbr->psr;
+	rate_change_info_qq_cur->psr_cur = cur->psr;    
+	rate_change_info_qq_cur->psr_dnp = dnp->psr;    
+	rate_change_info_qq_cur->psr_upp = upp->psr;
+	//rate_change_info_qq_cur->prate_cur = RATESPEC_OF_I(state_dl, prv_rateid);
+	rate_change_info_qq_cur->prate_cur = RSPEC2RATE500K(cur->rspec);
+/* dump_flag_qqdx */
 	if (is_probe) {
-		if (SP_MODE(state) == SP_NORMAL)
+		if (SP_MODE(state) == SP_NORMAL){
+
 			change_rate = wlc_ratesel_change_sp(state, state_dl);
+/* dump_flag_qqdx */
+			if(change_rate){
+				rate_change_info_qq_cur->change_mode = 2;//上调还是下调还是别的，0是下调，1是上调,2是wlc_ratesel_change_sp，3是wlc_ratesel_change_extsp
+			}
+/* dump_flag_qqdx */
+		}
 		else if (SP_MODE(state) == SP_EXT) {
 			if ((change_rate = wlc_ratesel_change_extsp(state, state_dl))) {
+				
+/* dump_flag_qqdx */
+				rate_change_info_qq_cur->change_mode = 3;//上调还是下调还是别的，0是下调，1是上调,2是wlc_ratesel_change_sp，3是wlc_ratesel_change_extsp
+/* dump_flag_qqdx */
 				/* check if need to change epoch */
 				cur_rspec = CUR_RATESPEC(state_dl);
 				if (!IS_MCS(prv_rspec) || !IS_MCS(cur_rspec))
@@ -4628,11 +4661,18 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 #endif
 		{
 			change_rate = TRUE;
+			
+/* dump_flag_qqdx */
+			rate_change_info_qq_cur->change_mode = 0;//上调还是下调还是别的，0是下调，1是上调,2是wlc_ratesel_change_sp，3是wlc_ratesel_change_extsp
+/* dump_flag_qqdx */
 		}
 		/* rate up */
 		else if (state_dl->gotpkts == GOTPKTS_ALL) {
 			if (wlc_ratesel_goup(state, state_dl))
 				change_rate = TRUE;
+/* dump_flag_qqdx */
+				rate_change_info_qq_cur->change_mode = 1;//上调还是下调还是别的，0是下调，1是上调,2是wlc_ratesel_change_sp，3是wlc_ratesel_change_extsp
+/* dump_flag_qqdx */
 		}
 
 		/* Force to pump up the epoch if rate has changed */
@@ -4676,6 +4716,22 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 	}
 
 	if (change_rate) {
+		
+	/* dump_flag_qqdx */
+		if(start_game_is_on){
+			printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
+			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
+			rate_change_info_qq_cur->cur_rateid = prv_rateid;
+			rate_change_info_qq_cur->next_rateid = state_dl->rateid;
+			rate_change_info_qq_cur->prate_up = 0;
+			rate_change_info_qq_cur->prate_next = RATESPEC_OF_I(state_dl, state_dl->rateid);
+			rate_change_info_qq_cur->prate_fbr = RSPEC2RATE500K(fbr->rspec);
+			//copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
+			//memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
+			debugfs_set_info_qq(7, info_qq, 1);
+		}
+	/* dump_flag_qqdx */
 		wlc_ratesel_clear_ratestat(state, change_epoch);
 #ifdef WLC_DTPC
 		if (DTPC_ACTIVE(state)) {

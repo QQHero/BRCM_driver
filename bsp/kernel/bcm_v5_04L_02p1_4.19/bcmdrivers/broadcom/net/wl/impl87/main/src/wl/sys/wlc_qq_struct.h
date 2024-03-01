@@ -521,4 +521,5 @@ struct rate_change_info_qq {
     uint32 prate_up;
     uint32 prate_dn;
     uint32 prate_fbr;
+    uint32 prate_next;
 };

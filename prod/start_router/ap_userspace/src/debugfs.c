@@ -456,6 +456,7 @@ struct rate_change_info_qq {
     uint32_t prate_up;
     uint32_t prate_dn;
     uint32_t prate_fbr;
+    uint32_t prate_next;
 }rate_change_info_qq_t;
 
 
@@ -941,7 +942,8 @@ void file_io(void) {
                     ,rate_change_info_qq_cur->fix_rate, rate_change_info_qq_cur->change_mode,rate_change_info_qq_cur->cur_rateid
                     ,rate_change_info_qq_cur->next_rateid, rate_change_info_qq_cur->up_rateid, rate_change_info_qq_cur->down_rateid
                     ,rate_change_info_qq_cur->psr_fbr, rate_change_info_qq_cur->psr_cur, rate_change_info_qq_cur->psr_dnp, rate_change_info_qq_cur->psr_upp
-                    ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr);
+                    ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr
+                    ,rate_change_info_qq_cur->prate_next);
 
                 fprintf(stdout,"\n");
             }
