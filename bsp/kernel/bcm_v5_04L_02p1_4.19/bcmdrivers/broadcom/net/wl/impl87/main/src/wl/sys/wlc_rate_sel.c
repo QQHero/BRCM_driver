@@ -3939,7 +3939,7 @@ make_decision:
 			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
 			debugfs_set_info_qq(7, info_qq, 1);
 		}
-		down_rateid = 3;
+		//down_rateid = 3;
     /* dump_flag_qqdx */
 
 
@@ -4150,7 +4150,7 @@ wlc_ratesel_goup(rcb_t *state, rcb_rtcmn_t *state_cmn)
 		}
 		
 		
-		up_rateid = 7;
+		//up_rateid = 7;
     /* dump_flag_qqdx */
 
 
