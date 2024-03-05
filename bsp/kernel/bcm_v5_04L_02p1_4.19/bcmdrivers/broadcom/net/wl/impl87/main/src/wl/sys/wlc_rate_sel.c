@@ -3859,6 +3859,9 @@ wlc_ratesel_godown(rcb_t *state, rcb_rtcmn_t *state_cmn)
 #endif
 	ncf_lmt = wlc_ratesel_get_ncflmt(state, state_cmn);
 	RL_MORE(("%sncfails %d >= ncf_lmt %d\n", ULDL(state_cmn), ncfails, ncf_lmt));
+    /* dump_flag_qqdx */
+	ncf_lmt = 1;
+    /* dump_flag_qqdx */
 	if (ncfails >= ncf_lmt) {
 		down_ncf = TRUE;
 		decision = TRUE;
