@@ -2204,7 +2204,7 @@ bool pkt_qq_chain_len_in_range(uint16 upper_bound,uint16 lower_bound){
 
 void pkt_qq_print_by_debugfs_ergodic(uint8 print_loc){
     print_loc = print_loc+1;//当不需要debug的时候就关闭该函数。
-    return;//当不需要debug的时候就关闭该函数。
+    //return;//当不需要debug的时候就关闭该函数。
     read_lock(&pkt_qq_mutex_len); // 加锁
     uint16 cur_pkt_qq_chain_len = pkt_qq_chain_len;
     read_unlock(&pkt_qq_mutex_len); // 解锁
@@ -2219,7 +2219,8 @@ void pkt_qq_print_by_debugfs_ergodic(uint8 print_loc){
     pkt_ergodic_cur.pkt_len = cur_pkt_qq_chain_len;
 
     while((pkt_qq_cur != (struct pkt_qq *)NULL )){                    
-        pkt_ergodic_cur.pkt_FrameID[index] = pkt_qq_cur->FrameID;
+        pkt_ergodic_cur.pkt_FrameID[index] = pkt_qq_cur->FrameID;                
+        pkt_ergodic_cur.into_CFP_time[index] = pkt_qq_cur->into_CFP_time;
 
         struct pkt_qq *pkt_qq_cur_next = pkt_qq_cur->next;
         pkt_qq_cur = pkt_qq_cur_next;
@@ -2235,6 +2236,8 @@ void pkt_qq_print_by_debugfs_ergodic(uint8 print_loc){
     }
     pkt_ergodic_cur.print_loc = print_loc;
     pkt_ergodic_cur.real_pkt_num = index;
+    
+    pkt_ergodic_cur.cur_time = OSL_SYSUPTIME();
     kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 
     memcpy(info_qq, &pkt_ergodic_cur, sizeof(struct pkt_ergodic));
@@ -2385,8 +2388,12 @@ void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur, osl_t *osh){
 
     read_lock(&pkt_qq_mutex_len); // 加锁
     if(pkt_qq_chain_len>=max_pkt_qq_chain_len-2){//防止溢出
+    
+        printk("****************pkt_qq_chain_len debug3----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
         read_unlock(&pkt_qq_mutex_len); // 解锁
         pkt_qq_delete(pkt_qq_chain_head,osh);//删除最早被加入的节点
+        
+        printk("****************pkt_qq_chain_len debug4----------(%u)",pkt_qq_chain_len);
     }
     read_unlock(&pkt_qq_mutex_len); // 解锁
     pkt_qq_print_by_debugfs_ergodic(2);
@@ -2509,7 +2516,7 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
     //printk("**************debug15*******************");
     read_unlock(&pkt_qq_mutex_len); // 解锁
     if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len,0)){
-            
+        printk("****************pkt_qq_chain_len debug1----------(%u)",pkt_qq_chain_len);
         //bool sniffer_flag = FALSE;
         //sniffer_flag = pkt_qq_len_error_sniffer(osh, 41);
         //mutex_lock(&pkt_qq_mutex_head); // 加锁
@@ -2520,6 +2527,8 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
         if(pkt_qq_len_error_sniffer(osh, 4)&& !sniffer_flag){
             printk("_______error here4");
         }*/
+        
+        printk("****************pkt_qq_chain_len debug2----------(%u)",pkt_qq_chain_len);
     }
     if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len-66,0)){
         //uint16 index = 0;
@@ -2538,9 +2547,9 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
                 printk("****************wrong pkt_qq_chain_len2----------(%u)",pkt_qq_chain_len);
             }
             //uint32 cur_time = OSL_SYSUPTIME();
-            uint32 pkt_qq_cur_PHYdelay = cur_time - pkt_qq_cur->into_hw_time;
+            uint32 pkt_qq_cur_PHYdelay = cur_time - pkt_qq_cur->into_CFP_time;
             struct pkt_qq *pkt_qq_cur_next = pkt_qq_cur->next;
-            if((pkt_qq_cur_PHYdelay>pkt_qq_ddl)||(pkt_qq_cur->free_time > 0)){/*每隔一段时间删除超时的数据包节点以及已经ACK的数据包*/
+            if((pkt_qq_cur_PHYdelay>pkt_qq_ddl)||(pkt_qq_cur->free_time > 0)||(cur_time - pkt_qq_cur->into_hw_time>pkt_qq_ddl)){/*每隔一段时间删除超时的数据包节点以及已经ACK的数据包*/
 #ifdef PRINTTIMEOUTPKT
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                 pkt_qq_cur->droped_withoutACK_time = cur_time;
@@ -2851,6 +2860,8 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
 
                 //pkt_qq_cur = pkt_qq_cur->next;
                 //continue; 
+                
+            //printk("**************debug5+7-1*******************");
             }else{//未收到ACK则增加计数
                 /*用于记录出现重传包重传时，函数调用路径*/
                 //printk("**************debug5+7*******************");
@@ -2903,6 +2914,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 }
                 pkt_phydelay_dict[index_i]++;
             }
+            //printk("**************debug5+8+1*******************");
         }
     }else{
 

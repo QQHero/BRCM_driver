@@ -69,11 +69,14 @@ struct pkt_qq {
     
 };
 
+#define PKT_ERGODIC_MAX 150
 struct pkt_ergodic {
     uint8 print_loc;
     uint32 pkt_len;
     uint32 real_pkt_num;
-    uint16 pkt_FrameID[390];
+    uint32 cur_time;
+    uint32 into_CFP_time[PKT_ERGODIC_MAX];
+    uint16 pkt_FrameID[PKT_ERGODIC_MAX];
 };
 
 struct wlc_pps_info {
