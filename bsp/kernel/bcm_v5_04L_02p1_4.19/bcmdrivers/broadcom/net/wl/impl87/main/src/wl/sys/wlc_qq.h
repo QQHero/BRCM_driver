@@ -2203,8 +2203,8 @@ bool pkt_qq_chain_len_in_range(uint16 upper_bound,uint16 lower_bound){
 
 
 void pkt_qq_print_by_debugfs_ergodic(uint8 print_loc){
-    print_loc = print_loc+1;//当不需要debug的时候就关闭该函数。
-    //return;//当不需要debug的时候就关闭该函数。
+    //print_loc = print_loc+1;//当不需要debug的时候就关闭该函数。
+    return;//当不需要debug的时候就关闭该函数。
     read_lock(&pkt_qq_mutex_len); // 加锁
     uint16 cur_pkt_qq_chain_len = pkt_qq_chain_len;
     read_unlock(&pkt_qq_mutex_len); // 解锁
@@ -2229,11 +2229,12 @@ void pkt_qq_print_by_debugfs_ergodic(uint8 print_loc){
             mutex_unlock(&pkt_qq_mutex_head); // 解锁
             break;
         }
-        if(index>=390){
+        if(index>=PKT_ERGODIC_MAX){
             break;
         }
-        mutex_unlock(&pkt_qq_mutex_head); // 解锁
+        //mutex_unlock(&pkt_qq_mutex_head); // 解锁
     }
+    mutex_unlock(&pkt_qq_mutex_head); // 解锁
     pkt_ergodic_cur.print_loc = print_loc;
     pkt_ergodic_cur.real_pkt_num = index;
     
@@ -2241,7 +2242,6 @@ void pkt_qq_print_by_debugfs_ergodic(uint8 print_loc){
     kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 
     memcpy(info_qq, &pkt_ergodic_cur, sizeof(struct pkt_ergodic));
-    mutex_unlock(&pkt_qq_mutex_head); // 解锁
     debugfs_set_info_qq(4, info_qq, 1);
 
 
@@ -2276,18 +2276,20 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
 
 
     //printk(KERN_ALERT"###########pkt_qq_chain_len_delete1(%u)",pkt_qq_chain_len);
-    wlc_pkttag_t* pkttag = (wlc_pkttag_t*)(uintptr)pkt_qq_cur->qq_pkttag_pointer;
-    if(pkttag != (wlc_pkttag_t*)NULL){
-        pkt_qq_cur->qq_pkttag_pointer = (uint32)NULL;
+    if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
+        wlc_pkttag_t* pkttag = (wlc_pkttag_t*)(uintptr)pkt_qq_cur->qq_pkttag_pointer;
+        if(pkttag != (wlc_pkttag_t*)NULL){
+            pkt_qq_cur->qq_pkttag_pointer = (uint32)NULL;
+        }
+    }
+    else{
+        printk("****************wrong IS_ERR_OR_NULL(pkt_qq_cur)----------(%u)",pkt_qq_chain_len);
+        return;
     }
 
     //mutex_lock(&pkt_qq_mutex); // 加锁
     //printk("**************debugdelete_11-(%u;%u)*******************",pkt_qq_cur->FrameID,pkt_qq_chain_head->FrameID);
     pkt_qq_print_by_debugfs_ergodic(1);
-    if((pkt_qq_last != (struct pkt_qq *)NULL)&&(pkt_qq_cur->FrameID == pkt_qq_last->FrameID)){
-        pkt_qq_last = (struct pkt_qq *)NULL;
-        index_last = 0;
-    }
     read_lock(&pkt_qq_mutex_len); // 加锁
     //printk("**************debug14-*******************");
     if(pkt_qq_chain_len<1){
@@ -2299,12 +2301,14 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     //printk("**************debug15-*******************");
     read_unlock(&pkt_qq_mutex_len); // 解锁
     //if((pkt_qq_cur->FrameID == pkt_qq_chain_head->FrameID)&&(pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
-    if((pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
+    if((!IS_ERR_OR_NULL(pkt_qq_cur))&&(pkt_qq_cur->prev==(struct pkt_qq *)NULL)){
         //printk("**************debug12******************");
         
         if(pkt_qq_chain_head->next == (struct pkt_qq *)NULL){//防止删除节点时出错
             //printk("**************debug13*******************");
-            MFREE(osh, pkt_qq_cur, sizeof(*pkt_qq_cur));
+            if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
+                MFREE(osh, pkt_qq_cur, sizeof(*pkt_qq_cur));
+            }
             mutex_lock(&pkt_qq_mutex_head); // 加锁
             pkt_qq_chain_head=(struct pkt_qq *)NULL;
             mutex_unlock(&pkt_qq_mutex_head); // 解锁
@@ -2338,40 +2342,46 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
             write_lock(&pkt_qq_mutex_len); // 加锁
             pkt_qq_chain_len--;
             write_unlock(&pkt_qq_mutex_len); // 解锁
-
-            MFREE(osh, pkt_qq_cur, sizeof(*pkt_qq_cur));
+            if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
+                MFREE(osh, pkt_qq_cur, sizeof(*pkt_qq_cur));
+            }
         }
 
         
     }else{
-        //printk("**************debug18*******************");
-        if(pkt_qq_cur->prev!=(struct pkt_qq *)NULL){
-            (*((*pkt_qq_cur).prev)).next = (*pkt_qq_cur).next;
-            //printk("**************debug19-3*******************");
-        }
-        if(pkt_qq_cur->next!=(struct pkt_qq *)NULL){
-            (*((*pkt_qq_cur).next)).prev = (*pkt_qq_cur).prev;
-            //printk("**************debug19-2*******************");
-        }else{
-            mutex_lock(&pkt_qq_mutex_tail); // 加锁
-            pkt_qq_chain_tail=pkt_qq_chain_tail->prev;
-            mutex_unlock(&pkt_qq_mutex_tail); // 解锁
-            //printk("**************debug19-1*******************");
+        if((!IS_ERR_OR_NULL(pkt_qq_cur))){
+            //printk("**************debug18*******************");
+            if(pkt_qq_cur->prev!=(struct pkt_qq *)NULL){
+                (*((*pkt_qq_cur).prev)).next = (*pkt_qq_cur).next;
+                //printk("**************debug19-3*******************");
+            }
+            if(pkt_qq_cur->next!=(struct pkt_qq *)NULL){
+                (*((*pkt_qq_cur).next)).prev = (*pkt_qq_cur).prev;
+                //printk("**************debug19-2*******************");
+            }else{
+                mutex_lock(&pkt_qq_mutex_tail); // 加锁
+                pkt_qq_chain_tail=pkt_qq_chain_tail->prev;
+                mutex_unlock(&pkt_qq_mutex_tail); // 解锁
+                //printk("**************debug19-1*******************");
+                
+            }
+            //printk("**************debug19*******************");
             
+            if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
+                MFREE(osh, pkt_qq_cur, sizeof(*pkt_qq_cur));
+            }
+            write_lock(&pkt_qq_mutex_len); // 加锁
+            pkt_qq_chain_len--;
+            write_unlock(&pkt_qq_mutex_len); // 解锁
+            //printk("**************debug10*******************");
         }
-        //printk("**************debug19*******************");
         
-        MFREE(osh, pkt_qq_cur, sizeof(*pkt_qq_cur));
-        write_lock(&pkt_qq_mutex_len); // 加锁
-        pkt_qq_chain_len--;
-        write_unlock(&pkt_qq_mutex_len); // 解锁
-        //printk("**************debug10*******************");
     }
     return;
 //mutex_unlock(&pkt_qq_mutex); // 解锁
 }
 
-
+void pkt_qq_del_timeout_ergodic(osl_t *osh);
 void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur, osl_t *osh){
     //return;//debug142
     if (pkt_qq_cur == (struct pkt_qq *)NULL){
@@ -2389,13 +2399,20 @@ void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur, osl_t *osh){
     read_lock(&pkt_qq_mutex_len); // 加锁
     if(pkt_qq_chain_len>=max_pkt_qq_chain_len-2){//防止溢出
     
-        printk("****************pkt_qq_chain_len debug3----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
+        //printk("****************pkt_qq_chain_len debug3----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
         read_unlock(&pkt_qq_mutex_len); // 解锁
         pkt_qq_delete(pkt_qq_chain_head,osh);//删除最早被加入的节点
+        //printk("****************pkt_qq_chain_len debug3+1----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
+        pkt_qq_del_timeout_ergodic(osh);
+        //printk("****************pkt_qq_chain_len debug4-1----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
         
-        printk("****************pkt_qq_chain_len debug4----------(%u)",pkt_qq_chain_len);
+        //printk("****************pkt_qq_chain_len debug4----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
     }
-    read_unlock(&pkt_qq_mutex_len); // 解锁
+    else{
+
+        read_unlock(&pkt_qq_mutex_len); // 解锁
+    }
+
     pkt_qq_print_by_debugfs_ergodic(2);
 
     pkt_qq_chain_len_add++;
@@ -2464,7 +2481,6 @@ bool pkt_qq_retry_ergodic(uint16 FrameID, uint16 cur_pktSEQ, osl_t *osh){
     uint16 index = 0;
     mutex_lock(&pkt_qq_mutex_head); // 加锁
     struct pkt_qq *pkt_qq_cur = pkt_qq_chain_head;
-    //printk(KERN_ALERT"###########pkt_qq_chain_len before delete(%d)",pkt_qq_chain_len);
     while((pkt_qq_cur != (struct pkt_qq *)NULL )){                    
         //printk("###****************index----------(%u)",index);
         if((pkt_qq_cur->FrameID == FrameID) && (pkt_qq_cur->pktSEQ == cur_pktSEQ)){
@@ -2495,6 +2511,8 @@ bool pkt_qq_retry_ergodic(uint16 FrameID, uint16 cur_pktSEQ, osl_t *osh){
 
 void pkt_qq_del_timeout_ergodic(osl_t *osh){
     uint32 cur_time = OSL_SYSUPTIME();
+    //printk(KERN_ALERT"###########pkt_qq_chain_len before delete(%d)",pkt_qq_chain_len);
+    //printk(KERN_ALERT"###########pkt_qq_chain_len before delete(%d)",pkt_qq_chain_len);
     if(!mutex_trylock(&pkt_qq_mutex_head)){
         //mutex_unlock(&pkt_qq_mutex_head); // 解锁
         return;
@@ -2506,7 +2524,7 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
     uint16 index = 0;
 
     read_lock(&pkt_qq_mutex_len); // 加锁
-    //printk("**************debug14*******************");
+    //printk("**************debug14*******************(%u)",pkt_qq_chain_len);
     if(pkt_qq_chain_len<1){
         //printk("****************wrong pkt_qq_chain_len----------(%u)",pkt_qq_chain_len);
         read_unlock(&pkt_qq_mutex_len); // 解锁
@@ -2516,7 +2534,7 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
     //printk("**************debug15*******************");
     read_unlock(&pkt_qq_mutex_len); // 解锁
     if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len,0)){
-        printk("****************pkt_qq_chain_len debug1----------(%u)",pkt_qq_chain_len);
+        //printk("****************pkt_qq_chain_len debug1----------(%u)",pkt_qq_chain_len);
         //bool sniffer_flag = FALSE;
         //sniffer_flag = pkt_qq_len_error_sniffer(osh, 41);
         //mutex_lock(&pkt_qq_mutex_head); // 加锁
@@ -2528,11 +2546,13 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
             printk("_______error here4");
         }*/
         
-        printk("****************pkt_qq_chain_len debug2----------(%u)",pkt_qq_chain_len);
+        //printk("****************pkt_qq_chain_len debug2----------(%u)",pkt_qq_chain_len);
     }
-    if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len-66,0)){
+    //if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len/2,0)){
+    if(!pkt_qq_chain_len_in_range(1,0)){
         //uint16 index = 0;
         mutex_lock(&pkt_qq_mutex_head); // 加锁
+        //printk("**************debug15*******************(%u,%u,%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,cur_time);
         struct pkt_qq *pkt_qq_cur = pkt_qq_chain_head;
         mutex_unlock(&pkt_qq_mutex_head); // 解锁
         //printk(KERN_ALERT"###########pkt_qq_chain_len before delete(%d)",pkt_qq_chain_len);
@@ -2541,6 +2561,7 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
             //if(cur_pkt_qq_chain_len<index + 10){//如果发现已经接近尾部就停止
             if(pkt_qq_chain_len_in_range((index + 10),0)){//如果发现已经接近尾部就停止
                 //mutex_unlock(&pkt_qq_mutex_head); // 解锁
+                //printk(KERN_ALERT"###########pkt_qq_chain_len after delete(%u)",pkt_qq_chain_len);
                 return;
             }
             if(!pkt_qq_chain_len_in_range(max_pkt_qq_chain_len,0)){        
@@ -2549,7 +2570,7 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
             //uint32 cur_time = OSL_SYSUPTIME();
             uint32 pkt_qq_cur_PHYdelay = cur_time - pkt_qq_cur->into_CFP_time;
             struct pkt_qq *pkt_qq_cur_next = pkt_qq_cur->next;
-            if((pkt_qq_cur_PHYdelay>pkt_qq_ddl)||(pkt_qq_cur->free_time > 0)||(cur_time - pkt_qq_cur->into_hw_time>pkt_qq_ddl)){/*每隔一段时间删除超时的数据包节点以及已经ACK的数据包*/
+            if((pkt_qq_cur_PHYdelay>pkt_qq_ddl)||(pkt_qq_cur->free_time > 0)||(cur_time - pkt_qq_cur->into_hw_time>pkt_qq_ddl)||(cur_time < pkt_qq_cur->into_hw_time)){/*每隔一段时间删除超时的数据包节点以及已经ACK的数据包*/
 #ifdef PRINTTIMEOUTPKT
                 kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                 pkt_qq_cur->droped_withoutACK_time = cur_time;
@@ -2565,14 +2586,18 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
                 pkt_qq_delete(pkt_qq_cur,osh);
                 pkt_qq_chain_len_timeout ++;
             }
+            else{
+                //printk(KERN_ALERT"###########pkt_qq_chain_len after delete(%u)",pkt_qq_chain_len);
+                return;
+            }
             pkt_qq_cur = pkt_qq_cur_next;
             //printk("###****************[fyl] pkt_qq_cur_PHYdelay----------(%u)",pkt_qq_cur_PHYdelay);
             //printk("###****************[fyl] FrameID@@@@@@@@@@@@@@@(%u)",pkt_qq_cur->FrameID);
             index++;
         }
         //printk("###****************index----------(%u)",index);
-        //printk(KERN_ALERT"###########pkt_qq_chain_len after delete(%u)",pkt_qq_chain_len);
     }
+    //printk(KERN_ALERT"###########pkt_qq_chain_len after delete(%u)",pkt_qq_chain_len);
 }
 
 
@@ -2591,7 +2616,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
     }
             
     uint slottime_qq = APHY_SLOT_TIME;
-    ampdu_tx_config_t *ampdu_tx_cfg = ampdu_tx->config;
+    //ampdu_tx_config_t *ampdu_tx_cfg = ampdu_tx->config;
     if (wlc->band->gmode && !wlc->shortslot)
         slottime_qq = BPHY_SLOT_TIME;
     //uint16 curTxFrameID = txh_info->TxFrameID;
@@ -2644,7 +2669,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
     if(pkt_qq_chain_len<1){
         pkt_qq_chain_len_notfound++;
 
-        printk("----------[fyl] not found(%u:%u:%u)",OSL_SYSUPTIME(),curTxFrameID,pkttag->seq);
+        //printk("----------[fyl] not found(%u:%u:%u)",OSL_SYSUPTIME(),curTxFrameID,pkttag->seq);
         read_unlock(&pkt_qq_mutex_len); // 解锁
         return;
     }
@@ -2652,9 +2677,9 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
 
     //printk("**************debug8+2*******************");
     pkt_qq_cur = (struct pkt_qq *)(uintptr)pkttag->qq_pktinfo_pointer;
-    if(pkt_qq_cur == NULL){
+    if((pkt_qq_cur == NULL)||(OSL_SYSUPTIME() - pkt_qq_cur->into_hw_time>pkt_qq_ddl)||(OSL_SYSUPTIME()< pkt_qq_cur->into_hw_time)){//直接跳过时延较高的节点，避免出错
         pkt_qq_chain_len_notfound++;
-        printk("----------[fyl] not found(%u:%u:%u)",OSL_SYSUPTIME(),curTxFrameID,pkttag->seq);
+        //printk("----------[fyl] not found(%u:%u:%u)",OSL_SYSUPTIME(),curTxFrameID,pkttag->seq);
         return;
     }
     //printk(KERN_ALERT"###########pkt_qq_chain_len debug-11(%u)",pkt_qq_chain_len);
@@ -2669,6 +2694,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
     uint16 cur_pktSEQ = pkttag->seq;
 	struct dot11_header *h;
 	h = NULL;
+    uint pktnum_to_send_end = 0;
     //printk(KERN_ALERT"###########pkt_qq_chain_len debug24(%u)",pkt_qq_chain_len);
     //if(pkt_qq_cur->pktSEQ == cur_pktSEQ ){//如果找到了这个数据包
     //if(pkt_qq_cur->FrameID == htol16(curTxFrameID) ){//如果找到了这个数据包
@@ -2699,6 +2725,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 dma_info_t *di = DI_INFO(tx_di);
                 pkt_qq_cur->fifo = fifo;
                 pkt_qq_cur->pktnum_to_send_end = NTXDACTIVE(di->txin, di->txout) + 1;
+                pktnum_to_send_end = pkt_qq_cur->pktnum_to_send_end;
                 pkt_qq_cur->pkt_added_in_wlc_tx_end = pkt_added_in_wlc_tx;
                 pkt_qq_cur->APnum = num_routers;
                 pkt_qq_cur->free_time = cur_time;
@@ -2799,52 +2826,6 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                     debugfs_set_info_qq(0, info_qq, 1);
                     debugfs_set_info_qq(2, info_qq2, 1);
                     //if (!use_last_pkt) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
-                    if (0) {/*use_last_pkt代表非第一个mpdu，所以这里指的是只打印第一个mpdu的信息*/
-                        printk("----------[fyl] OSL_SYSUPTIME()1----------(%u)",OSL_SYSUPTIME());
-                        printk("----------[fyl] acked_FrameID----------(%u)",pkt_qq_cur->FrameID);
-                        printk("----------[fyl] pktSEQ----------(%u)",pkt_qq_cur->pktSEQ);
-                        read_lock(&pkt_qq_mutex_len); // 加锁
-                        printk("----------[fyl] pkt_qq_chain_len----------(%u)",pkt_qq_chain_len);
-                        read_unlock(&pkt_qq_mutex_len); // 解锁
-                        printk("----------[fyl] cur_mpdu_index----------(%u)",cur_mpdu_index);/*当前mpdu在ampdu中的编号*/
-                        printk("----------[fyl] pkt_qq_cur->failed_cnt----------(%u)",pkt_qq_cur->failed_cnt);
-                        printk("----------[fyl] pkt_qq_cur_PHYdelay----------(%u)",pkt_qq_cur_PHYdelay);
-                        printk("----------[fyl] pkt_qq_cur->free_time----------(%u)",pkt_qq_cur->free_time);
-                        printk("----------[fyl] pkt_qq_cur->into_hw_time----------(%u)",pkt_qq_cur->into_hw_time);
-                        printk("----------[fyl] pkt_qq_cur->airtime_self----------(%u)",pkt_qq_cur->airtime_self);
-                        //printk("----------[fyl] pkt_qq_cur->airtime_all----------(%u)",pkt_qq_cur->airtime_all);
-                        printk("----------[fyl] busy_qq----------(%u)",pkt_qq_cur->busy_time);
-                        printk("----------[fyl] free_txop:::into_hw_txop:::txop*9----------(%u:%u:%u)",pkt_qq_cur->free_txop, pkt_qq_cur->into_hw_txop,pkt_qq_cur->txop_in_fly);
-                        printk("----------[fyl] pkt_qq_cur:ps_pretend_probe(%u):::ps_pretend_count(%u):::ps_pretend_succ_count(%u):::ps_pretend_failed_ack_count(%u)----------",\
-                        pkt_qq_cur->ps_pretend_probe, pkt_qq_cur->ps_pretend_count,pkt_qq_cur->ps_pretend_succ_count,pkt_qq_cur->ps_pretend_failed_ack_count);
-                        printk("----------[fyl] pps_scb_qq:ps_pretend_probe(%u):::ps_pretend_count(%u):::ps_pretend_succ_count(%u):::ps_pretend_failed_ack_count(%u)----------",\
-                        pps_scb_qq->ps_pretend_probe, pps_scb_qq->ps_pretend_count,pps_scb_qq->ps_pretend_succ_count,pps_scb_qq->ps_pretend_failed_ack_count);
-
-                        printk("----------[fyl] ampdu_tx_cfg->ba_policy----------(%u)",ampdu_tx_cfg->ba_policy);
-                        //printk("----------[fyl] ampdu_tx_cfg->ba_policy::ba_rx_wsize::delba_timeout----------(%u)",
-                                    //ampdu_tx_cfg->ba_policy,ba_rx_wsize,delba_timeout);
-                        /*printk("ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)",ccastats_qq_differ[0]\
-                            ,ccastats_qq_differ[1],ccastats_qq_differ[2],ccastats_qq_differ[3]\
-                            ,ccastats_qq_differ[4]);*/
-                        printk("----------[fyl] time_in_pretend_tot_qq:::pkt_qq_cur->time_in_pretend_tot:::R_REG(wlc->osh, D11_TSFTimerLow(wlc)):::pps_scb_qq->ps_pretend_start:::time_in_pretend----------(%u:%u:%u:%u:%u)",time_in_pretend_tot_qq,pkt_qq_cur->time_in_pretend_tot,R_REG(wlc->osh, D11_TSFTimerLow(wlc)),pps_scb_qq->ps_pretend_start,time_in_pretend_tot_qq - pkt_qq_cur->time_in_pretend_tot);
-                        printk("----------[fyl] ini->tid----------(%u)",tid);
-                        printk("----------[fyl] scb->ps_tottime:scb->ps_starttime:ps_dur_trans----------(%u:%u:%u)",scb->ps_tottime,scb->ps_starttime,pkt_qq_cur->ps_dur_trans);
-                        
-                        printk("----------[fyl] PS:::ps_pretend:::PS_TWT:::ps_txfifo_blk----------(%u:%u:%u:%u)",
-                                    scb->PS, scb->ps_pretend,scb->PS_TWT,scb->ps_txfifo_blk);
-                        printk("--[fyl] txs->status.rts_tx_cnt:txs->status.cts_tx_cnt---(%u:%u)",txs->status.rts_tx_cnt,txs->status.cts_rx_cnt);
-                        printk("ccastats_qq_differ:TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)",ccastats_qq_differ[0]\
-                            ,ccastats_qq_differ[1],ccastats_qq_differ[2],ccastats_qq_differ[3]\
-                            ,ccastats_qq_differ[4],ccastats_qq_differ[5],ccastats_qq_differ[6]\
-                            ,ccastats_qq_differ[7],ccastats_qq_differ[8]);
-                        if(pkt_qq_cur->failed_cnt>0){
-                            printk("failed_time_list_qq:0(%u)1(%u)2(%u)3(%u)4(%u)5(%u)6(%u)7(%u)8(%u)9(%u)",pkt_qq_cur->failed_time_list_qq[0]\
-                            ,pkt_qq_cur->failed_time_list_qq[1],pkt_qq_cur->failed_time_list_qq[2],pkt_qq_cur->failed_time_list_qq[3]\
-                            ,pkt_qq_cur->failed_time_list_qq[4],pkt_qq_cur->failed_time_list_qq[5],pkt_qq_cur->failed_time_list_qq[6]\
-                            ,pkt_qq_cur->failed_time_list_qq[7],pkt_qq_cur->failed_time_list_qq[8],pkt_qq_cur->failed_time_list_qq[9]);
-                        }
-                        printk("----------[fyl] OSL_SYSUPTIME()2----------(%u)",OSL_SYSUPTIME());
-                    }
 
                 }
                 //printk("**************debug5+6*******************");
@@ -2937,10 +2918,10 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
 
     read_lock(&pkt_qq_mutex_len); // 加锁
     //printk("**************debug14*******************");
-    if(pkt_qq_chain_len>max_pkt_qq_chain_len/2){
+    if((pkt_qq_chain_len>max_pkt_qq_chain_len-100)&&(pkt_qq_chain_head->into_CFP_time+pkt_qq_ddl<OSL_SYSUPTIME())){
         read_unlock(&pkt_qq_mutex_len); // 解锁
 
-        //printk("**************debug_pkt_qq_del_timeout_ergodic*******************");
+        printk("**************debug_pkt_qq_del_timeout_ergodic(%u;%u)*******************",pktnum_to_send_end,pkt_qq_chain_len);
         pkt_qq_del_timeout_ergodic(osh);
     }else{
         read_unlock(&pkt_qq_mutex_len); // 解锁

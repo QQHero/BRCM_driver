@@ -1758,6 +1758,14 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         memcpy(info_qq, pkt_count_qq_cur, sizeof(*pkt_count_qq_cur));
                         MFREE(osh, pkt_count_qq_cur, sizeof(*pkt_count_qq_cur));
                         debugfs_set_info_qq(1, info_qq, 1);
+                        mutex_lock(&pkt_qq_mutex_head); // 加锁
+                        if((pkt_qq_chain_head->into_CFP_time+pkt_qq_ddl<OSL_SYSUPTIME())||(OSL_SYSUPTIME() < pkt_qq_chain_head->into_hw_time)){
+                            
+                            mutex_unlock(&pkt_qq_mutex_head); // 解锁
+                            pkt_qq_del_timeout_ergodic(osh);
+                        }else{
+                            mutex_unlock(&pkt_qq_mutex_head); // 解锁     
+                        }                  
                         
 
         #if 0
@@ -1865,7 +1873,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                     //mutex_unlock(&pkt_qq_mutex); // 解锁
                 }
             }
-            else{
+            else{//用于将用不到的节点提前删掉
                 struct pkt_qq *pkt_qq_cur = NULL;
                 if(pkttag->qq_pktinfo_pointer==(uint32)NULL){
 
@@ -1875,7 +1883,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                     pkt_qq_delete(pkt_qq_cur,osh);
                 }
 
-                pkt_qq_print_by_debugfs_ergodic(7);
+                //pkt_qq_print_by_debugfs_ergodic(7);
             }
         }//#endif
 

@@ -4722,7 +4722,7 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 		
 	/* dump_flag_qqdx */
 		if(start_game_is_on){
-			printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
+			//printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			rate_change_info_qq_cur->cur_rateid = prv_rateid;
 			rate_change_info_qq_cur->next_rateid = state_dl->rateid;
