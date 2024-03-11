@@ -946,21 +946,17 @@ void file_io(void) {
                 ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq));
                 
                 fprintf(stdout,"fix_rate(%u);change_mode(%u);cur_rateid(%u);"\
-                    "next_rateid(%u);up_rateid(%u);down_rateid,"\
-                    "(%u);psr_fbr(%u);psr_cur(%u);psr_dnp(%u);psr_upp(%u);"\
-                    "prate_cur(%u);prate_up(%u);prate_dn(%u);prate_fbr(%u)"\
-                    "cur_rspec(%u);next_rspec(%u);cur_mcs(%u);next_mcs(%u)"\
+                    "next_rateid(%u);up_rateid(%u);down_rateid(%u);"\
+                    "psr_fbr(%u);psr_cur(%u);psr_dnp(%u);psr_upp(%u);"\
+                    "prate_cur(%u);prate_up(%u);prate_dn(%u);prate_fbr(%u);"\
+                    "prate_next(%u);cur_rspec(%u);next_rspec(%u);cur_mcs(%u);"\
+                    "next_mcs(%u)"\
                     ,rate_change_info_qq_cur->fix_rate, rate_change_info_qq_cur->change_mode,rate_change_info_qq_cur->cur_rateid
                     ,rate_change_info_qq_cur->next_rateid, rate_change_info_qq_cur->up_rateid, rate_change_info_qq_cur->down_rateid
                     ,rate_change_info_qq_cur->psr_fbr, rate_change_info_qq_cur->psr_cur, rate_change_info_qq_cur->psr_dnp, rate_change_info_qq_cur->psr_upp
                     ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr
                     ,rate_change_info_qq_cur->prate_next,rate_change_info_qq_cur->cur_rspec,rate_change_info_qq_cur->next_rspec,rate_change_info_qq_cur->cur_mcs
-                    ,rate_change_info_qq_cur->next_mcs(%u))
-
-    ratespec_t cur_rspec;
-    ratespec_t next_rspec;
-    uint8_t cur_mcs;
-    uint8_t next_mcs;
+                    ,rate_change_info_qq_cur->next_mcs);
                 fprintf(stdout,"\n");
             }
             pre_timestamp_class8= rate_change_info.timestamp;

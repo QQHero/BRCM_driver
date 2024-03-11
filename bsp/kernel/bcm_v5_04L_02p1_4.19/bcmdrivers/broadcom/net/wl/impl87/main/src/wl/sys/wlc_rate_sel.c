@@ -4405,7 +4405,11 @@ wlc_ratesel_change_sp(rcb_t *state, rcb_rtcmn_t *state_cmn)
 	    (!state->rsi->ratesel_sp_algo &&
 	     (spatial_m - state_cmn->mcs_sp_statc) <= state_cmn->mcs_sp_K)) {
 		/* switch */
-		state_cmn->rateid = state_cmn->mcs_sp_id;
+		
+/* dump_flag_qqdx */
+		//state_cmn->rateid = state_cmn->mcs_sp_id;
+		state_cmn->rateid = 12;
+/* dump_flag_qqdx */
 
 #ifdef BCMDBG
 		/* below is debug info */
@@ -4722,7 +4726,6 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 		
 	/* dump_flag_qqdx */
 		if(start_game_is_on){
-			//printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()----------(%u)",OSL_SYSUPTIME());
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			rate_change_info_qq_cur->cur_rateid = prv_rateid;
 			rate_change_info_qq_cur->cur_rspec = RATESPEC_OF_I(state_dl, prv_rateid);
@@ -4733,6 +4736,7 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 			rate_change_info_qq_cur->prate_up = 0;
 			rate_change_info_qq_cur->prate_next = RATESPEC_OF_I(state_dl, state_dl->rateid);
 			rate_change_info_qq_cur->prate_fbr = RSPEC2RATE500K(fbr->rspec);
+			printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()(%u)cur_mcs(%u)(%u)",OSL_SYSUPTIME(),rate_change_info_qq_cur->cur_mcs, WL_RSPEC_RATE_MASK & rate_change_info_qq_cur->cur_rspec);
 			//copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
 			//memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
 			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
