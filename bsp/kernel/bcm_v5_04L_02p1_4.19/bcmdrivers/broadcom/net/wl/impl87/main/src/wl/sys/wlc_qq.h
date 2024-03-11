@@ -669,6 +669,121 @@ wf_he_rspec_to_rate(ratespec_t rspec)
 	return 0;
 } /* wf_he_rspec_to_rate */
 
+
+uint wf_rspec_to_mcs_qq2(ratespec_t rspec)
+{
+	uint rate = (uint)(-1);
+	uint mcs, nss;
+
+	switch (rspec & WL_RSPEC_ENCODING_MASK) {
+		case WL_RSPEC_ENCODE_HE:
+			rate = wf_he_rspec_to_rate(rspec);
+			break;
+		case WL_RSPEC_ENCODE_VHT:
+			mcs = RSPEC_VHT_MCS(rspec);
+			nss = RSPEC_VHT_NSS(rspec);
+#ifdef BCMDBG
+			if (mcs > WLC_MAX_VHT_MCS || nss == 0 || nss > 8) {
+				printf("%s: rspec=%x\n", __FUNCTION__, rspec);
+			}
+#endif /* BCMDBG */
+			ASSERT(mcs <= WLC_MAX_VHT_MCS);
+			ASSERT(nss != 0 && nss <= 8);
+			rate = wf_mcs_to_rate(mcs, nss,
+				RSPEC_BW(rspec), RSPEC_ISSGI(rspec));
+			break;
+		case WL_RSPEC_ENCODE_HT:
+			mcs = RSPEC_HT_MCS(rspec);
+#ifdef BCMDBG
+			if (mcs > 32 && !IS_PROPRIETARY_11N_MCS(mcs)) {
+				printf("%s: rspec=%x\n", __FUNCTION__, rspec);
+			}
+#endif /* BCMDBG */
+			ASSERT(mcs <= 32 || IS_PROPRIETARY_11N_MCS(mcs));
+			if (mcs == 32) {
+				rate = wf_mcs_to_rate(mcs, 1, WL_RSPEC_BW_40MHZ,
+					RSPEC_ISSGI(rspec));
+			} else {
+#if defined(WLPROPRIETARY_11N_RATES)
+				nss = GET_11N_MCS_NSS(mcs);
+				mcs = wf_get_single_stream_mcs(mcs);
+#else /* this ifdef prevents ROM abandons */
+				nss = 1 + (mcs / 8);
+				mcs = mcs % 8;
+#endif /* WLPROPRIETARY_11N_RATES */
+				rate = wf_mcs_to_rate(mcs, nss, RSPEC_BW(rspec),
+					RSPEC_ISSGI(rspec));
+			}
+			break;
+		case WL_RSPEC_ENCODE_RATE:	/* Legacy */
+			rate = 500 * RSPEC2RATE(rspec);
+			break;
+		default:
+			ASSERT(0);
+			break;
+	}
+    return mcs;
+
+}
+
+
+uint wf_rspec_to_nss_qq2(ratespec_t rspec)
+{
+	uint rate = (uint)(-1);
+	uint mcs, nss;
+
+	switch (rspec & WL_RSPEC_ENCODING_MASK) {
+		case WL_RSPEC_ENCODE_HE:
+			rate = wf_he_rspec_to_rate(rspec);
+			break;
+		case WL_RSPEC_ENCODE_VHT:
+			mcs = RSPEC_VHT_MCS(rspec);
+			nss = RSPEC_VHT_NSS(rspec);
+#ifdef BCMDBG
+			if (mcs > WLC_MAX_VHT_MCS || nss == 0 || nss > 8) {
+				printf("%s: rspec=%x\n", __FUNCTION__, rspec);
+			}
+#endif /* BCMDBG */
+			ASSERT(mcs <= WLC_MAX_VHT_MCS);
+			ASSERT(nss != 0 && nss <= 8);
+			rate = wf_mcs_to_rate(mcs, nss,
+				RSPEC_BW(rspec), RSPEC_ISSGI(rspec));
+			break;
+		case WL_RSPEC_ENCODE_HT:
+			mcs = RSPEC_HT_MCS(rspec);
+#ifdef BCMDBG
+			if (mcs > 32 && !IS_PROPRIETARY_11N_MCS(mcs)) {
+				printf("%s: rspec=%x\n", __FUNCTION__, rspec);
+			}
+#endif /* BCMDBG */
+			ASSERT(mcs <= 32 || IS_PROPRIETARY_11N_MCS(mcs));
+			if (mcs == 32) {
+				rate = wf_mcs_to_rate(mcs, 1, WL_RSPEC_BW_40MHZ,
+					RSPEC_ISSGI(rspec));
+			} else {
+#if defined(WLPROPRIETARY_11N_RATES)
+				nss = GET_11N_MCS_NSS(mcs);
+				mcs = wf_get_single_stream_mcs(mcs);
+#else /* this ifdef prevents ROM abandons */
+				nss = 1 + (mcs / 8);
+				mcs = mcs % 8;
+#endif /* WLPROPRIETARY_11N_RATES */
+				rate = wf_mcs_to_rate(mcs, nss, RSPEC_BW(rspec),
+					RSPEC_ISSGI(rspec));
+			}
+			break;
+		case WL_RSPEC_ENCODE_RATE:	/* Legacy */
+			rate = 500 * RSPEC2RATE(rspec);
+			break;
+		default:
+			ASSERT(0);
+			break;
+	}
+    return nss;
+
+}
+
+
 /** take a well formed ratespec_t arg and return phy rate in [Kbps] units */
 void wf_rspec_to_phyinfo_qq(ratesel_txs_t rs_txs, struct phy_info_qq *phy_info_qq_cur)
 {

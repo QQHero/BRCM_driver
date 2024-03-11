@@ -4598,6 +4598,11 @@ wlc_ratesel_change_extsp(rcb_t *state, rcb_rtcmn_t *state_cmn)
 	return FALSE;
 }
 
+/* dump_flag_qqdx */
+extern uint wf_rspec_to_mcs_qq2(ratespec_t rspec);
+extern uint wf_rspec_to_nss_qq2(ratespec_t rspec);
+extern int wf_rspec_to_mcs_qq(ratespec_t rspec);
+/* dump_flag_qqdx */
 /**
  * <is_probe>: Indicate this calling is due to a probe packet or not.
  */
@@ -4729,10 +4734,12 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 			kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
 			rate_change_info_qq_cur->cur_rateid = prv_rateid;
 			rate_change_info_qq_cur->cur_rspec = RATESPEC_OF_I(state_dl, prv_rateid);
-			rate_change_info_qq_cur->cur_mcs = WL_RSPEC_RATE_MASK & rate_change_info_qq_cur->cur_rspec;
+			rate_change_info_qq_cur->cur_mcs = wf_rspec_to_mcs_qq2(rate_change_info_qq_cur->cur_rspec);
+			rate_change_info_qq_cur->cur_nss = wf_rspec_to_nss_qq2(rate_change_info_qq_cur->cur_rspec);
 			rate_change_info_qq_cur->next_rateid = state_dl->rateid;
 			rate_change_info_qq_cur->next_rspec = RATESPEC_OF_I(state_dl, rate_change_info_qq_cur->next_rateid);
-			rate_change_info_qq_cur->next_mcs = WL_RSPEC_RATE_MASK & rate_change_info_qq_cur->next_rspec;
+			rate_change_info_qq_cur->next_mcs = wf_rspec_to_mcs_qq2( rate_change_info_qq_cur->next_rspec);
+			rate_change_info_qq_cur->next_nss = wf_rspec_to_nss_qq2( rate_change_info_qq_cur->next_rspec);
 			rate_change_info_qq_cur->prate_up = 0;
 			rate_change_info_qq_cur->prate_next = RATESPEC_OF_I(state_dl, state_dl->rateid);
 			rate_change_info_qq_cur->prate_fbr = RSPEC2RATE500K(fbr->rspec);

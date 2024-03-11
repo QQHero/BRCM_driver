@@ -518,6 +518,8 @@ struct rate_change_info_qq {
     ratespec_t next_rspec;
     uint8 cur_mcs;
     uint8 next_mcs;
+    uint8 cur_nss;
+    uint8 next_nss;
     uint8 up_rateid;
     uint8 down_rateid;
     uint32 psr_fbr;
