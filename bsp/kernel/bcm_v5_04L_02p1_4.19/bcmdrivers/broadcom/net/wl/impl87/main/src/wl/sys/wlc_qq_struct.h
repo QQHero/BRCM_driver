@@ -514,6 +514,10 @@ struct rate_change_info_qq {
     uint8 change_mode;//上调还是下调还是别的，0是下调，1是上调
     uint8 cur_rateid;
     uint8 next_rateid;
+    ratespec_t cur_rspec;
+    ratespec_t next_rspec;
+    uint8 cur_mcs;
+    uint8 next_mcs;
     uint8 up_rateid;
     uint8 down_rateid;
     uint32 psr_fbr;
