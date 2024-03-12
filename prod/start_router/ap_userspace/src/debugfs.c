@@ -445,6 +445,7 @@ uint16_t ltoh16(uint16_t little_endian_value) {
 
 
 typedef uint32_t	ratespec_t;
+#define MAX_RATEID_QQ 36
 //rate change info
 struct rate_change_info_qq {
     uint8_t fix_rate;
@@ -468,6 +469,8 @@ struct rate_change_info_qq {
     uint32_t prate_dn;
     uint32_t prate_fbr;
     uint32_t prate_next;
+    uint8_t rateID_2_mcs[MAX_RATEID_QQ];
+    uint8_t rateID_2_nss[MAX_RATEID_QQ];
 }rate_change_info_qq_t;
 
 
@@ -959,7 +962,13 @@ void file_io(void) {
                     ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr
                     ,rate_change_info_qq_cur->prate_next,rate_change_info_qq_cur->cur_rspec,rate_change_info_qq_cur->next_rspec,rate_change_info_qq_cur->cur_mcs
                     ,rate_change_info_qq_cur->next_mcs,rate_change_info_qq_cur->cur_nss,rate_change_info_qq_cur->next_nss);
+                    uint8_t i;
+                    for ( i = 0; (i < MAX_RATEID_QQ); i++) {
+                        fprintf(stdout,"rateID(%u);mcs(%u);nss(%u)",i,rate_change_info_qq_cur->rateID_2_mcs[i],rate_change_info_qq_cur->rateID_2_nss[i]);
+                        //printk("i(%u);mcs(%u);nss(%u);",i,wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i)),wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i)));
+                    }
                 fprintf(stdout,"\n");
+
             }
             pre_timestamp_class8= rate_change_info.timestamp;
         }

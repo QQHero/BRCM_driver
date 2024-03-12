@@ -509,6 +509,7 @@ struct wlc_info_qq_record{
 
 
 //rate change info
+#define MAX_RATEID_QQ 36
 struct rate_change_info_qq {
     uint8 fix_rate;
     uint8 change_mode;//上调还是下调还是别的，0是下调，1是上调
@@ -531,4 +532,6 @@ struct rate_change_info_qq {
     uint32 prate_dn;
     uint32 prate_fbr;
     uint32 prate_next;
+    uint8 rateID_2_mcs[MAX_RATEID_QQ];
+    uint8 rateID_2_nss[MAX_RATEID_QQ];
 };

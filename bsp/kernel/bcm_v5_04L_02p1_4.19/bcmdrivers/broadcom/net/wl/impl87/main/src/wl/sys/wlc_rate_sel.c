@@ -4745,15 +4745,18 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 			rate_change_info_qq_cur->prate_up = 0;
 			rate_change_info_qq_cur->prate_next = RATESPEC_OF_I(state_dl, state_dl->rateid);
 			rate_change_info_qq_cur->prate_fbr = RSPEC2RATE500K(fbr->rspec);
-			printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()(%u)cur_mcs(%u)(%u)",OSL_SYSUPTIME(),rate_change_info_qq_cur->cur_mcs, WL_RSPEC_RATE_MASK & rate_change_info_qq_cur->cur_rspec);
+			//printk("rate change time:wlc_ratesel_godown:OSL_SYSUPTIME()(%u)cur_mcs(%u)(%u)",OSL_SYSUPTIME(),rate_change_info_qq_cur->cur_mcs, WL_RSPEC_RATE_MASK & rate_change_info_qq_cur->cur_rspec);
 			//copy_wl_rxsts_to_wl_rxsts_qq(&sts, &(monitor_info_qq_cur->wl_mon_rxsts));
 			//memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
+			uint8 i;
+			for ( i = state_dl->mcs_baseid; (i < state_dl->active_rates_num) && (i < MAX_RATEID_QQ); i++) {
+				rate_change_info_qq_cur->rateID_2_mcs[i] = wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i));
+				rate_change_info_qq_cur->rateID_2_nss[i] = wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i));
+				//printk("i(%u);mcs(%u);nss(%u);",i,wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i)),wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i)));
+			}
 			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
 			debugfs_set_info_qq(7, info_qq, 1);
-			uint8 i;
-			for ( i = state_dl->mcs_baseid; i < state_dl->active_rates_num; i++) {
-				printk("i(%u);mcs(%u);nss(%u);",i,wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i)),wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i)));
-			}
+			
 
 		}
 	/* dump_flag_qqdx */
