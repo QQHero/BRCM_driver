@@ -4020,7 +4020,9 @@ make_decision:
 		"0x%x 0x%x\n", ULDL(state_cmn), __FUNCTION__, decision, prate_cur,
 		prate_fbr, prate_dn, cur->psr, fbr->psr, psr_dn,
 		prate_cur * cur->psr, prate_dn * psr_dn));
-
+    /* dump_flag_qqdx */
+	*rateid = down_rateid;
+    /* dump_flag_qqdx */
 	return decision;
 } /* wlc_ratesel_godown */
 
@@ -4750,7 +4752,7 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 			debugfs_set_info_qq(7, info_qq, 1);
 			uint8 i;
 			for ( i = state_dl->mcs_baseid; i < state_dl->active_rates_num; i++) {
-				printk("i(%u);mcs(%u);",i,(WL_RSPEC_RATE_MASK & known_rspec[state_dl->select_rates[i]]));
+				printk("i(%u);mcs(%u);nss(%u);",i,wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i)),wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i)));
 			}
 
 		}
