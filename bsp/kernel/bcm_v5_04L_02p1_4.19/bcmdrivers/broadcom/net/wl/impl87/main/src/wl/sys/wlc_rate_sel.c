@@ -4748,6 +4748,11 @@ wlc_ratesel_pick_rate(rcb_t *state, bool is_probe, bool is_sgi)
 			//memcpy(&(monitor_info_qq_cur->wl_mon_rxsts), &sts, sizeof(wl_rxsts_t));
 			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
 			debugfs_set_info_qq(7, info_qq, 1);
+			uint8 i;
+			for ( i = state_dl->mcs_baseid; i < state_dl->active_rates_num; i++) {
+				printk("i(%u);mcs(%u);",i,(WL_RSPEC_RATE_MASK & known_rspec[state_dl->select_rates[i]]));
+			}
+
 		}
 	/* dump_flag_qqdx */
 		wlc_ratesel_clear_ratestat(state, change_epoch);
