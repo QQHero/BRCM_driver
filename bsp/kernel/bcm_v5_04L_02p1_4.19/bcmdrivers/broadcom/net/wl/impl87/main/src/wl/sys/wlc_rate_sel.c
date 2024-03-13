@@ -3942,7 +3942,7 @@ make_decision:
 			memcpy(info_qq, rate_change_info_qq_cur, sizeof(*rate_change_info_qq_cur));
 			debugfs_set_info_qq(7, info_qq, 1);
 		}
-		down_rateid = 11;
+		//down_rateid = 11;
     /* dump_flag_qqdx */
 
 
@@ -4022,7 +4022,7 @@ make_decision:
 		prate_cur * cur->psr, prate_dn * psr_dn));
     /* dump_flag_qqdx */
 	if(decision) {
-		*rateid = down_rateid;
+		//*rateid = down_rateid;
 	}
     /* dump_flag_qqdx */
 	return decision;
@@ -4157,7 +4157,7 @@ wlc_ratesel_goup(rcb_t *state, rcb_rtcmn_t *state_cmn)
 		}
 		
 		
-		up_rateid = 14;
+		//up_rateid = 14;
     /* dump_flag_qqdx */
 
 
