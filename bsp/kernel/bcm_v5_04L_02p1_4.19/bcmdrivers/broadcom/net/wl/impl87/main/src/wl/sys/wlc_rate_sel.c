@@ -4411,8 +4411,8 @@ wlc_ratesel_change_sp(rcb_t *state, rcb_rtcmn_t *state_cmn)
 		/* switch */
 		
 /* dump_flag_qqdx */
-		//state_cmn->rateid = state_cmn->mcs_sp_id;
-		state_cmn->rateid = 12;
+		state_cmn->rateid = state_cmn->mcs_sp_id;
+		//state_cmn->rateid = 12;
 /* dump_flag_qqdx */
 
 #ifdef BCMDBG
