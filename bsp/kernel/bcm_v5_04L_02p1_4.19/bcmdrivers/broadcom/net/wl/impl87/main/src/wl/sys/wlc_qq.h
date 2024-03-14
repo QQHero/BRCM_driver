@@ -418,6 +418,7 @@ for(i = 0; i<pkt_phydelay_dict_len; i++){
 //DEFINE_MUTEX(pkt_qq_mutex); // 定义一个互斥锁
 DEFINE_MUTEX(pkt_qq_mutex_tail); // 定义一个互斥锁
 DEFINE_MUTEX(pkt_qq_mutex_head); // 定义一个互斥锁
+DEFINE_MUTEX(pkt_qq_mutex_delete); // 定义一个互斥锁
 DEFINE_RWLOCK(pkt_qq_mutex_len); // 定义一个读写锁
 
 /*记录PS时间
@@ -2389,7 +2390,7 @@ bool pkt_qq_len_error_sniffer(osl_t *osh, uint8 num){
 void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     //return;//debug142
 
-
+    mutex_lock(&pkt_qq_mutex_delete);
     //printk(KERN_ALERT"###########pkt_qq_chain_len_delete1(%u)",pkt_qq_chain_len);
     if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
         wlc_pkttag_t* pkttag = (wlc_pkttag_t*)(uintptr)pkt_qq_cur->qq_pkttag_pointer;
@@ -2399,6 +2400,7 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     }
     else{
         printk("****************wrong IS_ERR_OR_NULL(pkt_qq_cur)----------(%u)",pkt_qq_chain_len);
+        mutex_unlock(&pkt_qq_mutex_delete); // 解锁
         return;
     }
 
@@ -2410,6 +2412,7 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     if(pkt_qq_chain_len<1){
         printk("****************wrong pkt_qq_chain_len----------(%u)",pkt_qq_chain_len);
         read_unlock(&pkt_qq_mutex_len); // 解锁
+        mutex_unlock(&pkt_qq_mutex_delete); // 解锁 
         return;
 
     }
@@ -2492,6 +2495,7 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
         }
         
     }
+    mutex_unlock(&pkt_qq_mutex_delete); // 解锁
     return;
 //mutex_unlock(&pkt_qq_mutex); // 解锁
 }
