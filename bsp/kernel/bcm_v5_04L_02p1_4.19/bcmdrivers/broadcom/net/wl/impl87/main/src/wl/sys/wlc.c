@@ -3945,7 +3945,7 @@ void
 wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
 {
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec1:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec1:(0x%04x)",chanspec);
     //dump_stack();
     /* dump_flag_qqdx */
     enum wlc_bandunit bandunit;
@@ -3979,7 +3979,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
         WL_INFORM(("wl%d: %s skip updating chanspec 0x%04x during psmwd\n",
             wlc->pub->unit, __FUNCTION__, chanspec));
     /* dump_flag_qqdx */
-        printk("wlc_set_chanspec2:(0x%04x)",chanspec);
+        //printk("wlc_set_chanspec2:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
         return;
     }
@@ -4003,13 +4003,13 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
         WL_ERROR(("wl%d: %s: Bad chanspec %s\n",
             wlc->pub->unit, __FUNCTION__, wf_chspec_ntoa_ex(chanspec, chanbuf1)));
     /* dump_flag_qqdx */
-        printk("wlc_set_chanspec3:(0x%04x)",chanspec);
+        //printk("wlc_set_chanspec3:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
         goto set_chanspec_done;
     }
 
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec4:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec4:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #ifdef CCA_STATS
 #ifndef DONGLEBUILD
@@ -4033,7 +4033,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
             cca_send_event(wlc, 1);
     }
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec5:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec5:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif /* CCA_STATS */
 #ifdef WLCHANIM
@@ -4048,7 +4048,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
     if (old_chanspec == chanspec) {
         WL_TSLOG(wlc, __FUNCTION__, TS_EXIT, 0);
     /* dump_flag_qqdx */
-        printk("wlc_set_chanspec6:(0x%04x)",chanspec);
+        //printk("wlc_set_chanspec6:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
         return;
     }
@@ -4068,7 +4068,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
         }
     }
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec7:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec7:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif /* WL_PWRSTATS */
 
@@ -4082,7 +4082,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
                     wf_chspec_ntoa_ex(chanspec, chanbuf1)));
 
     /* dump_flag_qqdx */
-                printk("wlc_set_chanspec8:(0x%04x)",chanspec);
+                //printk("wlc_set_chanspec8:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
                 goto set_chanspec_done;
             }
@@ -4101,7 +4101,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
         }
     }
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec9:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec9:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 
     ASSERT(VHT_ENAB_BAND(wlc->pub, CHSPEC_BANDTYPE(chanspec)) ||
@@ -4118,7 +4118,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
 #endif  /* defined(WL_UCM) */
     /* sync up phy/radio chanspec */
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec10:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec10:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
     wlc_set_phy_chanspec(wlc, chanspec);
 
@@ -4128,12 +4128,12 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
          * Mainly add MCS32 for 40Mhz, remove MCS 32 for 20Mhz
          */
     /* dump_flag_qqdx */
-        printk("wlc_set_chanspec10+:(0x%04x)",chanspec);
+        //printk("wlc_set_chanspec10+:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
         wlc_rateset_ht_bw_mcs_filter(&wlc->band->hw_rateset, CHSPEC_WLC_BW(chanspec));
     }
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec11:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec11:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 
     /* update some mac configuration since chanspec changed */
@@ -4148,7 +4148,7 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
         }
     }
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec12:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec12:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif /* WL_UCM */
 #ifdef CCA_STATS
@@ -4165,13 +4165,13 @@ wlc_set_chanspec(wlc_info_t *wlc, chanspec_t chanspec, int reason_bitmap)
     /* update ED/CRS settings */
     wlc_bmac_ifsctl_edcrs_set(wlc->hw, FALSE);
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec13:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec13:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 
 set_chanspec_done:
     wlc_chansw_notif(wlc, reason_bitmap, old_chanspec, chanspec, tsf_l);
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec14:(0x%04x)",chanspec);
+    //printk("wlc_set_chanspec14:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 
 #ifdef BCMLTECOEX
@@ -4195,7 +4195,7 @@ set_chanspec_done:
 
     WL_TSLOG(wlc, __FUNCTION__, TS_EXIT, 0);
     /* dump_flag_qqdx */
-    printk("wlc_set_chanspec15:wlc->home_chanspec(0x%04x)",wlc->home_chanspec);
+    //printk("wlc_set_chanspec15:wlc->home_chanspec(0x%04x)",wlc->home_chanspec);
     /* dump_flag_qqdx */
 } /* wlc_set_chanspec */
 
