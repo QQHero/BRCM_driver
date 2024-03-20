@@ -440,7 +440,32 @@ struct monitor_info_qq {
 uint16_t ltoh16(uint16_t little_endian_value) {
     return le16toh(little_endian_value);
 }
-
+//如果检测到信道繁忙，并且为自身路由器所连接的用户发送数据，记录为CCASTATS_INBSS
+//如果检测到信道繁忙，但非自身路由器所连接的用户发送数据，记录为CCASTATS_OBSS
+//如果检测到信道繁忙，识别为802.11头部，但是无法探知其数据类型，记录为CCASTATS_NOCTG
+//如果检测到信道繁忙，但没有检测到任何数据包，记录为CCASTATS_NOPKT（猜想与brokensignal的计算有关，但是看不到其具体计算方法）
+//如果路由器自身正在发送数据，记录为CCASTATS_TXDUR
+//TXDUR(%u)INBSS(%u)OBSS(%u)NOCTG(%u)NOPKT(%u)DOZE(%u)TXOP(%u)GDTXDUR(%u)BDTXDUR(%u)
+struct outime_reason_count{
+    uint32_t total_count;
+    uint32_t busy_count;
+    uint32_t self_busy;
+    uint32_t INBSS_busy;
+    uint32_t OBSS_busy;
+    uint32_t NOCTG_busy;
+    uint32_t NOPKT_busy;
+    uint32_t PS_count;
+};
+void reset_outime_reason_count(struct outime_reason_count *count) {
+    count->total_count = 0;
+    count->busy_count = 0;
+    count->self_busy = 0;
+    count->INBSS_busy = 0;
+    count->OBSS_busy = 0;
+    count->NOCTG_busy = 0;
+    count->NOPKT_busy = 0;
+    count->PS_count = 0;
+}
 
 
 
@@ -549,6 +574,15 @@ void file_io(void) {
     uint32_t cur_free_time;
     uint16_t cur_FrameID;
     uint16_t pre_FrameID = 0;
+    uint8_t rateID_2_mcs[MAX_RATEID_QQ];
+    uint8_t rateID_2_nss[MAX_RATEID_QQ];
+    
+    
+
+    struct outime_reason_count outime_reason_count_qq;
+    // 设置结构体成员为0
+    reset_outime_reason_count(&outime_reason_count_qq);
+
     while (1) {
 
 // Read the content of the debugfs file 1 into the buffer
@@ -648,13 +682,14 @@ void file_io(void) {
                         ,pkt_qq_cur->pkt_qq_chain_len_add_start,pkt_qq_cur->pkt_qq_chain_len_add_end,pkt_qq_cur->pkt_qq_chain_len_add_end-pkt_qq_cur->pkt_qq_chain_len_add_start\
                         ,pkt_qq_cur->pkt_added_in_wlc_tx_start,pkt_qq_cur->pkt_added_in_wlc_tx_end,pkt_qq_cur->pkt_added_in_wlc_tx_end-pkt_qq_cur->pkt_added_in_wlc_tx_start\
                         ,pkt_qq_cur->pktnum_to_send_start, pkt_qq_cur->pktnum_to_send_end, (pkt_qq_cur->pktnum_to_send_end-pkt_qq_cur->pktnum_to_send_start), pkt_qq_cur->tid\
-                        , pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->free_time-pkt_qq_cur->into_CFP_time,pkt_qq_cur->ps_dur_trans\
+                        ,pkt_qq_cur->failed_cnt,pkt_qq_cur->free_time-pkt_qq_cur->into_hw_time,pkt_qq_cur->free_time-pkt_qq_cur->into_CFP_time,pkt_qq_cur->ps_dur_trans\
                         ,pkt_qq_cur->free_time,pkt_qq_cur->into_hw_time,pkt_qq_cur->into_CFP_time_record_loc,pkt_qq_cur->into_CFP_time,pkt_qq_cur->droped_withoutACK_time,pkt_qq_cur->airtime_self,pkt_qq_cur->txop_in_fly,pkt_qq_cur->busy_time\
                         ,pkt_qq_cur->ps_pretend_probe, pkt_qq_cur->ps_pretend_count,pkt_qq_cur->ps_pretend_succ_count,pkt_qq_cur->ps_pretend_failed_ack_count\
                         ,pkt_qq_cur->time_in_pretend_in_fly,pkt_qq_cur->ccastats_qq_differ[0]\
                         ,pkt_qq_cur->ccastats_qq_differ[1],pkt_qq_cur->ccastats_qq_differ[2],pkt_qq_cur->ccastats_qq_differ[3]\
                         ,pkt_qq_cur->ccastats_qq_differ[4],pkt_qq_cur->ccastats_qq_differ[5],pkt_qq_cur->ccastats_qq_differ[6]\
                         ,pkt_qq_cur->ccastats_qq_differ[7],pkt_qq_cur->ccastats_qq_differ[8]);
+
                 
 
                     /*fprintf(stdout,"%s: FrameID(%u) n_pkts(%u) APnum(%u) fifo(%u)"
@@ -947,7 +982,7 @@ void file_io(void) {
                 fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,rate_change_info.timestamp.tv_sec,
                 rate_change_info.timestamp.tv_nsec / 1000);
                 fprintf(stdout,"rate_change info:");
-                fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq)(%u:%u:%u)"\
+                //fprintf(stdout,"size:,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq)(%u:%u:%u)"\
                 ,sizeof(struct wl_rxsts_qq),sizeof(struct dot11_header),sizeof(struct rate_change_info_qq));
                 
                 fprintf(stdout,"fix_rate(%u);change_mode(%u);cur_rateid(%u);"\
@@ -962,10 +997,13 @@ void file_io(void) {
                     ,rate_change_info_qq_cur->prate_cur, rate_change_info_qq_cur->prate_up, rate_change_info_qq_cur->prate_dn, rate_change_info_qq_cur->prate_fbr
                     ,rate_change_info_qq_cur->prate_next,rate_change_info_qq_cur->cur_rspec,rate_change_info_qq_cur->next_rspec,rate_change_info_qq_cur->cur_mcs
                     ,rate_change_info_qq_cur->next_mcs,rate_change_info_qq_cur->cur_nss,rate_change_info_qq_cur->next_nss);
-                    uint8_t i;
-                    for ( i = 0; (i < MAX_RATEID_QQ); i++) {
-                        fprintf(stdout,"rateID(%u);mcs(%u);nss(%u)",i,rate_change_info_qq_cur->rateID_2_mcs[i],rate_change_info_qq_cur->rateID_2_nss[i]);
-                        //printk("i(%u);mcs(%u);nss(%u);",i,wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i)),wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i)));
+                    if((memcmp(rateID_2_mcs, rate_change_info_qq_cur->rateID_2_mcs, sizeof(uint8_t)*MAX_RATEID_QQ) != 0)||(memcmp(rateID_2_nss, rate_change_info_qq_cur->rateID_2_nss, sizeof(uint8_t)*MAX_RATEID_QQ) != 0)){
+
+                        uint8_t i;
+                        for ( i = 0; (i < MAX_RATEID_QQ); i++) {
+                            fprintf(stdout,"rateID(%u);mcs(%u);nss(%u)",i,rate_change_info_qq_cur->rateID_2_mcs[i],rate_change_info_qq_cur->rateID_2_nss[i]);
+                            //printk("i(%u);mcs(%u);nss(%u);",i,wf_rspec_to_mcs_qq2(RATESPEC_OF_I(state_dl, i)),wf_rspec_to_nss_qq2(RATESPEC_OF_I(state_dl, i)));
+                        }
                     }
                 fprintf(stdout,"\n");
 

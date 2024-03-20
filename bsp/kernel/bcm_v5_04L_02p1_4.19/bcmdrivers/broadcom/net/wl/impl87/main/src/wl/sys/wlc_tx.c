@@ -327,6 +327,7 @@ typedef struct {
 
 	/* dump_flag_qqdx */
 #include <wlc_qq.h>
+struct pkt_count_qq pkt_count_qq_cur_last;
 uint32 recent_into_CFP_time = 0;
 /*
 void print_trace(void) {
@@ -1736,8 +1737,9 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         }
         #endif /*dump_stack_qqdx_print*/
                     }
+
                     if ((pkt_qq_chain_len_add>=pkt_qq_chain_len_add_last+PKTCOUNTCYCLE)||(pkt_qq_chain_len_add<pkt_qq_chain_len_add_last)) {
-                        //每隔10000个数据包显示一轮统计,防止pkt_qq_chain_len_add溢出
+                        //每隔10000个数据包显示一轮统计,防止pkt_qq_chain_len_add溢出     
                         pkt_qq_chain_len_add_last = pkt_qq_chain_len_add;
                         struct pkt_count_qq *pkt_count_qq_cur = NULL;
                         pkt_count_qq_cur = (struct pkt_count_qq *) MALLOCZ(osh, sizeof(*pkt_count_qq_cur));
@@ -1765,7 +1767,30 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                             pkt_qq_del_timeout_ergodic(osh);
                         }else{
                             mutex_unlock(&pkt_qq_mutex_head); // 解锁     
-                        }                  
+                        }          
+                        uint32 cw_cur = set_cw_qq(wlc->hw);
+                        uint32 pktsnum_20up = 0;
+                        if(pkt_qq_chain_len_add>PKTCOUNTCYCLE*1.5){
+                            for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
+                                pktsnum_20up += pkt_count_qq_cur->pkt_phydelay_dict[i] - pkt_count_qq_cur_last.pkt_phydelay_dict[i];
+                            }
+
+                            printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)--"\
+                            ,cw_cur,OSL_SYSUPTIME()\
+                            ,pkt_qq_chain_len_acked - pkt_count_qq_cur_last.pkt_qq_chain_len_acked\
+                            ,pkt_qq_chain_len_timeout - pkt_count_qq_cur_last.pkt_qq_chain_len_timeout,pktsnum_20up);
+
+                        }else{
+                            for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
+                                pktsnum_20up += pkt_count_qq_cur->pkt_phydelay_dict[i];
+                            }
+                            printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)--"\
+                            ,cw_cur,OSL_SYSUPTIME()\
+                            ,pkt_qq_chain_len_acked\
+                            ,pkt_qq_chain_len_timeout,pktsnum_20up);
+
+                        }
+                        pkt_count_qq_cur_last = *pkt_count_qq_cur;
                         
 
         #if 0

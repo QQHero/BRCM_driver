@@ -485,6 +485,27 @@ uint32 pkt_qq_chain_len_found = 0;// 遍历链表没有找到
 uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包量
 
 
+bool set_min_cw = TRUE;
+struct timer_list timer_qq_CW_set;
+uint32 set_cw_qq(wlc_hw_info_t *wlc_hw){
+    uint32 cur_CW;
+    if(set_min_cw){
+        cur_CW = 15;
+        wlc_bmac_set_cwmin(wlc_hw, cur_CW);
+        wlc_bmac_set_cwmax(wlc_hw, cur_CW);
+        set_min_cw = FALSE;
+    }
+    else{
+        cur_CW = 1000;
+        wlc_bmac_set_cwmin(wlc_hw, cur_CW);
+        wlc_bmac_set_cwmax(wlc_hw, cur_CW);
+        set_min_cw = TRUE;
+    }
+    return cur_CW;
+    
+
+}
+
 wlc_info_t *wlc_qq;
 phy_info_t qq_pi;
 bool qq_pi_is_set = FALSE;
