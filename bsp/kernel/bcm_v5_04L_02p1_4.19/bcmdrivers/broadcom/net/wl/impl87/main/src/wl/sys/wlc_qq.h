@@ -487,23 +487,38 @@ uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包�
 
 bool set_min_cw = TRUE;
 struct timer_list timer_qq_CW_set;
-uint32 set_cw_qq(wlc_hw_info_t *wlc_hw){
-    uint32 cur_CW;
+uint32 cur_CW_qq = 0;
+uint32 set_hw_cw_qq(wlc_hw_info_t *wlc_hw){
     if(set_min_cw){
-        cur_CW = 15;
-        wlc_bmac_set_cwmin(wlc_hw, cur_CW);
-        wlc_bmac_set_cwmax(wlc_hw, cur_CW);
+        cur_CW_qq = 2;
+        wlc_bmac_set_cwmin(wlc_hw, cur_CW_qq);
+        wlc_bmac_set_cwmax(wlc_hw, cur_CW_qq);
         set_min_cw = FALSE;
     }
     else{
-        cur_CW = 1000;
-        wlc_bmac_set_cwmin(wlc_hw, cur_CW);
-        wlc_bmac_set_cwmax(wlc_hw, cur_CW);
+        cur_CW_qq = 1000000;
+        wlc_bmac_set_cwmin(wlc_hw, cur_CW_qq);
+        wlc_bmac_set_cwmax(wlc_hw, cur_CW_qq);
         set_min_cw = TRUE;
     }
-    return cur_CW;
+    return cur_CW_qq;
     
 
+}
+uint32 set_cw_qq(wlc_info_t	*wlc){
+    if(set_min_cw){
+        cur_CW_qq = 2;
+        wlc_set_cwmin(wlc, cur_CW_qq);
+        wlc_set_cwmax(wlc, cur_CW_qq);
+        set_min_cw = FALSE;
+    }
+    else{
+        cur_CW_qq = 1000000;
+        wlc_set_cwmin(wlc, cur_CW_qq);
+        wlc_set_cwmax(wlc, cur_CW_qq);
+        set_min_cw = TRUE;
+    }
+    return cur_CW_qq;
 }
 
 wlc_info_t *wlc_qq;
@@ -2717,6 +2732,11 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
                 memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
                 debugfs_set_info_qq(0, info_qq, 1);
                 
+                phy_info_qq_rx_new.cur_CW_qq = cur_CW_qq;		
+                phy_info_qq_rx_new.wlc_CW_max_qq =  wlc_qq->band->CWmax;		
+                phy_info_qq_rx_new.wlc_hw_CW_max_qq = wlc_qq->hw->band->CWmax;
+                phy_info_qq_rx_new.wlc_CW_min_qq =  wlc_qq->band->CWmin;		
+                phy_info_qq_rx_new.wlc_hw_CW_min_qq = wlc_qq->hw->band->CWmin;		
                 phy_info_qq_rx_new.RSSI_loc = 222;			
 				memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
                 kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
@@ -2953,6 +2973,11 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 phy_info_qq_cur->ignore_bcns = wlc->ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
                 phy_info_qq_cur->interference_mode_crs = wlc->interference_mode_crs;	/**< aphy crs state for interference mitigation */
                 phy_info_qq_cur->legacy_probe = wlc->legacy_probe;		/**< restricts probe requests to CCK rates */
+                phy_info_qq_cur->cur_CW_qq = cur_CW_qq;		
+                phy_info_qq_cur->wlc_CW_max_qq =  wlc->band->CWmax;		
+                phy_info_qq_cur->wlc_hw_CW_max_qq = wlc->hw->band->CWmax;
+                phy_info_qq_cur->wlc_CW_min_qq =  wlc->band->CWmin;		
+                phy_info_qq_cur->wlc_hw_CW_min_qq = wlc->hw->band->CWmin;		
                 kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
                 			
                 memcpy(phy_info_qq_cur->rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);

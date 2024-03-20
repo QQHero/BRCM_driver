@@ -3869,12 +3869,12 @@ wlc_set_phy_chanspec(wlc_info_t *wlc, chanspec_t chanspec)
     BCM_REFERENCE(pi);
 
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec1:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec1:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #ifdef FCC_PWR_LIMIT_2G
     if (FCC_PWR_LIMIT_2G_ENAB(wlc->pub)) {
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec2:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec2:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
         wlc_phy_prev_chanspec_set(WLC_PI(wlc), wlc->chanspec);
     }
@@ -3896,26 +3896,26 @@ wlc_set_phy_chanspec(wlc_info_t *wlc, chanspec_t chanspec)
 #ifdef WL11AC
     wlc_stf_chanspec_upd(wlc);
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec4:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec4:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif /* WL11AC */
 #ifdef WL_ULMU
     wlc_ulmu_chanspec_upd(wlc);
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec5:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec5:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif /* WL_ULMU */
 #ifdef WL11AX
     wlc_he_chanspec_upd(wlc);
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec6:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec6:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif /* WL11AX */
 #ifdef SRHWVSDB
     if (SRHWVSDB_ENAB(wlc->pub)) {
         wlc_srvsdb_stf_ss_algo_chan_get(wlc, chanspec);
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec7:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec7:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
     }
     else
@@ -3924,18 +3924,18 @@ wlc_set_phy_chanspec(wlc_info_t *wlc, chanspec_t chanspec)
         /* following code brings ~3ms delay for split driver */
         wlc_stf_ss_algo_channel_get(wlc, &wlc->stf->ss_algo_channel, chanspec);
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec8:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec8:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
     }
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec9:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec9:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
     wlc_stf_ss_update(wlc, wlc->band);
     wlc_bmac_txbw_update(wlc->hw);
 #ifdef WL_BEAMFORMING
     wlc_txbf_impbf_upd(wlc->txbf);
     /* dump_flag_qqdx */
-    printk("wlc_set_phy_chanspec10:(0x%04x)",chanspec);
+    //printk("wlc_set_phy_chanspec10:(0x%04x)",chanspec);
     /* dump_flag_qqdx */
 #endif
     WL_TSLOG(wlc, __FUNCTION__, TS_EXIT, 0);

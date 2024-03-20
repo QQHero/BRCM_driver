@@ -189,6 +189,11 @@ struct phy_info_qq {
 	bool		ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
 	bool		interference_mode_crs;	/**< aphy crs state for interference mitigation */
 	bool		legacy_probe;		/**< restricts probe requests to CCK rates */
+    uint32_t cur_CW_qq;
+    uint32_t wlc_CW_max_qq;
+    uint32_t wlc_hw_CW_max_qq;
+    uint32_t wlc_CW_min_qq;
+    uint32_t wlc_hw_CW_min_qq;
 }phy_info_qq_t;
 
 //#endif
@@ -793,7 +798,7 @@ void file_io(void) {
         struct phy_info_qq *phy_info_qq_cur;
         phy_info_qq_cur = (struct phy_info_qq *) malloc(sizeof(phy_info_qq_t));
         memcpy(phy_info_qq_cur, phy_info.info, sizeof(phy_info_qq_t));
-        if(pre_timestamp_class3.tv_nsec!= phy_info.timestamp.tv_nsec){
+        if((pre_FrameID != cur_FrameID)&&(pre_timestamp_class3.tv_nsec!= phy_info.timestamp.tv_nsec)){//只有当有高时延包时才打印
             if(PRINT_phy_info){
                 
                 fprintf(stdout, "loop_num(%d)#time: %ld:%ld \n ", loop_num,phy_info.timestamp.tv_sec,
@@ -802,9 +807,9 @@ void file_io(void) {
                 // clock_gettime(CLOCK_REALTIME, &amp;phy_info_qq.timestamp);
                             //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
 
-                fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d) channel_index(%u) real_BW(%u)\n"\
-                ,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel
-                ,phy_info_qq_cur->channel_index,phy_info_qq_cur->real_BW);
+                //fprintf(stdout,"phy_info_qq_cur:RSSI_loc(%u) RSSI_type(%u) RSSI_subtype(%u) RSSI(%d) noiselevel(%d) channel_index(%u) real_BW(%u)\n"\
+                //,phy_info_qq_cur->RSSI_loc,phy_info_qq_cur->RSSI_type,phy_info_qq_cur->RSSI_subtype,phy_info_qq_cur->RSSI,phy_info_qq_cur->noiselevel
+                //,phy_info_qq_cur->channel_index,phy_info_qq_cur->real_BW);
             
             //}
             //if(PRINT_pkt_info){
@@ -812,9 +817,12 @@ void file_io(void) {
                 uint8_t rssi_ring_buffer_index_cur = (phy_info_qq_cur->rssi_ring_buffer_index- 1) % RSSI_RING_SIZE;
                 if(pre_FrameID != cur_FrameID){
 
-                    fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d)\n"\
+                    fprintf(stdout,"phy_info_qq_cur:fix_rate(%u) mcs(%u) rate(%u) nss(%u) BW(%u) ISSGI(%u) RSSI(%d) SNR(%d) noiselevel(%d) "
+                    "cur_CW_qq(%u) wlc_CW_max_qq(%u) wlc_hw_CW_max_qq(%u) wlc_CW_min_qq(%u) wlc_hw_CW_min_qq(%u)\n"\
                     ,phy_info_qq_cur->fix_rate,phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],\
-                    phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel);
+                    phy_info_qq_cur->nss[0],phy_info_qq_cur->BW[0],phy_info_qq_cur->ISSGI[0],phy_info_qq_cur->RSSI,phy_info_qq_cur->SNR,phy_info_qq_cur->noiselevel,\
+                    phy_info_qq_cur->cur_CW_qq,phy_info_qq_cur->wlc_CW_max_qq,phy_info_qq_cur->wlc_hw_CW_max_qq,\
+                    phy_info_qq_cur->wlc_CW_min_qq,phy_info_qq_cur->wlc_hw_CW_min_qq);
 
                     fprintf(stdout,"time:rssi:noise");
                     for(int8_t i = 0;i<RSSI_RING_SIZE;i++){

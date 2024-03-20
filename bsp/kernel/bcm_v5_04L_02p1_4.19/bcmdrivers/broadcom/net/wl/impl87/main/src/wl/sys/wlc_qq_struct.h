@@ -143,6 +143,11 @@ struct phy_info_qq {
 	bool		ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
 	bool		interference_mode_crs;	/**< aphy crs state for interference mitigation */
 	bool		legacy_probe;		/**< restricts probe requests to CCK rates */
+    uint32 cur_CW_qq;
+    uint32 wlc_CW_max_qq;
+    uint32 wlc_hw_CW_max_qq;
+    uint32 wlc_CW_min_qq;
+    uint32 wlc_hw_CW_min_qq;
 };
 
 

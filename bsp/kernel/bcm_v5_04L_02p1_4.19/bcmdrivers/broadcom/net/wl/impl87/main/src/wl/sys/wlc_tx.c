@@ -1768,7 +1768,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         }else{
                             mutex_unlock(&pkt_qq_mutex_head); // 解锁     
                         }          
-                        uint32 cw_cur = set_cw_qq(wlc->hw);
+                        uint32 cw_cur = set_cw_qq(wlc);
                         uint32 pktsnum_20up = 0;
                         if(pkt_qq_chain_len_add>PKTCOUNTCYCLE*1.5){
                             for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
@@ -1790,6 +1790,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                             ,pkt_qq_chain_len_timeout,pktsnum_20up);
 
                         }
+                        printk(KERN_ALERT"after cw change");
                         pkt_count_qq_cur_last = *pkt_count_qq_cur;
                         
 
