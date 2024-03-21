@@ -1768,6 +1768,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         }else{
                             mutex_unlock(&pkt_qq_mutex_head); // 解锁     
                         }          
+                        /*
                         uint32 pktsnum_20up = 0;
                         if(pkt_qq_chain_len_add>PKTCOUNTCYCLE*1.5){
                             for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
@@ -1797,7 +1798,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         last_CW_rates_counts_txs_qq = cur_rates_counts_txs_qq;
                         printk(KERN_ALERT"cw change to %u", cw_cur);
                         pkt_count_qq_cur_last = *pkt_count_qq_cur;
-                        
+                        */
 
         #if 0
                         printk(KERN_ALERT"###########pkt_qq_chain_len(%d)",pkt_qq_chain_len);
