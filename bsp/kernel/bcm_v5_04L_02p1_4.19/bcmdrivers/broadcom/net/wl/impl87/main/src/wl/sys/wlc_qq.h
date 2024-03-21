@@ -604,67 +604,19 @@ chanspec_t chanspec_real_set = (chanspec_t)(0xd024);
 osl_t *osh_timer_callback_start_info_qq;
 struct timer_list timer_qq_start_info;
 void timer_callback_start_info_qq(struct timer_list *t) {
-    info_class_t *start_sta_info_buffer;
-    start_sta_info_buffer = (info_class_t *) MALLOCZ(osh_timer_callback_start_info_qq, sizeof(*start_sta_info_buffer));
-    debugfs_read_info_qq(3, start_sta_info_buffer);
-    //struct timespec start_sta_info_time = start_sta_info_buffer->timestamp;
-    kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
-    memcpy(info_qq, start_sta_info_buffer->info, sizeof(*start_sta_info_cur));
-    //info_qq[0] = start_sta_info_buffer->info;
-    memcpy(start_sta_info_cur, info_qq, sizeof(*start_sta_info_cur));
-    /*printk("----------[fyl] ac_queue_index(%d)",start_sta_info_cur->ac_queue_index);
-    printk("sizeof(*start_sta_info_cur)[%d][%d][%d][%d]\n", sizeof(*start_sta_info_cur)\
-	, sizeof(start_sta_info_cur->start_is_on), sizeof(start_sta_info_cur->ea), sizeof(start_sta_info_cur->ac_queue_index));
-    printf("MAC address (struct ether_addr): %02x:%02x:%02x:%02x:%02x:%02x\n",
-        start_sta_info_cur->ea.ether_addr_octet[0],
-        start_sta_info_cur->ea.ether_addr_octet[1],
-        start_sta_info_cur->ea.ether_addr_octet[2],
-        start_sta_info_cur->ea.ether_addr_octet[3],
-        start_sta_info_cur->ea.ether_addr_octet[4],
-        start_sta_info_cur->ea.ether_addr_octet[5]);*/
+            const char *mac_str = "80:A9:97:0A:87:20";
+            ether_aton_r_qq(mac_str, &start_sta_info_cur->ea);
+            start_sta_info_cur->start_is_on = 1;
     
     if(wlc_qq->pub->up && (!wlc_is_down_qq)){
             
-        if(start_sta_info_cur->start_is_on>0){
-                
-            if(FALSE &&(qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){//阻止OFDMA尝试
-                wlc_ratesel_info_t * wrsi = wlc_qq->wrsi;
-                if(((rcb_t *)(SCB_RATESEL_CUBBY((wlc_ratesel_info_t *)(wrsi), qq_scb, LINK_BW_ENTRY)))!=NULL){//->link_bw,防止后续因暂时关闭wl而报错。
-            /* dump_flag_qqdx */
-                        printk("start set ofdma qq:\n");
-            /* dump_flag_qqdx */
-                    WLC_HE_FEATURES_SET(wlc_qq->pub, WL_HE_FEATURES_DLOMU);
+        if(1){
 
-                    wlc_muscheduler_info_t *musched = wlc_qq->musched;
-                    wlc_musched_set_dlpolicy(musched, MUSCHED_DL_POLICY_FIXED);
-                    musched->rualloc = MUSCHED_RUALLOC_RUCFG;
-                    musched->dl_schidx = 1;
-                    //wlc_musched_update_dlofdma(wlc_qq->musched, qq_scb);
-                    //wlc_musched_admit_dlclients(wlc_qq->musched);
-                    if(!SCB_DLOFDMA_ADM(qq_scb)){
-                        wlc_scbmusched_set_dlofdma(wlc_qq->musched, qq_scb, TRUE);
-                    }
-                    //wlc_scbmusched_set_dlschpos(wlc_qq->musched, qq_scb, 0);
-                    scb_musched_t *musched_scb = SCB_MUSCHED(musched, qq_scb);
-                    musched_scb->dl_schpos = 1;
-	                wlc_musched_config_ru_alloc_type_qq(musched);
-                    printk("musched->dl_policy(%d)\n",musched->dl_policy);
-                }
-            }
             if(!start_game_is_on){
 
                 game_start_time_qq = OSL_SYSUPTIME();
             }
-            if((game_start_time_qq + 30*TIMER_INTERVAL_S_qq) <= OSL_SYSUPTIME()&&((game_start_time_qq + 32*TIMER_INTERVAL_S_qq) > OSL_SYSUPTIME())){//如果开玩30s就尝试切换
-                /*
-                int ret_qq_bsd;
-                ret_qq_bsd = btm_qq_send(wlc_qq, start_sta_info_cur->ea, WLC_BAND_2G);
-                printk("btm_qq_send:OSL_SYSUPTIME()-(%u)-(%d)",OSL_SYSUPTIME(), ret_qq_bsd);*/
-            }
             start_game_is_on = TRUE;
-            if((qq_scb!=NULL) && (memcmp(&(start_sta_info_cur->ea), &(qq_scb->ea), sizeof(struct ether_addr)) == 0)){
-                //chanspec_real_set = wlc_qq->chanspec;
-            }
         //wlc_musched_admit_dlclients(musched);
         }else{
             start_game_is_on = FALSE;
