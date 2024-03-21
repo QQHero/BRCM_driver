@@ -1161,20 +1161,20 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
         timer_setup(&timer_qq_start_info, timer_callback_start_info_qq, 0);
         mod_timer(&timer_qq_start_info, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq));
         timer_qq_loaded = TRUE;
-        cur_rates_counts_txs_qq = (struct rates_counts_txs_qq *) MALLOCZ(osh, sizeof(struct rates_counts_txs_qq));//提前分配内存
-        cur_rates_counts_txs_qq->ncons = 0;
-        cur_rates_counts_txs_qq->nlost = 0;
-        cur_rates_counts_txs_qq->rxcts_cnt = 0;
-        cur_rates_counts_txs_qq->txrts_cnt = 0;
+        //cur_rates_counts_txs_qq = (struct rates_counts_txs_qq *) MALLOCZ(osh, sizeof(struct rates_counts_txs_qq));//提前分配内存
+        cur_rates_counts_txs_qq.ncons = 0;
+        cur_rates_counts_txs_qq.nlost = 0;
+        cur_rates_counts_txs_qq.rxcts_cnt = 0;
+        cur_rates_counts_txs_qq.txrts_cnt = 0;
         for(uint i = 0; i<MAX_MCS_QQ;i++){
-            cur_rates_counts_txs_qq->tx_cnt[i] = 0;
-            cur_rates_counts_txs_qq->txsucc_cnt[i] = 0;
+            cur_rates_counts_txs_qq.tx_cnt[i] = 0;
+            cur_rates_counts_txs_qq.txsucc_cnt[i] = 0;
         }
         printk("************sizeof void**%d*****%d**************",sizeof(di),sizeof(wlc_pkttag_t));
         printk("************sizeof uint**%d****uint16*%d**************",sizeof(uint),sizeof(uint16));
-
-        //memset(cur_rates_counts_txs_qq->tx_cnt, 0, sizeof(cur_rates_counts_txs_qq->tx_cnt));
-        //memset(cur_rates_counts_txs_qq->txsucc_cnt, 0, sizeof(cur_rates_counts_txs_qq->txsucc_cnt));
+        last_CW_rates_counts_txs_qq = cur_rates_counts_txs_qq;
+        //memset(cur_rates_counts_txs_qq.tx_cnt, 0, sizeof(cur_rates_counts_txs_qq.tx_cnt));
+        //memset(cur_rates_counts_txs_qq.txsucc_cnt, 0, sizeof(cur_rates_counts_txs_qq.txsucc_cnt));
 
         wlc_qq = wlc;
         chanspec_real_set = wlc_qq->chanspec;
@@ -1669,7 +1669,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         
                         pkt_qq_cur->pktnum_to_send_start = NTXDACTIVE(di->txin, di->txout) + 1;
                         pkt_qq_cur->pkt_added_in_wlc_tx_start = pkt_added_in_wlc_tx;
-                        memcpy(&(pkt_qq_cur->rates_counts_txs_qq_start), cur_rates_counts_txs_qq, sizeof(struct rates_counts_txs_qq));
+                        memcpy(&(pkt_qq_cur->rates_counts_txs_qq_start), &cur_rates_counts_txs_qq, sizeof(struct rates_counts_txs_qq));
 
                         //memcpy(pkt_qq_cur->rates_counts_txs_qq_start, &cur_rates_counts_txs_qq, sizeof(pkt_qq_cur->rates_counts_txs_qq_start));
         #ifdef dump_stack_qqdx_print
@@ -1768,29 +1768,34 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         }else{
                             mutex_unlock(&pkt_qq_mutex_head); // 解锁     
                         }          
-                        uint32 cw_cur = set_cw_qq(wlc);
                         uint32 pktsnum_20up = 0;
                         if(pkt_qq_chain_len_add>PKTCOUNTCYCLE*1.5){
                             for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
                                 pktsnum_20up += pkt_count_qq_cur->pkt_phydelay_dict[i] - pkt_count_qq_cur_last.pkt_phydelay_dict[i];
                             }
 
-                            printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)--"\
-                            ,cw_cur,OSL_SYSUPTIME()\
+                            printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)"
+                            "--ncons(%u)--nlost(%u)--fail_rate(%u)"\
+                            ,cur_CW_qq, OSL_SYSUPTIME()\
                             ,pkt_qq_chain_len_acked - pkt_count_qq_cur_last.pkt_qq_chain_len_acked\
-                            ,pkt_qq_chain_len_timeout - pkt_count_qq_cur_last.pkt_qq_chain_len_timeout,pktsnum_20up);
+                            ,pkt_qq_chain_len_timeout - pkt_count_qq_cur_last.pkt_qq_chain_len_timeout,pktsnum_20up\
+                            ,last_CW_rates_counts_txs_qq.ncons,last_CW_rates_counts_txs_qq.nlost,last_CW_rates_counts_txs_qq.ncons == 0 ? 0: last_CW_rates_counts_txs_qq.nlost*100/last_CW_rates_counts_txs_qq.ncons);
 
                         }else{
                             for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
                                 pktsnum_20up += pkt_count_qq_cur->pkt_phydelay_dict[i];
                             }
-                            printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)--"\
-                            ,cw_cur,OSL_SYSUPTIME()\
+                            printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)"
+                            "--ncons(%u)--nlost(%u)--fail_rate(%f)"\
+                            ,cur_CW_qq, OSL_SYSUPTIME()\
                             ,pkt_qq_chain_len_acked\
-                            ,pkt_qq_chain_len_timeout,pktsnum_20up);
+                            ,pkt_qq_chain_len_timeout,pktsnum_20up\
+                            ,last_CW_rates_counts_txs_qq.ncons,last_CW_rates_counts_txs_qq.nlost,last_CW_rates_counts_txs_qq.ncons == 0 ? 0: last_CW_rates_counts_txs_qq.nlost*100/last_CW_rates_counts_txs_qq.ncons);
 
                         }
-                        printk(KERN_ALERT"after cw change");
+                        uint32 cw_cur = set_cw_qq(wlc);
+                        last_CW_rates_counts_txs_qq = cur_rates_counts_txs_qq;
+                        printk(KERN_ALERT"cw change to %u", cw_cur);
                         pkt_count_qq_cur_last = *pkt_count_qq_cur;
                         
 

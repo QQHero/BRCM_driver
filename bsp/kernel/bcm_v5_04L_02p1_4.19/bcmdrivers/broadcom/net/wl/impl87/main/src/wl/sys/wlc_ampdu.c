@@ -225,7 +225,7 @@ extern uint32 pkt_qq_chain_len_soft_retry;//记录PPS等原因重传导致的
 extern struct start_sta_info *start_sta_info_cur;
 extern bool start_game_is_on;
 
-extern struct rates_counts_txs_qq *cur_rates_counts_txs_qq;
+extern struct rates_counts_txs_qq cur_rates_counts_txs_qq;
 extern void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_mu, bool fix_rate, tx_status_t *txs,ratesel_txs_t rs_txs,uint16 ncons, uint16 nlost);
 
 

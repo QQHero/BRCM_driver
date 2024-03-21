@@ -1048,26 +1048,27 @@ void process_beacon_packet(struct dot11_header *h) {
 
 
 
-struct rates_counts_txs_qq *cur_rates_counts_txs_qq;
+struct rates_counts_txs_qq cur_rates_counts_txs_qq;
+struct rates_counts_txs_qq last_CW_rates_counts_txs_qq;//用于记录上次CW切换时的状态
 /*
 void update_cur_rates_counts_txs_qq(ratesel_txs_t rs_txs){
-    cur_rates_counts_txs_qq->ncons += rs_txs.ncons;
-    cur_rates_counts_txs_qq->nlost += rs_txs.nlost;
-    cur_rates_counts_txs_qq->rxcts_cnt += rs_txs.rxcts_cnt;
-    cur_rates_counts_txs_qq->txrts_cnt += rs_txs.txrts_cnt;
+    cur_rates_counts_txs_qq.ncons += rs_txs.ncons;
+    cur_rates_counts_txs_qq.nlost += rs_txs.nlost;
+    cur_rates_counts_txs_qq.rxcts_cnt += rs_txs.rxcts_cnt;
+    cur_rates_counts_txs_qq.txrts_cnt += rs_txs.txrts_cnt;
     for(uint i = 0; i<RATESEL_MFBR_NUM; i++){
         uint cur_mcs = wf_rspec_to_mcs_qq(rs_txs.txrspec[i]);
-        cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs] += rs_txs.txsucc_cnt[i];
-        cur_rates_counts_txs_qq->tx_cnt[cur_mcs] += rs_txs.tx_cnt[i];
-        //printk("tx_cnt(%u:%u:%u)",cur_mcs,rs_txs.tx_cnt[i],cur_rates_counts_txs_qq->tx_cnt[cur_mcs]);
+        cur_rates_counts_txs_qq.txsucc_cnt[cur_mcs] += rs_txs.txsucc_cnt[i];
+        cur_rates_counts_txs_qq.tx_cnt[cur_mcs] += rs_txs.tx_cnt[i];
+        //printk("tx_cnt(%u:%u:%u)",cur_mcs,rs_txs.tx_cnt[i],cur_rates_counts_txs_qq.tx_cnt[cur_mcs]);
     }
 
 }*/
 void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_mu, bool fix_rate, tx_status_t *txs,ratesel_txs_t rs_txs,uint16 ncons, uint16 nlost){
-    cur_rates_counts_txs_qq->ncons += ncons;
-    cur_rates_counts_txs_qq->nlost += nlost;
-    cur_rates_counts_txs_qq->rxcts_cnt += txs->status.cts_rx_cnt;
-    cur_rates_counts_txs_qq->txrts_cnt += txs->status.rts_tx_cnt;
+    cur_rates_counts_txs_qq.ncons += ncons;
+    cur_rates_counts_txs_qq.nlost += nlost;
+    cur_rates_counts_txs_qq.rxcts_cnt += txs->status.cts_rx_cnt;
+    cur_rates_counts_txs_qq.txrts_cnt += txs->status.rts_tx_cnt;
         /* Parse rs_txs_cur according to transmission type */
     
     uint8    rtidx = 0;
@@ -1142,14 +1143,14 @@ void update_cur_rates_counts_txs_qq(wlc_info_t *wlc, uint8 txs_mutype, bool txs_
         }
         //printk("update_cur_rates_counts_txs_qq13(%d)",cur_mcs);
 
-        cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs] += rs_txs_cur.txsucc_cnt[i];
+        cur_rates_counts_txs_qq.txsucc_cnt[cur_mcs] += rs_txs_cur.txsucc_cnt[i];
         //printk("update_cur_rates_counts_txs_qq131");
-        cur_rates_counts_txs_qq->tx_cnt[cur_mcs] += rs_txs_cur.tx_cnt[i];
+        cur_rates_counts_txs_qq.tx_cnt[cur_mcs] += rs_txs_cur.tx_cnt[i];
         //printk("update_cur_rates_counts_txs_qq132");
-        //printk("tx_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->tx_cnt[cur_mcs],rs_txs_cur.tx_cnt[i]);
+        //printk("tx_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq.tx_cnt[cur_mcs],rs_txs_cur.tx_cnt[i]);
 
-        //printk("txsucc_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq->txsucc_cnt[cur_mcs],rs_txs_cur.txsucc_cnt[i]);
-        //printk("tx_cnt(%u:%u:%u)",cur_mcs,rs_txs_cur.tx_cnt[i],cur_rates_counts_txs_qq->tx_cnt[cur_mcs]);
+        //printk("txsucc_cnt(%u:%u:%u:%u)",i,cur_mcs,cur_rates_counts_txs_qq.txsucc_cnt[cur_mcs],rs_txs_cur.txsucc_cnt[i]);
+        //printk("tx_cnt(%u:%u:%u)",cur_mcs,rs_txs_cur.tx_cnt[i],cur_rates_counts_txs_qq.tx_cnt[cur_mcs]);
     }
         //printk("update_cur_rates_counts_txs_qq14");
         //printk("update_cur_rates_counts_txs_qq15");
@@ -2426,6 +2427,16 @@ bool pkt_qq_len_error_sniffer(osl_t *osh, uint8 num){
 void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     //return;//debug142
 
+    phy_info_qq_rx_new.cur_CW_qq = cur_CW_qq;		
+    phy_info_qq_rx_new.wlc_CW_max_qq =  wlc_qq->band->CWmax;		
+    phy_info_qq_rx_new.wlc_hw_CW_max_qq = wlc_qq->hw->band->CWmax;
+    phy_info_qq_rx_new.wlc_CW_min_qq =  wlc_qq->band->CWmin;		
+    phy_info_qq_rx_new.wlc_hw_CW_min_qq = wlc_qq->hw->band->CWmin;		
+    phy_info_qq_rx_new.RSSI_loc = 222;			
+    memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
+    kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
+    memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
+    debugfs_set_info_qq(2, info_qq2, 1);
     mutex_lock(&pkt_qq_mutex_delete);
     //printk(KERN_ALERT"###########pkt_qq_chain_len_delete1(%u)",pkt_qq_chain_len);
     if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
@@ -2732,16 +2743,6 @@ void pkt_qq_del_timeout_ergodic(osl_t *osh){
                 memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
                 debugfs_set_info_qq(0, info_qq, 1);
                 
-                phy_info_qq_rx_new.cur_CW_qq = cur_CW_qq;		
-                phy_info_qq_rx_new.wlc_CW_max_qq =  wlc_qq->band->CWmax;		
-                phy_info_qq_rx_new.wlc_hw_CW_max_qq = wlc_qq->hw->band->CWmax;
-                phy_info_qq_rx_new.wlc_CW_min_qq =  wlc_qq->band->CWmin;		
-                phy_info_qq_rx_new.wlc_hw_CW_min_qq = wlc_qq->hw->band->CWmin;		
-                phy_info_qq_rx_new.RSSI_loc = 222;			
-				memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
-                kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
-                memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
-                debugfs_set_info_qq(2, info_qq2, 1);
 #endif
                 pkt_qq_delete(pkt_qq_cur,osh);
                 pkt_qq_chain_len_timeout ++;
@@ -2907,9 +2908,9 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                     ccastats_qq_differ[CCASTATS_NOPKT];
                 //printk("**************debug5+3*******************");
                 memcpy(pkt_qq_cur->ccastats_qq_differ, ccastats_qq_differ, sizeof(pkt_qq_cur->ccastats_qq_differ));
-                memcpy(&(pkt_qq_cur->rates_counts_txs_qq_end), cur_rates_counts_txs_qq, sizeof(struct rates_counts_txs_qq));
+                memcpy(&(pkt_qq_cur->rates_counts_txs_qq_end), &(cur_rates_counts_txs_qq), sizeof(struct rates_counts_txs_qq));
                 /*for(uint i = 0; i<8; i++){
-                    printk("tx_cnt2(%u:%u:%u)",i,pkt_qq_cur->rates_counts_txs_qq_end.tx_cnt[i],cur_rates_counts_txs_qq->tx_cnt[i]);
+                    printk("tx_cnt2(%u:%u:%u)",i,pkt_qq_cur->rates_counts_txs_qq_end.tx_cnt[i],cur_rates_counts_txs_qq.tx_cnt[i]);
                 }*/
                 pkt_qq_cur->txop_in_fly = (pkt_qq_cur->free_txop - pkt_qq_cur->into_hw_txop)*slottime_qq;
                 scb_pps_info_t *pps_scb_qq = SCB_PPSINFO(wlc->pps_info, scb);            
@@ -2919,25 +2920,23 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                 }
                 pkt_qq_cur->time_in_pretend_in_fly = time_in_pretend_tot_qq - pkt_qq_cur->time_in_pretend_tot;
                 pkt_qq_cur->ampdu_seq = cur_mpdu_index;
-                struct phy_info_qq *phy_info_qq_cur = NULL;
-                phy_info_qq_cur = (struct phy_info_qq *) MALLOCZ(osh, sizeof(*phy_info_qq_cur));
-                if(wlc->band->bandtype == WLC_BAND_2G){
+                /*if(wlc->band->bandtype == WLC_BAND_2G){
                     memcpy(phy_info_qq_cur,&phy_info_qq_rx_new_2G, sizeof(*phy_info_qq_cur));
                 }else if(wlc->band->bandtype == WLC_BAND_5G){
                     memcpy(phy_info_qq_cur,&phy_info_qq_rx_new_5G, sizeof(*phy_info_qq_cur));
-                }	
-                phy_info_qq_cur->fix_rate = (ltoh16(txh_info->MacTxControlHigh) & D11AC_TXC_FIX_RATE) ? 1:0;
-                wf_rspec_to_phyinfo_qq(rs_txs, phy_info_qq_cur);
-                //phy_info_qq_cur->RSSI = TGTXS_PHYRSSI(TX_STATUS_MACTXS_S8(txs));
-                //phy_info_qq_cur->RSSI = ((phy_info_qq_cur->RSSI) & PHYRSSI_SIGN_MASK) ? (phy_info_qq_cur->RSSI - PHYRSSI_2SCOMPLEMENT) : phy_info_qq_cur->RSSI;
-                //phy_info_qq_cur->RSSI = pkttag->pktinfo.misc.rssi;
+                }	*/
+                phy_info_qq_rx_new.fix_rate = (ltoh16(txh_info->MacTxControlHigh) & D11AC_TXC_FIX_RATE) ? 1:0;
+                wf_rspec_to_phyinfo_qq(rs_txs, &phy_info_qq_rx_new);
+                //phy_info_qq_rx_new.RSSI = TGTXS_PHYRSSI(TX_STATUS_MACTXS_S8(txs));
+                //phy_info_qq_rx_new.RSSI = ((phy_info_qq_rx_new.RSSI) & PHYRSSI_SIGN_MASK) ? (phy_info_qq_rx_new.RSSI - PHYRSSI_2SCOMPLEMENT) : phy_info_qq_rx_new.RSSI;
+                //phy_info_qq_rx_new.RSSI = pkttag->pktinfo.misc.rssi;
                 //wlc_d11rxhdr_t	*wrxh = (wlc_d11rxhdr_t *)PKTDATA(osh, p);
-                //phy_info_qq_cur->RSSI = phy_rssi_compute_rssi(WLC_PI(wlc), wrxh);
-                //phy_info_qq_cur->RSSI = wrxh->rssi;
+                //phy_info_qq_rx_new.RSSI = phy_rssi_compute_rssi(WLC_PI(wlc), wrxh);
+                //phy_info_qq_rx_new.RSSI = wrxh->rssi;
                 
                 //printk("**************debug5+4*******************");
 
-                //printk("rssi12345135345(%d,%d,%d)SNR(%d)",phy_info_qq_cur->RSSI,phy_info_qq_cur->RSSI,pkttag->pktinfo.misc.rssi,pkttag->pktinfo.misc.snr);
+                //printk("rssi12345135345(%d,%d,%d)SNR(%d)",phy_info_qq_rx_new.RSSI,phy_info_qq_rx_new.RSSI,pkttag->pktinfo.misc.rssi,pkttag->pktinfo.misc.snr);
                 
                 #if defined(DONGLEBUILD)
                         /* Get to dot11 header */
@@ -2948,43 +2947,43 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
                             D11_PHY_RXPLCP_LEN(wlc->pub->corerev));
                 #endif /* ! DONGLEBUILD */
 				uint16 fc_qq = ltoh16(h->fc);
-                phy_info_qq_cur->SNR = pkttag->pktinfo.misc.snr;
-                phy_info_qq_cur->noiselevel = wlc_lq_chanim_phy_noise(wlc);
-                phy_info_qq_cur->rssi_ring_buffer_index = rssi_ring_buffer_index;
-                phy_info_qq_cur->RSSI_loc = 111;
-                phy_info_qq_cur->RSSI_type = FC_TYPE(fc_qq);
-                phy_info_qq_cur->RSSI_subtype = FC_SUBTYPE(fc_qq);
-                phy_info_qq_cur->channel_index = wlc->chanspec & WL_CHANSPEC_CHAN_MASK;
-                phy_info_qq_cur->real_BW = wf_chspec_bw_num[CHSPEC_BW(wlc->chanspec)>> WL_CHANSPEC_BW_SHIFT];
+                phy_info_qq_rx_new.SNR = pkttag->pktinfo.misc.snr;
+                phy_info_qq_rx_new.noiselevel = wlc_lq_chanim_phy_noise(wlc);
+                phy_info_qq_rx_new.rssi_ring_buffer_index = rssi_ring_buffer_index;
+                phy_info_qq_rx_new.RSSI_loc = 111;
+                phy_info_qq_rx_new.RSSI_type = FC_TYPE(fc_qq);
+                phy_info_qq_rx_new.RSSI_subtype = FC_SUBTYPE(fc_qq);
+                phy_info_qq_rx_new.channel_index = wlc->chanspec & WL_CHANSPEC_CHAN_MASK;
+                phy_info_qq_rx_new.real_BW = wf_chspec_bw_num[CHSPEC_BW(wlc->chanspec)>> WL_CHANSPEC_BW_SHIFT];
                 /* PHY parameters */
-                phy_info_qq_cur->chanspec = wlc->chanspec;		/**< target operational channel */
-                phy_info_qq_cur->usr_fragthresh = wlc->usr_fragthresh;		/**< user configured fragmentation threshold */
-                memcpy(phy_info_qq_cur->fragthresh, wlc->fragthresh, sizeof(phy_info_qq_cur->fragthresh));
-                //phy_info_qq_cur->fragthresh[AC_COUNT];	/**< per-AC fragmentation thresholds */
-                phy_info_qq_cur->RTSThresh = wlc->RTSThresh;		/**< 802.11 dot11RTSThreshold */
-                phy_info_qq_cur->SRL = wlc->SRL;			/**< 802.11 dot11ShortRetryLimit */
-                phy_info_qq_cur->LRL = wlc->LRL;			/**< 802.11 dot11LongRetryLimit */
-                phy_info_qq_cur->SFBL = wlc->SFBL;			/**< Short Frame Rate Fallback Limit */
-                phy_info_qq_cur->LFBL = wlc->LFBL;			/**< Long Frame Rate Fallback Limit */
+                phy_info_qq_rx_new.chanspec = wlc->chanspec;		/**< target operational channel */
+                phy_info_qq_rx_new.usr_fragthresh = wlc->usr_fragthresh;		/**< user configured fragmentation threshold */
+                memcpy(phy_info_qq_rx_new.fragthresh, wlc->fragthresh, sizeof(phy_info_qq_rx_new.fragthresh));
+                //phy_info_qq_rx_new.fragthresh[AC_COUNT];	/**< per-AC fragmentation thresholds */
+                phy_info_qq_rx_new.RTSThresh = wlc->RTSThresh;		/**< 802.11 dot11RTSThreshold */
+                phy_info_qq_rx_new.SRL = wlc->SRL;			/**< 802.11 dot11ShortRetryLimit */
+                phy_info_qq_rx_new.LRL = wlc->LRL;			/**< 802.11 dot11LongRetryLimit */
+                phy_info_qq_rx_new.SFBL = wlc->SFBL;			/**< Short Frame Rate Fallback Limit */
+                phy_info_qq_rx_new.LFBL = wlc->LFBL;			/**< Long Frame Rate Fallback Limit */
 
                 /* network config */
-                phy_info_qq_cur->shortslot = wlc->shortslot;		/**< currently using 11g ShortSlot timing */
-                phy_info_qq_cur->shortslot_override = wlc->shortslot_override;	/**< 11g ShortSlot override */
-                phy_info_qq_cur->ignore_bcns = wlc->ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
-                phy_info_qq_cur->interference_mode_crs = wlc->interference_mode_crs;	/**< aphy crs state for interference mitigation */
-                phy_info_qq_cur->legacy_probe = wlc->legacy_probe;		/**< restricts probe requests to CCK rates */
-                phy_info_qq_cur->cur_CW_qq = cur_CW_qq;		
-                phy_info_qq_cur->wlc_CW_max_qq =  wlc->band->CWmax;		
-                phy_info_qq_cur->wlc_hw_CW_max_qq = wlc->hw->band->CWmax;
-                phy_info_qq_cur->wlc_CW_min_qq =  wlc->band->CWmin;		
-                phy_info_qq_cur->wlc_hw_CW_min_qq = wlc->hw->band->CWmin;		
+                phy_info_qq_rx_new.shortslot = wlc->shortslot;		/**< currently using 11g ShortSlot timing */
+                phy_info_qq_rx_new.shortslot_override = wlc->shortslot_override;	/**< 11g ShortSlot override */
+                phy_info_qq_rx_new.ignore_bcns = wlc->ignore_bcns;		/**< override: ignore non shortslot bcns in a 11g */
+                phy_info_qq_rx_new.interference_mode_crs = wlc->interference_mode_crs;	/**< aphy crs state for interference mitigation */
+                phy_info_qq_rx_new.legacy_probe = wlc->legacy_probe;		/**< restricts probe requests to CCK rates */
+                phy_info_qq_rx_new.cur_CW_qq = cur_CW_qq;		
+                phy_info_qq_rx_new.wlc_CW_max_qq =  wlc->band->CWmax;		
+                phy_info_qq_rx_new.wlc_hw_CW_max_qq = wlc->hw->band->CWmax;
+                phy_info_qq_rx_new.wlc_CW_min_qq =  wlc->band->CWmin;		
+                phy_info_qq_rx_new.wlc_hw_CW_min_qq = wlc->hw->band->CWmin;		
                 kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
                 			
-                memcpy(phy_info_qq_cur->rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
-                memcpy(info_qq2, phy_info_qq_cur, sizeof(*phy_info_qq_cur));
+                memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
+                memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
                 if(pkt_qq_cur_PHYdelay >= 17 || pkt_qq_cur->failed_cnt>=1 || pkt_qq_cur->free_time - pkt_qq_cur->into_CFP_time >= 20){//如果时延较高就打印出来
                     //printk("**************debug5+5*******************");
-                    //printk("----------[fyl] phy_info_qq_cur:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_cur->mcs[0],phy_info_qq_cur->rate[0],phy_info_qq_cur->fix_rate);
+                    //printk("----------[fyl] &phy_info_qq_rx_new:mcs(%u):rate(%u):fix_rate(%u)----------",phy_info_qq_rx_new.mcs[0],phy_info_qq_rx_new.rate[0],phy_info_qq_rx_new.fix_rate);
                     //int dump_rand_flag = OSL_RAND() % 10000;
                     kernel_info_t info_qq[DEBUG_CLASS_MAX_FIELD];
                     memcpy(info_qq, pkt_qq_cur, sizeof(*pkt_qq_cur));
