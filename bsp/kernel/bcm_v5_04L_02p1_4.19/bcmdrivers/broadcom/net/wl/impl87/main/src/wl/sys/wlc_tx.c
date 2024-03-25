@@ -1571,6 +1571,7 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
             /* dump_flag_qqdx */
             if(memcmp(&start_sta_info_cur->ea, &scb->ea, sizeof(struct ether_addr)) == 0 && start_sta_info_cur->ac_queue_index == PKTPRIO(p)){
                            
+                
                 start_sta_info_cur->fifo = fifo;
                 qq_scb = scb;     
                 qq_scb_is_set = TRUE;
@@ -1770,29 +1771,43 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         }          
                         
                         uint32 pktsnum_20up = 0;
+
+
+                        
+                        struct rates_counts_txs_qq rates_counts_txs_qq_differ;
+                        rates_counts_txs_qq_differ.ncons = cur_rates_counts_txs_qq.ncons - last_CW_rates_counts_txs_qq.ncons;
+                        rates_counts_txs_qq_differ.nlost = cur_rates_counts_txs_qq.nlost - last_CW_rates_counts_txs_qq.nlost;
+                        rates_counts_txs_qq_differ.txrts_cnt = cur_rates_counts_txs_qq.txrts_cnt - last_CW_rates_counts_txs_qq.txrts_cnt;
+                        rates_counts_txs_qq_differ.rxcts_cnt = cur_rates_counts_txs_qq.rxcts_cnt - last_CW_rates_counts_txs_qq.rxcts_cnt;
+                        uint32 total_tx_cnt_differ = 0;
+                        uint32 total_txsucc_cnt_differ = 0;
+                        for(int8_t i = 0;i<MAX_MCS_QQ;i++){
+                            rates_counts_txs_qq_differ.tx_cnt[i] = cur_rates_counts_txs_qq.tx_cnt[i] - last_CW_rates_counts_txs_qq.tx_cnt[i];
+                            rates_counts_txs_qq_differ.txsucc_cnt[i] = cur_rates_counts_txs_qq.txsucc_cnt[i] - last_CW_rates_counts_txs_qq.txsucc_cnt[i];
+                            total_tx_cnt_differ += rates_counts_txs_qq_differ.tx_cnt[i];
+                            total_txsucc_cnt_differ += rates_counts_txs_qq_differ.txsucc_cnt[i];
+                        }
                         if(pkt_qq_chain_len_add>PKTCOUNTCYCLE*1.5){
                             for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
                                 pktsnum_20up += pkt_count_qq_cur->pkt_phydelay_dict[i] - pkt_count_qq_cur_last.pkt_phydelay_dict[i];
                             }
-                            ncons_diff = cur_rates_counts_txs_qq.ncons - last_CW_rates_counts_txs_qq.ncons;
-                            nlost_diff = cur_rates_counts_txs_qq.nlost - last_CW_rates_counts_txs_qq.nlost;
                             printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)"
-                            "--ncons(%u)--nlost(%u)--fail_rate(%u)"\
+                            "--ncons(%u)--nsucc(%u)--succ_rate(%u)"\
                             ,cur_CW_qq, OSL_SYSUPTIME()\
                             ,pkt_qq_chain_len_acked - pkt_count_qq_cur_last.pkt_qq_chain_len_acked\
                             ,pkt_qq_chain_len_timeout - pkt_count_qq_cur_last.pkt_qq_chain_len_timeout,pktsnum_20up\
-                            ,ncons_diff,nlost_diff,ncons_diff == 0 ? 0: nlost_diff*100/ncons_diff);
+                            ,total_tx_cnt_differ,total_txsucc_cnt_differ,total_tx_cnt_differ == 0 ? 0: total_txsucc_cnt_differ*100/total_tx_cnt_differ);
 
                         }else{
                             for(uint8 i = 2;i<pkt_phydelay_dict_len;i++){
                                 pktsnum_20up += pkt_count_qq_cur->pkt_phydelay_dict[i];
                             }
                             printk(KERN_ALERT"----------[fyl] cur_CW(%u)--OSL_SYSUPTIME()(%u)--acked(%u)--timeout(%u)--pktsnum_20up(%u)"
-                            "--ncons(%u)--nlost(%u)--fail_rate(%u)"\
+                            "--ncons(%u)--nsucc(%u)--succ_rate(%u)"\
                             ,cur_CW_qq, OSL_SYSUPTIME()\
                             ,pkt_qq_chain_len_acked\
                             ,pkt_qq_chain_len_timeout,pktsnum_20up\
-                            ,ncons_diff,nlost_diff,ncons_diff == 0 ? 0: nlost_diff*100/ncons_diff);
+                            ,total_tx_cnt_differ,total_txsucc_cnt_differ,total_tx_cnt_differ == 0 ? 0: total_txsucc_cnt_differ*100/total_tx_cnt_differ);
                         }
                         uint32 cw_cur = set_cw_qq(wlc);
                         last_CW_rates_counts_txs_qq = cur_rates_counts_txs_qq;

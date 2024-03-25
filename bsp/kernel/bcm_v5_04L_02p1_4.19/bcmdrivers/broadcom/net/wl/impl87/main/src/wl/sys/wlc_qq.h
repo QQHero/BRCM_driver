@@ -406,7 +406,7 @@ static uint16 index_last;/*用于记录上次搜索到的数据包所在编号*/
 
 uint16 pkt_qq_chain_len = 0;
 uint16 max_pkt_qq_chain_len = 1000;
-uint16 pkt_qq_ddl = 666;
+uint16 pkt_qq_ddl = 500;
 uint16 pkt_phydelay_dict_len = 30;
 uint16 pkt_phydelay_dict_step = 10;
 uint32 pkt_phydelay_dict[30] = {0};//记录不同时延情况下的pkt数量
@@ -481,7 +481,7 @@ uint32 pkt_qq_chain_len_timeout = 0;//超时删除
 uint32 pkt_qq_chain_len_outofrange = 0;//超过链表最大长度删除
 uint32 pkt_qq_chain_len_notfound = 0;// 遍历链表没有找到
 uint32 pkt_qq_chain_len_found = 0;// 遍历链表没有找到
-#define PKTCOUNTCYCLE 100000//每隔100000个包打印一次数据包统计信息
+#define PKTCOUNTCYCLE 10000//每隔100000个包打印一次数据包统计信息
 uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包量
 
 
@@ -2426,24 +2426,13 @@ bool pkt_qq_len_error_sniffer(osl_t *osh, uint8 num){
 
 void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
     //return;//debug142
-
-    phy_info_qq_rx_new.cur_CW_qq = cur_CW_qq;		
-    phy_info_qq_rx_new.wlc_CW_max_qq =  wlc_qq->band->CWmax;		
-    phy_info_qq_rx_new.wlc_hw_CW_max_qq = wlc_qq->hw->band->CWmax;
-    phy_info_qq_rx_new.wlc_CW_min_qq =  wlc_qq->band->CWmin;		
-    phy_info_qq_rx_new.wlc_hw_CW_min_qq = wlc_qq->hw->band->CWmin;		
-    phy_info_qq_rx_new.RSSI_loc = 222;			
-    memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
-    kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
-    memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
-    debugfs_set_info_qq(2, info_qq2, 1);
     mutex_lock(&pkt_qq_mutex_delete);
     //printk(KERN_ALERT"###########pkt_qq_chain_len_delete1(%u)",pkt_qq_chain_len);
     if (!IS_ERR_OR_NULL(pkt_qq_cur)) {
-        wlc_pkttag_t* pkttag = (wlc_pkttag_t*)(uintptr)pkt_qq_cur->qq_pkttag_pointer;
+        /*wlc_pkttag_t* pkttag = (wlc_pkttag_t*)(uintptr)pkt_qq_cur->qq_pkttag_pointer;
         if(pkttag != (wlc_pkttag_t*)NULL){
             pkt_qq_cur->qq_pkttag_pointer = (uint32)NULL;
-        }
+        }*/
     }
     else{
         printk("****************wrong IS_ERR_OR_NULL(pkt_qq_cur)----------(%u)",pkt_qq_chain_len);
@@ -2565,14 +2554,14 @@ void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur, osl_t *osh){
     read_lock(&pkt_qq_mutex_len); // 加锁
     if(pkt_qq_chain_len>=max_pkt_qq_chain_len-2){//防止溢出
     
-        //printk("****************pkt_qq_chain_len debug3----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
+        printk("****************pkt_qq_chain_len debug3----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
         read_unlock(&pkt_qq_mutex_len); // 解锁
         pkt_qq_delete(pkt_qq_chain_head,osh);//删除最早被加入的节点
-        //printk("****************pkt_qq_chain_len debug3+1----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
+        printk("****************pkt_qq_chain_len debug3+1----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
         pkt_qq_del_timeout_ergodic(osh);
         //printk("****************pkt_qq_chain_len debug4-1----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
         
-        //printk("****************pkt_qq_chain_len debug4----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
+        printk("****************pkt_qq_chain_len debug4----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
     }
     else{
 
@@ -2776,6 +2765,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
         recent_channel_set_end_time = 0;
     }
             
+    
     uint slottime_qq = APHY_SLOT_TIME;
     //ampdu_tx_config_t *ampdu_tx_cfg = ampdu_tx->config;
     if (wlc->band->gmode && !wlc->shortslot)
@@ -2837,6 +2827,11 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
     read_unlock(&pkt_qq_mutex_len); // 解锁
 
     //printk("**************debug8+2*******************");
+    
+    if (IS_ERR_OR_NULL((struct pkt_qq *)(uintptr)pkttag->qq_pktinfo_pointer)) {
+        return;
+    }
+
     pkt_qq_cur = (struct pkt_qq *)(uintptr)pkttag->qq_pktinfo_pointer;
     if((pkt_qq_cur == NULL)||(OSL_SYSUPTIME() - pkt_qq_cur->into_hw_time>pkt_qq_ddl)||(OSL_SYSUPTIME()< pkt_qq_cur->into_hw_time)){//直接跳过时延较高的节点，避免出错
         pkt_qq_chain_len_notfound++;

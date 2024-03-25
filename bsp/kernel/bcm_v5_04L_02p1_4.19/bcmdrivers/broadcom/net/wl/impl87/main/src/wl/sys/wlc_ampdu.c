@@ -5043,6 +5043,10 @@ wlc_ampdu_txeval_action(ampdu_tx_info_t *ampdu_tx, scb_ampdu_tx_t *scb_ampdu,
 } /* wlc_ampdu_txeval_action */
 
 /* dump_flag_qqdx */
+#include <wl_linux.h>
+extern uint32 cur_CW_qq;
+extern struct phy_info_qq phy_info_qq_rx_new;
+extern DataPoint_qq rssi_ring_buffer_cur[RSSI_RING_SIZE];
 extern uint32 recent_channel_set_end_time;//探查channel switch 时延来源
 /* dump_flag_qqdx */
 /* Select one of the eval routines
@@ -9823,6 +9827,18 @@ free_and_next:
                     update_cur_rates_counts_txs_qq(wlc, txs_mutype, txs_mu, fix_rate, txs,rs_txs, ncons, nlost);
                     //printk("RxAckRSSI: %d ", (txs->ackphyrxsh & PRXS1_JSSI_MASK) >> PRXS1_JSSI_SHIFT);
                 }
+                
+
+                phy_info_qq_rx_new.cur_CW_qq = cur_CW_qq;		
+                phy_info_qq_rx_new.wlc_CW_max_qq =  wlc->band->CWmax;		
+                phy_info_qq_rx_new.wlc_hw_CW_max_qq = wlc->hw->band->CWmax;
+                phy_info_qq_rx_new.wlc_CW_min_qq =  wlc->band->CWmin;		
+                phy_info_qq_rx_new.wlc_hw_CW_min_qq = wlc->hw->band->CWmin;		
+                phy_info_qq_rx_new.RSSI_loc = 222;			
+                memcpy(phy_info_qq_rx_new.rssi_ring_buffer, rssi_ring_buffer_cur, sizeof(DataPoint_qq)*RSSI_RING_SIZE);
+                kernel_info_t info_qq2[DEBUG_CLASS_MAX_FIELD];
+                memcpy(info_qq2, &phy_info_qq_rx_new, sizeof(phy_info_qq_rx_new));
+                debugfs_set_info_qq(2, info_qq2, 1);
                 ack_update_qq(wlc, ini,ampdu_tx, scb, txs, pkttag, txh_info,was_acked\
                 ,wlc->osh,p, !first_pkt_flag_qqdx,tot_mpdu,rs_txs,receive_time, ccastats_qq_cur);
                 //printk("----------[fyl] ack_update_qq----------");
