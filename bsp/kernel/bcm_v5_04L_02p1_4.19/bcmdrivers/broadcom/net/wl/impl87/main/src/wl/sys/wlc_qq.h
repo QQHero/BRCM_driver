@@ -487,6 +487,8 @@ uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包�
 
 bool set_min_cw = TRUE;
 struct timer_list timer_qq_CW_set;
+uint16 CW_list_qq[] = {2, 10, 100, 1000, 10000};
+uint8 CW_list_index_qq = 0;
 uint32 cur_CW_qq = 0;
 uint32 set_hw_cw_qq(wlc_hw_info_t *wlc_hw){
     if(set_min_cw){
@@ -496,7 +498,7 @@ uint32 set_hw_cw_qq(wlc_hw_info_t *wlc_hw){
         set_min_cw = FALSE;
     }
     else{
-        cur_CW_qq = 1000000;
+        cur_CW_qq = 16960;
         wlc_bmac_set_cwmin(wlc_hw, cur_CW_qq);
         wlc_bmac_set_cwmax(wlc_hw, cur_CW_qq);
         set_min_cw = TRUE;
@@ -505,19 +507,13 @@ uint32 set_hw_cw_qq(wlc_hw_info_t *wlc_hw){
     
 
 }
+
 uint32 set_cw_qq(wlc_info_t	*wlc){
-    if(set_min_cw){
-        cur_CW_qq = 2;
-        wlc_set_cwmin(wlc, cur_CW_qq);
-        wlc_set_cwmax(wlc, cur_CW_qq);
-        set_min_cw = FALSE;
-    }
-    else{
-        cur_CW_qq = 1000000;
-        wlc_set_cwmin(wlc, cur_CW_qq);
-        wlc_set_cwmax(wlc, cur_CW_qq);
-        set_min_cw = TRUE;
-    }
+    cur_CW_qq = CW_list_qq[CW_list_index_qq];
+    wlc_set_cwmin(wlc, cur_CW_qq);
+    wlc_set_cwmax(wlc, cur_CW_qq);
+    CW_list_index_qq++;
+    CW_list_index_qq = CW_list_index_qq % (sizeof(CW_list_qq) / sizeof(CW_list_qq[0]));
     return cur_CW_qq;
 }
 
