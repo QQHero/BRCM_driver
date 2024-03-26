@@ -1713,15 +1713,6 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                             //rintk("**************tx_debug5*******************");
                             pkt_qq_add_at_tail(pkt_qq_cur,wlc->osh);
                         }
-                        read_lock(&pkt_qq_mutex_len); // 加锁
-                        //printk("**************debug14*******************");
-                        if(pkt_qq_chain_len>max_pkt_qq_chain_len-50){
-                            read_unlock(&pkt_qq_mutex_len); // 解锁
-                            pkt_qq_del_timeout_ergodic(osh);
-                        }else{
-                            read_unlock(&pkt_qq_mutex_len); // 解锁
-
-                        }
                         pkt_qq_print_by_debugfs_ergodic(5);
                         
                     }else{//如果是重传包，打印dump信息
@@ -1761,14 +1752,6 @@ txq_hw_fill(txq_info_t *txqi, txq_t *txq, uint fifo_idx)
                         memcpy(info_qq, pkt_count_qq_cur, sizeof(*pkt_count_qq_cur));
                         MFREE(osh, pkt_count_qq_cur, sizeof(*pkt_count_qq_cur));
                         debugfs_set_info_qq(1, info_qq, 1);
-                        mutex_lock(&pkt_qq_mutex_head); // 加锁
-                        if((pkt_qq_chain_head->into_CFP_time+pkt_qq_ddl<OSL_SYSUPTIME())||(OSL_SYSUPTIME() < pkt_qq_chain_head->into_hw_time)){
-                            
-                            mutex_unlock(&pkt_qq_mutex_head); // 解锁
-                            pkt_qq_del_timeout_ergodic(osh);
-                        }else{
-                            mutex_unlock(&pkt_qq_mutex_head); // 解锁     
-                        }          
                         
                         uint32 pktsnum_20up = 0;
 

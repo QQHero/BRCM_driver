@@ -434,7 +434,7 @@ uint32 PS_start_last = 0;//最近一次进入PS的时间
 
 
 /*是否打印超时被删除的包，专用于debug*/
-#define PRINTTIMEOUTPKT
+//#define PRINTTIMEOUTPKT
 
 
 #ifndef BCMDBG_PPS_qq
@@ -487,7 +487,8 @@ uint32 pkt_added_in_wlc_tx = 0;//wlc_tx文件中实际准备发送的数据包�
 
 bool set_min_cw = TRUE;
 struct timer_list timer_qq_CW_set;
-uint16 CW_list_qq[] = {2, 10, 100, 1000, 10000};
+uint16 CW_list_qq[] = {2, 10, 100, 1000, 10000, 20000};
+//uint32 CW_list_qq[] = {1000000};
 uint8 CW_list_index_qq = 0;
 uint32 cur_CW_qq = 0;
 uint32 set_hw_cw_qq(wlc_hw_info_t *wlc_hw){
@@ -597,6 +598,7 @@ bool timer_qq_loaded = FALSE;
 uint32 game_start_time_qq = 0;
 
 chanspec_t chanspec_real_set = (chanspec_t)(0xd024);
+void pkt_qq_del_timeout_ergodic(osl_t *osh);
 osl_t *osh_timer_callback_start_info_qq;
 struct timer_list timer_qq_start_info;
 void timer_callback_start_info_qq(struct timer_list *t) {
@@ -648,7 +650,11 @@ void timer_callback_start_info_qq(struct timer_list *t) {
                 }
             }
             if(!start_game_is_on){
-
+                start_game_is_on = TRUE;
+                if(game_start_time_qq != 0){
+                    pkt_qq_del_timeout_ergodic(osh_timer_callback_start_info_qq);
+                }
+                
                 game_start_time_qq = OSL_SYSUPTIME();
             }
             if((game_start_time_qq + 30*TIMER_INTERVAL_S_qq) <= OSL_SYSUPTIME()&&((game_start_time_qq + 32*TIMER_INTERVAL_S_qq) > OSL_SYSUPTIME())){//如果开玩30s就尝试切换
@@ -672,6 +678,14 @@ void timer_callback_start_info_qq(struct timer_list *t) {
     mod_timer(&timer_qq_start_info, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq));
 }
 
+
+void bug_killer_qq(void){
+    
+    printk("****************bug_killer_qq----------(%u)",OSL_SYSUPTIME());
+    start_game_is_on = FALSE;
+    mod_timer(&timer_qq_start_info, jiffies + msecs_to_jiffies(TIMER_INTERVAL_S_qq/2));
+    //pkt_qq_del_timeout_ergodic(osh_timer_callback_start_info_qq);
+}
 
 
 
@@ -2532,7 +2546,6 @@ void pkt_qq_delete(struct pkt_qq *pkt_qq_cur,osl_t *osh){
 //mutex_unlock(&pkt_qq_mutex); // 解锁
 }
 
-void pkt_qq_del_timeout_ergodic(osl_t *osh);
 void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur, osl_t *osh){
     //return;//debug142
     if (pkt_qq_cur == (struct pkt_qq *)NULL){
@@ -2550,14 +2563,14 @@ void pkt_qq_add_at_tail(struct pkt_qq *pkt_qq_cur, osl_t *osh){
     read_lock(&pkt_qq_mutex_len); // 加锁
     if(pkt_qq_chain_len>=max_pkt_qq_chain_len-2){//防止溢出
     
+
+
         printk("****************pkt_qq_chain_len debug3----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
+
         read_unlock(&pkt_qq_mutex_len); // 解锁
-        pkt_qq_delete(pkt_qq_chain_head,osh);//删除最早被加入的节点
-        printk("****************pkt_qq_chain_len debug3+1----------(%u:%u:%u)",pkt_qq_chain_len,pkt_qq_chain_head->into_CFP_time,OSL_SYSUPTIME());
-        pkt_qq_del_timeout_ergodic(osh);
-        //printk("****************pkt_qq_chain_len debug4-1----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
-        
-        printk("****************pkt_qq_chain_len debug4----------(%u:%u)",pkt_qq_chain_len,OSL_SYSUPTIME());
+        bug_killer_qq();
+        return;
+
     }
     else{
 
@@ -3077,7 +3090,7 @@ void ack_update_qq(wlc_info_t *wlc, scb_ampdu_tid_ini_t* ini,ampdu_tx_info_t *am
         read_unlock(&pkt_qq_mutex_len); // 解锁
 
         printk("**************debug_pkt_qq_del_timeout_ergodic(%u;%u)*******************",pktnum_to_send_end,pkt_qq_chain_len);
-        pkt_qq_del_timeout_ergodic(osh);
+        bug_killer_qq();
     }else{
         read_unlock(&pkt_qq_mutex_len); // 解锁
 
